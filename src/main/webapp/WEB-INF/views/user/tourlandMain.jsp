@@ -308,8 +308,7 @@
 	  })
 	  
 	  //최근 본 상품의 이미지를 누르면 링크로 이동 
-<<<<<<< HEAD
-=======
+
 	  $("#currentP1").click(function(){
 		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno};
 	  })
@@ -330,10 +329,9 @@
 			  location.href = "${pageContext.request.contextPath}/customer/tourlandProductMainSearchList?tourDays="+tourDays+"&to="+to+"&capa="+capa+"&date="+date;
 		  }
 	  })
+	 
 	  
->>>>>>> refs/heads/hana_tour34
-	  
-	 if(${currentProductPrice} != null){
+/* 	 if(${currentProductPrice} != null){
      	  $(".currentP1").click(function(){
 		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+${currentProductPrice};
 	    })
@@ -342,10 +340,10 @@
 	 if(${currentProductPrice2} != null){
 	 
 	 $(".currentP2").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+${currentProductPrice2};
-	   })
-	 }  
-  })
+		 /*  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+${currentProductPrice2}; */
+	 /*  })
+	 }  */
+  }) 
 	  
 </script>
 <%-- <c:if test="${currentProduct != null}">
