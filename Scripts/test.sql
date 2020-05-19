@@ -22,6 +22,7 @@ select * from rentcar where rentddate=  '2020-04-01' between  returndate  = '202
 select * from rentcar where rentddate =  '2020-04-01' and returndate  = '2020-04-05';
 -- 배너
 select * from banner b2 ;
+delete from banner;
 select * from banner order by no desc limit 1, 3;
 delete from banner where no in(1,3,4,5,6,7,8,9,10,11);
 

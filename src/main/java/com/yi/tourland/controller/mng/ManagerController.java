@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.google.gson.JsonObject;
 import com.yi.tourland.domain.PageMaker;
@@ -462,7 +460,7 @@ public class ManagerController {
 	public String employeeRegisterPost(EmployeeVO vo) throws Exception {
 
 		employeeService.insertEmployee(vo);
-		return "redirect:empMngList/0";
+		return "redirect:/empMngList/0";
 	}
 
 	// 아이디 존재유무 체크
@@ -594,7 +592,7 @@ public class ManagerController {
 	public String userRegisterPost(UserVO vo) throws Exception {
         System.out.println(vo);
 		userService.insertUser(vo);
-		return "redirect:userMngList/0";
+		return "redirect:/userMngList/0";
 	}
 
 	// 예약관리
@@ -667,7 +665,7 @@ public class ManagerController {
 		String bigSizePic = savedName.substring(0, 12) + savedName.substring(14);
 		vo.setPic(bigSizePic.replaceAll(" ", "_"));
 		productService.insertProduct(vo);
-		return "redirect:productMngList";
+		return "redirect:/productMngList";
 	}
 	
 	@RequestMapping(value = "productMngList", method = RequestMethod.GET)
@@ -771,7 +769,7 @@ public class ManagerController {
 			vo.setPic(originalPic);
 		}
 		productService.insertProduct(vo);
-		return "redirect:productDetail?no="+vo.getPno()+"&page="+cri.getPage()+"&searchType="+cri.getSearchType()+"&keyword="+cri.getKeyword();
+		return "redirect:/productDetail?no="+vo.getPno()+"&page="+cri.getPage()+"&searchType="+cri.getSearchType()+"&keyword="+cri.getKeyword();
 	}
 	@RequestMapping(value = "productDelete", method = RequestMethod.GET)
 	public String productDelete(int no,ProductVO vo,SearchCriteria cri,Model model) throws SQLException {
@@ -786,7 +784,7 @@ public class ManagerController {
 		}
 		productService.deleteProduct(vo);
 		model.addAttribute("cri",cri);
-		return "redirect:productMngList";
+		return "redirect:/productMngList";
 	}
 
 	@ResponseBody
@@ -978,7 +976,7 @@ public class ManagerController {
 	@RequestMapping(value = "tourRegister", method = RequestMethod.POST)
 	public String tourRegisterPost(TourVO vo, Model model) throws SQLException {
 		tourService.insertTour(vo);
-		return "redirect:tourMngList";
+		return "redirect:/tourMngList";
 	}
 
 	@RequestMapping(value = "tourDetail", method = RequestMethod.GET)
@@ -1000,14 +998,14 @@ public class ManagerController {
 	@RequestMapping(value = "tourModify", method = RequestMethod.POST)
 	public String tourModifyPost(TourVO vo, SearchCriteria cri) throws SQLException {
 		tourService.updateTour(vo);
-		return "redirect:tourDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
+		return "redirect:/tourDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
 				+ "&searchType2=" + cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "tourDelete", method = RequestMethod.GET)
 	public String tourDelete(TourVO vo, SearchCriteria cri, Model model) throws SQLException {
 		tourService.deleteTour(vo);
-		return "redirect:tourMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
+		return "redirect:/tourMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 				+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 	}
 
@@ -1059,7 +1057,7 @@ public class ManagerController {
 	@RequestMapping(value = "rentcarRegister", method = RequestMethod.POST)
 	public String rentcarRegisterPost(RentcarVO vo, Model model) throws Exception {
 		  rentcarService.insertRentcar(vo);
-		return "redirect:rentcarMngList";
+		return "redirect:/rentcarMngList";
 	}
 	
 	//렌트카 상세 페이지
@@ -1212,7 +1210,7 @@ public class ManagerController {
 	@RequestMapping(value = "FAQRegister", method = RequestMethod.POST)
 	public String FAQResgiterPost(FaqVO vo) throws SQLException {
 		faqService.insertFAQ(vo);
-		return "redirect:FAQMngList";
+		return "redirect:/FAQMngList";
 	}
 
 	@RequestMapping(value = "FAQDetail", method = RequestMethod.GET)
@@ -1234,14 +1232,14 @@ public class ManagerController {
 	@RequestMapping(value = "FAQModify", method = RequestMethod.POST)
 	public String FAQModifyPost(FaqVO vo, SearchCriteria cri) throws SQLException {
 		faqService.updateFAQ(vo);
-		return "redirect:FAQDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
+		return "redirect:/FAQDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
 				+ "&searchType2=" + cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "FAQDelete", method = RequestMethod.GET)
 	public String FAQDelete(FaqVO vo, SearchCriteria cri, Model model) throws SQLException {
 		faqService.deleteFAQ(vo);
-		return "redirect:FAQMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
+		return "redirect:/FAQMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 				+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 	}
 
@@ -1813,7 +1811,7 @@ public class ManagerController {
 	public String editNoticePOST(NoticeVO notice, Model model) throws Exception {
 		System.out.println(notice);
 		noticeService.editNotice(notice);
-		return "redirect://noticeDetail?no=" + notice.getNo();
+		return "redirect:/noticeDetail?no=" + notice.getNo();
 	}
 
 	// 쿠폰관리
@@ -1907,7 +1905,7 @@ public class ManagerController {
 	@RequestMapping(value = "hotelRegister", method = RequestMethod.POST)
 	public String hotelResgiterPost(HotelVO vo) throws Exception {
 		hotelService.insertHotel(vo);
-		return "redirect:hotelMngList";
+		return "redirect:/hotelMngList";
 	}
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.GET)
@@ -1921,13 +1919,13 @@ public class ManagerController {
 	@RequestMapping(value = "hotelModify", method = RequestMethod.POST)
 	public String hotelModifyPost(HotelVO vo, SearchCriteria cri) throws Exception {
 		hotelService.updateHotel(vo);
-		return "redirect:hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "hotelDelete", method = RequestMethod.GET)
 	public String hotelDelete(HotelVO vo, SearchCriteria cri) throws Exception {
 		hotelService.deleteHotel(vo);
-		return "redirect:hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 	
 	// 상품 문의사항
@@ -1943,7 +1941,6 @@ public class ManagerController {
 			return "/manager/board/planBoardList";
 		}
 		
-		//상품게시판의 리스트 상세보기
 		@RequestMapping(value = "planBoardDetail", method = RequestMethod.GET)
 		public String planBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model,String respond) throws Exception {
 			vo = planBoardService.readByVoPlanBoard(vo);
@@ -1952,8 +1949,11 @@ public class ManagerController {
 			model.addAttribute("respond", respond);
 			return "/manager/board/planBoardDetail";
 		}
-		
+
 		//달려져있는 답변내용 수정,삭제 하는 페이지
+
+		//답변내용 달기
+
 		@RequestMapping(value = "planBoardModify", produces = "application/text; charset=utf8", method = RequestMethod.GET)
 		public String planBoardModify(PlanBoardVO vo, SearchCriteria cri, Model model,int no, String respond) throws Exception {
 			vo = planBoardService.readByNoPlanBoard(no);
@@ -1964,7 +1964,7 @@ public class ManagerController {
 			model.addAttribute("cri", cri);
 			return "/manager/board/planBoardModify";
 		}
-		//모달로 수정된 답변내용을 받는거 
+		//답변내용 수정
 		@ResponseBody
 		@RequestMapping(value = "planBoardModifyApi", produces = "application/text; charset=utf8", method = RequestMethod.GET)
 		public ResponseEntity<String> planBoardModifyAjax(PlanBoardVO vo, SearchCriteria cri, Model model,int no, String respondText) throws Exception {
@@ -1990,9 +1990,12 @@ public class ManagerController {
 		public String planBoardDelete(PlanBoardVO vo, SearchCriteria cri, Model model,int no) throws Exception {
 			vo=planBoardService.readByNoPlanBoard(no);
 			planBoardService.deletePlanBoard(vo);
-			return "redirect:planBoardList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
+			return "redirect:/planBoardList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 					+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 		}
+
+		
+		
 		//결제 관리
 		
 		@RequestMapping(value = "paymentList", method = RequestMethod.GET)
