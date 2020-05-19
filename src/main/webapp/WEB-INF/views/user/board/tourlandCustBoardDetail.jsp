@@ -31,6 +31,9 @@
 				   <div id="datailRealContent">
 				       ${custBoardVO.content}
 				   </div>
+				   <div class="box-footer">
+							 <button type="button" class="btn btn-primary" id="btnReturnToList">목록으로</button>
+				   </div>
 				</div>
 				
 				
