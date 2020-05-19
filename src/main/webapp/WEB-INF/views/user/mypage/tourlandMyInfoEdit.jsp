@@ -220,7 +220,7 @@ section div#editProfile #btns input {
 						</p>
 					</c:when>
 					<c:when test="${mypage=='mypageemp'}">
-					<input type="hidden" value="${Auth.empno }" name="empno">
+					<input type="hidden" value="${Auth.empno}" name="empno">
 						<p>
 							<label>아이디</label><input type="text" value="${Auth.empid }" name="empid" readonly="readonly" style="background-color: lightgray;">
 						</p>
