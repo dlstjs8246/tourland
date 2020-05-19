@@ -74,14 +74,17 @@ label {
 	margin-left: 20px;
 }
 
-span.errorMsg {
+.errorMsg {
 	color: tomato;
 	margin-left: 140px;
 	font-size: smaller;
-	display: none;
+ 	display: none;
 }
 </style>
-<script>
+
+<body>
+	<%@ include file="../include/userHeader.jsp"%>
+	<script>
 	$(function(){
 		$("form").submit(function(e){
 			$(".errorMsg").css("display", "none");
@@ -93,46 +96,39 @@ span.errorMsg {
 			//이름 정규표현식
 			var nameReg = /^[가-힣]{2,5}$/;
 			if (nameReg.test(name) == false) {
-				$("input[name='name']").next().css("display", "inline");
+				$("input[name='name']").next().next().css("display", "inline");
 				  return false;
 			  }
 			
 			//생년월일 정규표현식
 			var birthReg = /^(1|2)[0-9]{3}-(01|02|03|04|05|06|07|08|09|10|11|12)-(01|02|03|04|05|06|07|08|09|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)$/; 
 			if (birthReg.test(birth) == false) {
-				$("input[name='birth']").next().css("display", "inline");
+				$("input[name='birth']").next().next().css("display", "inline");
 				  return false;
 			  }
 			
 			//전화번호 정규표현식
 			var phoneReg = /^(010|011|019|018|017)-[0-9]{3,4}-[0-9]{4}$/; 
 			if (phoneReg.test(tel) == false) {
-				$("input[name='tel']").next().css("display", "inline");
+				$("input[name='tel']").next().next().css("display", "inline");
 				  return false;
 			  }
 			
 			//이메일 정규표현식
 			var emailReg = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 			if(emailReg.test(email)==false){
-				$("input[name='email']").next().css("display", "inline");
+				$("input[name='email']").next().next().css("display", "inline");
 				  return false;
-			}
-			
-			
-			location.href="${pageContext.request.contextPath}/customer/tourlandFindIdPw";
-				
-			
+			}	
 		})
 	})
 </script>
-<body>
-	<%@ include file="../include/userHeader.jsp"%>
 	<section>
 		<div id="editProfile">
 			<h1>ID, Password 찾기</h1>
 			<span class="info">투어랜드는 고객님의 개인정보가 외부로 노출되지 않도록 항상 노력하고 있습니다.</span><br>
 			<span class="info">이름과 생년월일, 전화번호, 이메일을 입력해주세요.</span>
-			<form action="tourlandfindIdPw" method="post">
+			<form action="tourlandfindIdPw" method="post" autocomplete="off">
 				<p>
 					<label>이름</label> 
 					<input type="text" name="name" required="required" placeholder="한글 2-5자리"><br> 

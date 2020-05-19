@@ -87,14 +87,7 @@ div#pkgOrderBy button {
 	border: none;
 	width: 100px;
 	height: 30px;
-}
-
-div.pkgListBox {
-	width: 90%;
-	height: 210px;
-	padding: 20px;
-	border: 1px solid #ededed;
-}
+} 
 
 div.pkgImg {
 	width: 250px;
@@ -109,9 +102,10 @@ div.pkgImg img {
 }
 
 div.pkgInfoBox {
-	width: 320px;
-	height: 180px;
-	overflow: hidden;
+	width: 90%;
+	height: 210px; 
+	padding: 20px;
+	border: 1px solid #ededed; 
 }
 
 div.pkgInfoBox p {
@@ -170,10 +164,10 @@ function replaceAll(str, searchStr, replaceStr) {
 	return str.split(searchStr).join(replaceStr);
 }
 /* yyyy-MM-dd 형식으로 변경하는 메서드  */
-function getFormatDate(date){
+function getFormatDate(date,seperater){
 	var date = new Date(date);
-    var year = date.getFullYear()+"-";              //yyyy
-    var month = (date.getMonth()+1)+"-";          //M
+    var year = date.getFullYear()+seperater;              //yyyy
+    var month = (date.getMonth()+1)+seperater;          //M
     month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
     var day = date.getDate();                   //d
     day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
@@ -208,7 +202,7 @@ function getSearchResult(){
 		dataType : "json",
 		data : {ddate : ddate, tourDays : tourDays, cnt : cnt},
 		success : function(rs){
-			 $(".pkgListBox").remove();
+			 $("#pkgListBoxWrap").empty();
 			 $(".pagination").empty();
 			 $("#totalCount").html(rs.list.length);
 			 $(rs.list).each(function(i, obj) {
@@ -223,7 +217,7 @@ function getSearchResult(){
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
 				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
-				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire)+"까지");
+				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire,"/")+"까지");
 				 
 				 var $p4 = $("<p>").addClass("pkgReserv");
 				 var $btn = $("<button>").addClass("pkgReservBtn").html("지금 바로 예약");
@@ -232,13 +226,10 @@ function getSearchResult(){
 				 $div2.append($p1);
 				 $div2.append($p2);
 				 $div2.append($p3);
-				 
 				 $p4.append($btn);
-				 var $pkgListBox = $("<div class='pkgListBox'>").append($div1).append($div2).append($p4);
-				 /* $(".pkgListBox").append($div1);
-				 $(".pkgListBox").append($div2);
-				 $(".pkgListBox").append($p4); */
-				 $("#pkgOrderBy").after($pkgListBox);
+				 $div2.append($p4);
+				 var $pkgListBox = $("<div class='pkgListBox'>").append($div1).append($div2);
+				 $("#pkgListBoxWrap").append($pkgListBox);
 				 return false;
 			 })
 		}
@@ -252,7 +243,7 @@ function getList(page){
 		type : "get",
 		dataType : "json",
 		success : function(rs){
-			 $(".pkgListBox").remove();
+			 $("#pkgListBoxWrap").empty();
 			 $("#totalCount").html(rs.count);
 			 $(rs.list).each(function(i, obj) {
 				 
@@ -266,19 +257,20 @@ function getList(page){
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
 				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
-				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire)+"까지");
+				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire,"/")+"까지");
 				 
 				 var $p4 = $("<p>").addClass("pkgReserv");
 				 var $btn = $("<button>").addClass("pkgReservBtn").html("지금 바로 예약");
-				 
+
 				 $div1.append($img1);
 				 $div2.append($p1);
 				 $div2.append($p2);
 				 $div2.append($p3);
 				 
 				 $p4.append($btn);
-				 var $pkgListBox = $("<div class='pkgListBox'>").append($div1).append($div2).append($p4);
-				 $("#pkgOrderBy").after($pkgListBox);
+				 $div2.append($p4);
+				 var $pkgListBox = $("<div class='pkgListBox'>").append($div1).append($div2);
+				 $("#pkgListBoxWrap").append($pkgListBox);
 				 
 			 })
 			 /* 페이징 부분 */
@@ -319,10 +311,9 @@ function getLowPriceList(page){
 		type : "get",
 		dataType : "json",
 		success : function(rs){
-			 $(".pkgListBox").remove();
+			 $("#pkgListBoxWrap").empty();
 			 $("#totalCount").html(rs.count);
 			 $(rs.list).each(function(i, obj) {
-				 
 				 var $input1 = $("<input>").attr("type", "hidden").attr("value", obj.pno).attr("id", "pno");
 				 
 				 var $div1 = $("<div>").addClass("pkgImg");
@@ -333,7 +324,7 @@ function getLowPriceList(page){
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
 				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
-				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire)+"까지");
+				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire,"/")+"까지");
 				 
 				 var $p4 = $("<p>").addClass("pkgReserv");
 				 var $btn = $("<button>").addClass("pkgReservBtn").html("지금 바로 예약");
@@ -344,8 +335,9 @@ function getLowPriceList(page){
 				 $div2.append($p3);
 				 
 				 $p4.append($btn);
-				 var $pkgListBox = $("<div class='pkgListBox'>").append($input1).append($div1).append($div2).append($p4);
-				 $("#pkgOrderBy").after($pkgListBox);
+				 $div2.append($p4);
+				 var $pkgListBox = $("<div class='pkgListBox'>").append($input1).append($div1).append($div2);
+				 $("#pkgListBoxWrap").append($pkgListBox);
 				 
 			 })
 			 /* 페이징 부분 */
@@ -408,11 +400,24 @@ function getLowPriceList(page){
 			var pno = $(this).parent().parent().find("#pno").val();
 			var price = replaceAll($(this).attr("data-price"),",","");
 			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
+			 if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){			 
+				 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
+				 $.cookie("currentProductPrice2",$.cookie('currentProductPrice'),{expires:1, path:"/"});
+				 $.removeCookie('currentProduct');
+				 $.removeCookie('currentProductPrice');
+				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+				 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+			 }else{
+				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+				 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+			 }
 		})
 		/* AJAX 리스트에 동적으로 생성된 '지금 바로 예약하기' 버튼  */
 		$(document).on("click", ".pkgReservBtn", function(){
 			var pno = $(this).parent().parent().find("#pno").val();
 			var price = replaceAll($(this).attr("data-price"),",","");
+		
+			
 			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 		})
 	})
@@ -474,17 +479,17 @@ function getLowPriceList(page){
 				<p id="totalCnt">
 					베이징 : 검색된 상품 <span id="totalCount">${count}</span>건
 				</p>
+				
 				<div id="pkgOrderBy">
 					<button id="byPrice">낮은 가격 순</button>
 					<button id="listAll">전체 리스트 보기</button>
 				</div>
-				<c:forEach var="product" items="${list}">
-				<div class="pkgListBox">
-					<input type="hidden" value="${product.pno}" id="pno">
-					<div class="pkgImg">
-						<img src="displayFile/product?filename=${product.pic}">
-					</div>
+				<div id="pkgListBoxWrap">
+					<c:forEach var="product" items="${list}">
 					<div class="pkgInfoBox">
+						<div class="pkgImg">
+							<img src="displayFile/product?filename=${product.pic}">
+						</div>
 						<p class="pkgTitle">${product.pname}</p>
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
 						<c:set var="airPrice" value="0"/>
@@ -507,12 +512,12 @@ function getLowPriceList(page){
 						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
 						<p class="pkgPrice">${price}원 부터~</p>
 						<p class="pkgDate">~ ${expire}까지</p>
+						<p class="pkgReserv">
+							<button class="pkgReservBtn" data-price="${price}">지금 바로 예약</button>
+						</p>
 					</div>
-					<p class="pkgReserv">
-						<button class="pkgReservBtn" data-price="${price}">지금 바로 예약</button>
-					</p>
+					</c:forEach>
 				</div>
-				</c:forEach>
 				<ul class="pagination">
 					<c:if test="${pageMaker.prev == true}">
 						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${pageMaker.startPage-1}">&laquo;</a></li>
@@ -529,23 +534,4 @@ function getLowPriceList(page){
 	</section>
 	<%@ include file="../../include/userFooter.jsp"%>
 </body>
-
-
-<script>
-	$(function() {
-		$(".pkgReservBtn").click(function() {
-			var pno = $(this).parent().parent().find("#pno").val();
-			 if($.cookie('currentProduct') != null){			 
-				 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
-				 $.removeCookie('currentProduct');
-				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
-			 }else{
-				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
-			 }
-			
-			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno;
-		})
-	})
-</script>
-
 </html>

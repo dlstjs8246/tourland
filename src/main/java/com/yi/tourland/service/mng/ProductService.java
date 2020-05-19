@@ -93,16 +93,16 @@ public class ProductService {
 		return dao.totalCountBySearchProductJapan();
 	}
 	//고객 페이지 - 중국 패키지 검색 박스 Ajax 
-	public List<ProductVO> tourlandProductChinaSearchList(String ddate, String rdate, String cnt) throws SQLException{
-		return dao.tourlandProductChinaSearchList(ddate, rdate, cnt);
+	public List<ProductVO> tourlandProductChinaSearchList(String ddate, String rdate, String cnt, String tourDays) throws SQLException{
+		return dao.tourlandProductChinaSearchList(ddate, rdate, cnt, tourDays);
 	};
 	//고객 페이지 - 일본 패키지 검색 박스 Ajax 
-	public List<ProductVO> tourlandProductJapanSearchList(String ddate, String rdate, String cnt) throws SQLException{
-		return dao.tourlandProductJapanSearchList(ddate, rdate, cnt);
+	public List<ProductVO> tourlandProductJapanSearchList(String ddate, String rdate, String cnt, String tourDays) throws SQLException{
+		return dao.tourlandProductJapanSearchList(ddate, rdate, cnt, tourDays);
 	};
 	//고객 페이지 - 제주 패키지 검색 박스 Ajax 
-		public List<ProductVO> tourlandProductKRSearchList(String ddate, String rdate, String cnt) throws SQLException{
-			return dao.tourlandProductKRSearchList(ddate, rdate, cnt);
+		public List<ProductVO> tourlandProductKRSearchList(String ddate, String rdate, String cnt, String tourDays) throws SQLException{
+			return dao.tourlandProductKRSearchList(ddate, rdate, cnt, tourDays);
 		};
 		
 	// 고객 페이지 - 중국 패키지 검색 박스 "낮은 가격 순 " Ajax

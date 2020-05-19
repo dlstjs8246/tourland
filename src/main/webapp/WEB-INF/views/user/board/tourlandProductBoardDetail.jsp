@@ -63,17 +63,18 @@
 		     </div>
 		</section>
 <script>
-	$("#btnSearch").click(function(){
-		var searchType = $("#searchType").val();
-		var keyword = $("#keywordInput").val();
-		location.href = "tourlandBoardNotice?searchType="+searchType+"&keyword="+keyword;
-		//searchBoardController의 listPage GET 으로 받음 
-	})
 	$("#reply").click(function(){
 		var answer ="${plan.answer}";
 		var no = "${plan.no }";
+		var respond = "${plan.respond}";
+		var page = "${cri.page}";
+		var searchType = "${cri.searchType}";
+		var	searchType2 = "${cri.searchType2}";
+		var	keyword = "${cri.keyword}";
 		if(answer==0){
-			location.href = "planBoardDetail?no="+no;
+			location.href = "${pageContext.request.contextPath}/manager/planBoardDetail?no="+no;
+		}else if(answer==1){
+			location.href = "${pageContext.request.contextPath}/manager/planBoardModify?no="+no+"&respond="+respond;
 		}
 	})
 </script>

@@ -130,11 +130,7 @@ section div#editProfile #btns input {
 						}
 						var res = confirm("수정하시겠습니까?");
 						if(res){
-<<<<<<< HEAD
 							location.href="${pageContext.request.contextPath}/editProfile";
-=======
-							location.href="${pageContext.request.contextPath}/customer/editProfile?userid="+userid;
->>>>>>> branch 'master' of https://github.com/dlstjs8246/tourland.git
 							alert("수정이 완료되었습니다.");
 						}
 						return false;
@@ -224,7 +220,7 @@ section div#editProfile #btns input {
 						</p>
 					</c:when>
 					<c:when test="${mypage=='mypageemp'}">
-					<input type="hidden" value="${Auth.empno }" name="empno">
+					<input type="hidden" value="${Auth.empno}" name="empno">
 						<p>
 							<label>아이디</label><input type="text" value="${Auth.empid }" name="empid" readonly="readonly" style="background-color: lightgray;">
 						</p>
