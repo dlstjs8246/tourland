@@ -192,6 +192,7 @@ public class CustomerController {
 	public String tourlandMain(Model model, HttpServletResponse response, HttpServletRequest request) throws Exception {
 	 //쿠키불러오기
 		Cookie[] currentC = request.getCookies();
+		if(currentC != null) {
 		for(Cookie c : currentC) {
 			 if(c.getName().contentEquals("currentProduct")) {
 				 ProductVO currentP = new ProductVO();
@@ -204,6 +205,7 @@ public class CustomerController {
 				 ProductVO dbcurrentP = productService.productByNo(currentP);
 				 model.addAttribute("currentProduct2",dbcurrentP);
 			 }
+		   }
 		}
 		
 	//팝업 불러오기
