@@ -70,7 +70,7 @@
 								   top: 20px; left: 30px;
 								   color: #ff7f00; 
 								   text-shadow: 1px 1px 1px #000;}
-	section#section3 .popular p { position: absolute; 
+	section#section3 .popular p { position: absolute;  
 								  top: 50px; left: 30px;
 								  color: #fff;}
 	section#section3 #popInfo { width: 580px; height: 60px; 
@@ -321,9 +321,8 @@
 			  location.href = "${pageContext.request.contextPath}/customer/tourlandProductMainSearchList?tourDays="+tourDays+"&to="+to+"&capa="+capa+"&date="+date;
 		  }
 	  })
-	  
+	 
 
-  })
 </script>
  <c:if test="${currentProductPrice != null}">
     <script>
