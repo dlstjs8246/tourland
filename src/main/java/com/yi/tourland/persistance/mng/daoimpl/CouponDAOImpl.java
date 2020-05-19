@@ -60,8 +60,4 @@ public class CouponDAOImpl implements CouponDAO {
 		 */
 		return sqlSession.selectList(namespace + "userCouponList", vo);
 	}
-	@Override
-	public void editCouponNo1(CouponVO coupon) throws Exception {
-		sqlSession.update(namespace + "editCouponNo1", coupon);
-	}
 }

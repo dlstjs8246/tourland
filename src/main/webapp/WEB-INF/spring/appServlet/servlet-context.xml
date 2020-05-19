@@ -60,6 +60,8 @@
 			<mapping path="/customer/tourlandMyWishes"/>
 			<mapping path="/customer/tourlandMyCoupon"/>
 			<mapping path="/customer/tourlandCustBoardDetail"/>
+			<mapping path="/customer/tourlandCustBoardRegister"/>
+			<mapping path="/customer/tourlandProductBoardRegister"/>
 			<mapping path="/customer/tourlandProductBoardDetail"/>
 			<beans:ref bean="LoginInterceptor"/>
 
