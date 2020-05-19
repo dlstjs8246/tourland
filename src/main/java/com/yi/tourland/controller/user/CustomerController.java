@@ -740,10 +740,11 @@ public class CustomerController {
 	}			
 	//상품 세부 정보    
 	@RequestMapping(value="tourlandProductDetail", method=RequestMethod.GET)
-	public String tourlandProductDetail(SearchCriteria cri,ProductVO vo,Model model) throws SQLException {
+	public String tourlandProductDetail(SearchCriteria cri,ProductVO vo,Model model,int price) throws SQLException {
 		vo = productService.productByNo(vo);
 		model.addAttribute("cri",cri);
 		model.addAttribute("vo",vo);
+		model.addAttribute("price",price);
 		return "/user/product/tourlandProductDetail"; 
 	}
 	//상품 리뷰    

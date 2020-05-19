@@ -166,7 +166,9 @@ div.pkgInfoBox .pkgTitle {
 .pagination li .pageNumA { display: block; height: 100%;}
 </style>    
 <script>   
-
+function replaceAll(str, searchStr, replaceStr) {
+	return str.split(searchStr).join(replaceStr);
+}
 /* yyyy-MM-dd 형식으로 변경하는 메서드  */
 function getFormatDate(date){
 	var date = new Date(date);
@@ -387,12 +389,14 @@ function getLowPriceList(page){
 		/* 지금 바로 예약하기 버튼 */
 		$(".pkgReservBtn").click(function() {
 			var pno = $(this).parent().parent().find("#pno").val();
-			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno;
+			var price = replaceAll($(this).attr("data-price"),",","");
+			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 		})
 		/* AJAX 리스트에 동적으로 생성된 '지금 바로 예약하기' 버튼  */
 		$(document).on("click", ".pkgReservBtn", function(){
 			var pno = $(this).parent().parent().find("#pno").val();
-			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno;
+			var price = replaceAll($(this).attr("data-price"),",","");
+			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 		})
 	})
 </script>
@@ -488,7 +492,7 @@ function getLowPriceList(page){
 						<p class="pkgDate">~ ${expire}까지</p>
 					</div>
 					<p class="pkgReserv">
-						<button class="pkgReservBtn">지금 바로 예약</button>
+						<button class="pkgReservBtn" data-price="${price}">지금 바로 예약</button>
 					</p>
 				</div>
 				</c:forEach>

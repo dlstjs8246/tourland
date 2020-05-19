@@ -213,8 +213,6 @@
 							<c:forEach var="t" items="${vo.tour}" begin="0" end="0">
 								<c:set var="capacity" value="${t.capacity}"/>
 							</c:forEach>
-							<c:set var="N" value="${vo.pprice/capacity}"/>
-							<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
 							<li class="selOption">
 								<p>
 									예약인원
@@ -309,7 +307,7 @@
 									</select>
 								</p>
 							</li>
-							<li id="infoPrice" style="clear : both;">가격 : <span id="price">${price}</span>원</li>
+							<li id="infoPrice" style="clear : both;">가격 : <span id="price"><fmt:formatNumber value="${price}" pattern="###,###"/></span>원</li>
 						</ul>
 						<div id="btnsBox">
 						<button id="doReserv">예약하기</button>

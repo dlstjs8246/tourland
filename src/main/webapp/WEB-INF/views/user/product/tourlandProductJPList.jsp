@@ -396,7 +396,7 @@ function getLowPriceList(page){
 			 }else{
 				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
 			 }
-			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno;
+			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price=${price}";
 		})
 		/* AJAX 리스트에 동적으로 생성된 '지금 바로 예약하기' 버튼  */
 		/* $(document).on("click", ".pkgReservBtn", function(){
