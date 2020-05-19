@@ -159,9 +159,8 @@ div.pkgInfoBox .pkgTitle {
 #listAll { margin-left: 420px; background: steelblue; color: #fff;}   
 .pagination li .pageNumA { display: block; height: 100%;}
 </style>
-<%@include file="productList_script.jsp"%>    
+<%@include file="tourlandProductChinaList_script.jsp"%>     
 <body>
-
 	<section>
 		<div id="pkgTitleBox">
 			<h1>베이징</h1>
@@ -223,6 +222,7 @@ div.pkgInfoBox .pkgTitle {
 					<button id="listAll">전체 리스트 보기</button>
 				</div>
 				<div id="pkgListBoxWrap">
+					<input type="hidden" value="${product.pno}" id="pno">
 					<c:forEach var="product" items="${list}">
 					<div class="pkgInfoBox">
 						<div class="pkgImg">
@@ -251,7 +251,7 @@ div.pkgInfoBox .pkgTitle {
 						<p class="pkgPrice">${price}원 부터~</p>
 						<p class="pkgDate">~ ${expire}까지</p>
 						<p class="pkgReserv">
-							<button class="pkgReservBtn" data-price="${price}">지금 바로 예약</button>
+							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
 						</p>
 					</div>
 					</c:forEach>

@@ -123,56 +123,66 @@ function getLowPriceList(page){
 		}
 	})
 }
-	$(function(){
-		/* 페이지 좌측 검색 박스 검색 버튼 클릭  */
-		$("#pkgSearchBtn").click(function(){
-			getSearchResult();
-		})
-		/* 리스트 우측 전체 리스트 보기 버튼 클릭 */
-		$("#listAll").click(function(){
-			getList(1);
-		})
-		/* 낮은 가격 순 정렬 */
-		$("#byPrice").click(function(){
-			getLowPriceList(1);
-		})
-		/* AJAX 페이징 */
-		/* 낮은 가격순 리스트 페이지 번호 클릭 시 페이지 번호가 넘어가고 해당 번호의 리스트 출력 */
-		$(document).on("click", ".lowPriceListPage", function(){
-		    $('html, body').animate({scrollTop: 0}, 200);
-			var page = $(this).html();
-			getLowPriceList(page);
-		})
-		/* 전체 리스트 페이지 번호 클릭 시 페이지 번호가 넘어가고 해당 페이지 번호의 리스트 출력 */
-		$(document).on("click", ".listAll", function(){
-		    $('html, body').animate({scrollTop: 0}, 200);
-			var page = $(this).html();
-			getList(page);
-		})
-		/* 지금 바로 예약하기 버튼 */
-		$(".pkgReservBtn").click(function() {
-			var pno = $(this).parent().parent().find("#pno").val();
-			var price = replaceAll($(this).attr("data-price"),",","");
-			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
-			 if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){			 
-				 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
-				 $.cookie("currentProductPrice2",$.cookie('currentProductPrice'),{expires:1, path:"/"});
-				 $.removeCookie('currentProduct');
-				 $.removeCookie('currentProductPrice');
-				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
-				 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
-			 }else{
-				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
-				 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
-			 }
-		})
-		/* AJAX 리스트에 동적으로 생성된 '지금 바로 예약하기' 버튼  */
-		$(document).on("click", ".pkgReservBtn", function(){
-			var pno = $(this).parent().parent().find("#pno").val();
-			var price = replaceAll($(this).attr("data-price"),",","");
-		
-			
-			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
-		})
+$(function(){
+	/* 페이지 좌측 검색 박스 검색 버튼 클릭  */
+	$("#pkgSearchBtn").click(function(){
+		getSearchResult();
 	})
+	/* 리스트 우측 전체 리스트 보기 버튼 클릭 */
+	$("#listAll").click(function(){
+		getList(1);
+	})
+	/* 낮은 가격 순 정렬 */
+	$("#byPrice").click(function(){
+		getLowPriceList(1);
+	})
+	/* AJAX 페이징 */
+	/* 낮은 가격순 리스트 페이지 번호 클릭 시 페이지 번호가 넘어가고 해당 번호의 리스트 출력 */
+	$(document).on("click", ".lowPriceListPage", function(){
+	    $('html, body').animate({scrollTop: 0}, 200);
+		var page = $(this).html();
+		getLowPriceList(page);
+	})
+	/* 전체 리스트 페이지 번호 클릭 시 페이지 번호가 넘어가고 해당 페이지 번호의 리스트 출력 */
+	$(document).on("click", ".listAll", function(){
+	    $('html, body').animate({scrollTop: 0}, 200);
+		var page = $(this).html();
+		getList(page);
+	})
+	/* 지금 바로 예약하기 버튼 */
+	$(".pkgReservBtn").click(function() {
+		var pno = $(this).parent().parent().find("#pno").val();
+		var price = replaceAll($(this).attr("data-price"),",","");
+		if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){			 
+			 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
+			 $.cookie("currentProductPrice2",$.cookie('currentProductPrice'),{expires:1, path:"/"});
+			 $.removeCookie('currentProduct');
+			 $.removeCookie('currentProductPrice');
+			 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+			 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+		 }else{
+			 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+			 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+		 }
+		location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
+		
+	})
+	/* AJAX 리스트에 동적으로 생성된 '지금 바로 예약하기' 버튼  */
+	$(document).on("click", ".pkgReservBtn", function(){
+		var pno = $(this).attr("data-pno");
+		var price = replaceAll($(this).attr("data-price"),",","");
+		if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){			 
+			 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
+			 $.cookie("currentProductPrice2",$.cookie('currentProductPrice'),{expires:1, path:"/"});
+			 $.removeCookie('currentProduct');
+			 $.removeCookie('currentProductPrice');
+			 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+			 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+		 }else{
+			 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+			 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+		 }
+		location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
+	})
+})
 </script>
