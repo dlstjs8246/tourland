@@ -199,9 +199,9 @@
      background:linen;
      position: absolute;
      width:110px;
-     height: 350px;
+     height: 410px;
      top:300px;
-     right:0;
+     right:-4px;
      padding: 5px 5px;
      border:0.5px solid gainsboro;
    }
@@ -292,16 +292,27 @@
 			$('html, body').animate({ scrollTop : 0 }, 600); // 이동 스르륵
 			return false;
 		} );
-	  $("#slExit").click(function(){
-		  $("#slideBoxMain").css("margin-right","-120px");
+	  //닫기화살표 누르면
+	  $(document).on("click","#arrows",function(){
+		 
+			  $("#slideBoxMain").css("margin-right","-118px");
+			  $("#arrowSide").html('<i class="fas fa-caret-left" style="margin-left:4px;" id="arrowsBack"></i>');
+		
+		  
 	  })
-	  
+	  $(document).on("click","#arrowsBack",function(){
+
+			  $("#slideBoxMain").css("margin-right","0");
+			  $("#arrowSide").html('<i class="fas fa-caret-right" style=" margin-left:7px; display:block; width:18px; height:22px; line-height:22px;" id="arrows"></i>');
+	
+	  })
 	  
 	  //최근 본 상품의 이미지를 누르면 링크로 이동 
-	  $("#currentP1").click(function(){
+	  
+	  $(".currentP1").click(function(){
 		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno};
 	  })
-	  $("#currentP2").click(function(){
+	  $(".currentP2").click(function(){
 		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno};
 	  })
 	  
@@ -561,23 +572,23 @@
 					</div>
 					
 					<div id="slideBoxMain">
-					 <div id="slExit" style="position: absolute; left:-19px; top:170px; background:mistyrose; width:18px;" ><i class="fas fa-caret-right" style="margin-left:8px;" id="arrows"></i></div>
+					 <div id="slExit" style="position: absolute; left:-18px; top:200px; background:mistyrose; width:18px;"><span id="arrowSide" style="width:18px; 25px;"><i class="fas fa-caret-right" style="margin-left:8px;" id="arrows"></i></span></div>
 					   <ul>
 					     <li style="background: mistyrose;"><a href="${pageContext.request.contextPath }/customer/tourlandMyReserv" style="display:block;">예약확인/결제</a></li>
 					     <li>최근 본 상품</li>
-					     <li style="margin-bottom:80px;">
-					     <c:if test="${currentProduct.pic == null }"><span>최근 본 상품이 없습니다.</span>
-					     </c:if>
-					     <c:if test="${currentProduct.pic != null }">
-					       <img src="displayFile/product?filename=${currentProduct.pic}" style="width:100px; height: 100px;" id="currentP1">
-					     </c:if>
+					     <li style="margin-bottom:10px; height:130px;">
+					          <c:if test="${currentProduct.pic == null }"><span>최근 본 상품이 없습니다.</span> </c:if>
+					          <c:if test="${currentProduct.pic != null }">
+					                  <img src="displayFile/product?filename=${currentProduct.pic}" style="width:100px; height: 100px;" class="currentP1">
+					                  <span style="width:100px; white-space:nowrap; overflow: hidden; display: block;" class="currentP1">${currentProduct.pname }</span>
+					          </c:if>
 					     </li>
-					     <li>
-					      <c:if test="${currentProduct2.pic == null }">
-					     </c:if>
-					     <c:if test="${currentProduct2.pic != null }">
-					     <img src="displayFile/product?filename=${currentProduct2.pic}" style="width:100px; height: 100px; " id="currentP2">
-					     </c:if>
+					     <li style="margin-bottom:10px; height:130px;">
+						      <c:if test="${currentProduct2.pic == null }"></c:if>
+						      <c:if test="${currentProduct2.pic != null }"> 
+						              <img src="displayFile/product?filename=${currentProduct2.pic}" style="width:100px; height: 100px; " class="currentP2">
+						              <span style="width:100px; white-space:nowrap; overflow: hidden; display: block;" class="currentP2">${currentProduct2.pname }</span>
+						     </c:if>
 					     </li>
 					   </ul>
 					   <span id="slSpan"><i class="fas fa-angle-up" style="color:silver;"></i> Top</span>
