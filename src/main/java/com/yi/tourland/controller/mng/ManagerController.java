@@ -77,7 +77,7 @@ public class ManagerController {
 	@Resource(name = "uploadPathPopup") 
 	private String uploadPathPopup;
 	 
-	@Resource(name ="uploadPathEvent") 
+	@Resource(name ="uploadPathEvent")   
 	private String uploadPathEvent;
 	 
 	@Resource(name = "uploadPathProduct")

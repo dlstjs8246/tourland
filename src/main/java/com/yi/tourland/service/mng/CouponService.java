@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.CouponVO;
-import com.yi.tourland.domain.mng.NoticeVO;
+import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.persistance.mng.dao.CouponDAO;
 
 @Service
@@ -43,5 +43,12 @@ public class CouponService {
 	//쿠폰 수정
 	public void editCoupon(CouponVO coupon) throws Exception{
 		dao.editCoupon(coupon);
+	}
+	//해당 유저의 쿠폰 확인
+	public List<CouponVO> userCouponList(UserVO vo) throws Exception {
+		return dao.userCouponList(vo);
+	}
+	public void editCouponNo1(CouponVO coupon) throws Exception{
+		dao.editCouponNo1(coupon);
 	}
 }

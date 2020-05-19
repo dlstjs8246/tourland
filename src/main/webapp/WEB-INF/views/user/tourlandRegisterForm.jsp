@@ -147,7 +147,7 @@
 				 return false;
 			 }
 			 
-			 
+			 alert("가입 축하 쿠폰이 발급 되었습니다. 마이페이지에서 확인하세요!");
 
 		})
 		
@@ -246,8 +246,8 @@
 	                    if(extraAddr !== ''){
 	                        extraAddr = ' (' + extraAddr + ')';
 	                    }
-	                    // 조합된 참고항목을 해당 필드에 넣는다.
-	                    document.getElementById("sample6_extraAddress").value = extraAddr;
+	                    /* // 조합된 참고항목을 해당 필드에 넣는다.
+	                    document.getElementById("sample6_extraAddress").value = extraAddr; */
 	                
 	                } else {
 	                    document.getElementById("sample6_extraAddress").value = '';
@@ -282,12 +282,12 @@
 						</p>
 						<p>
 							<label>비밀번호</label>
-							<input type="text" name="userpass" placeholder=" 영문, 숫자 포함 5-12자리" required="required" id="userpassword" >
+							<input type="password" name="userpass" placeholder=" 영문, 숫자 포함 5-12자리" required="required" id="userpassword" >
 							<span class="errorMsg">영문, 숫자 포함 5-12자리를 넣어주세요</span>
 						</p>
 						<p>
 							<label>비밀번호 확인</label>
-							<input type="text" name="userpass2" required="required" id="userpassword2" ><br>
+							<input type="password" name="userpass2" required="required" id="userpassword2" ><br>
 							<span class="errorMsg">영문, 숫자 포함 5-12자리를 넣어주세요</span><br>
 							<span class="errorMsg">비밀번호가 일치하지 않습니다.</span>
 						</p>

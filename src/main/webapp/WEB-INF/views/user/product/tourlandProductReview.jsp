@@ -21,8 +21,8 @@
 	
 	#proDetailBtns { height: 50px; text-align: center;}
 	#proDetailBtns a {display: block; width: 200px; height: 30px; border: none;line-height:30px; text-decoration: none;font-size: 14px; float: left; margin:10px;}
-	#proDetailBtns #detail { background: #828282; color: #fff; }
-	#proDetailBtns #review { background: gainsboro; }
+	#proDetailBtns #review { background: #828282; color: #fff; }
+	#proDetailBtns #detail { background: gainsboro; }
 
 	/* 리뷰  */
 	.realReview { height: 50px; background: #F4F4F4; line-height: 50px; }
@@ -85,7 +85,7 @@
 								<fmt:formatDate var="ddate" value="${air.ddate}" pattern="yyyy-MM-dd"/>
 							</c:forEach>
 							<li id="infoDate">출발일 : <span id="ddate">${ddate}</span></li>
-							<li id="infoDays">여행 기간 : <span id="tourDays">${fn:substring(vo.pname,5,6)-1}박${fn:substring(vo.pname,5,7)}</span></li>
+							<li id="infoDays">여행 기간 : <span id="tourDays">${(fn:substring(vo.pname,fn:indexOf(vo.pname,']')-2,fn:indexOf(vo.pname,']')-1)-1)}박${fn:substring(vo.pname,fn:indexOf(vo.pname,']')-2,fn:indexOf(vo.pname,']')-1)}일</span></li>
 							<c:forEach var="t" items="${vo.tour}" begin="0" end="0">
 								<c:set var="capacity" value="${t.capacity}"/>
 							</c:forEach>

@@ -4,7 +4,7 @@
 <!-- 유저 추가  -->
   <insert id="insertUser" parameterType="UserVO"> 
      insert into user(userno, username, userbirth, usertel, useraddr, userpassport,  userid, userpass, usersecess) values
-     (#{userno}, #{username}, #{userbirth}, #{usertel}, #{useraddr}, #{userpassport},  #{userid}, #{userpass}, 0)
+     (#{userno}, #{username}, #{userbirth}, #{usertel}, #{useraddr}, #{userpassport},  #{userid}, password(#{userpass}), 0)
   </insert>
 
 

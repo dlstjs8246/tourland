@@ -51,7 +51,6 @@
 	<interceptors>
 		<interceptor>
 			<mapping path="/manager/**"/>
-
 			<mapping path="/customer/EditPassword"/>
 			<mapping path="/customer/tourlandMyInfoEdit"/>
 			<mapping path="/customer/editProfile"/>
