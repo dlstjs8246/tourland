@@ -465,10 +465,23 @@ function getLowPriceList(page){
 					</div>
 					<div class="pkgInfoBox">
 						<p class="pkgTitle">${product.pname}</p>
-						<c:forEach var="t" items="${product.tour}" begin="0" end="0">
-							<c:set var="capacity" value="${t.capacity}"/>
+						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
+						<c:set var="airPrice" value="0"/>
+						<c:set var="hotelPrice" value="0"/>
+						<c:forEach var="f" items="${product.air}">
+							<c:set var="airPrice" value="${f.price}"/>
 						</c:forEach>
-						<c:set var="N" value="${product.pprice/capacity}"/>
+						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
+							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
+							<fmt:formatDate value="${h.checkout}" pattern="yyyyMMdd" var="checkout"/>
+							<fmt:parseDate value="${checkin}" pattern="yyyyMMdd" var="checkinDate"/>
+							<fmt:parseDate value="${checkout}" pattern="yyyyMMdd" var="checkoutDate"/>
+							<fmt:parseNumber value="${checkinDate.time / (1000*60*60*24)}" integerOnly="true" var="checkinTime"/>
+							<fmt:parseNumber value="${checkoutDate.time / (1000*60*60*24)}" integerOnly="true" var="checkoutTime"/>
+							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
+							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
+						</c:forEach>
+						<c:set var="N" value="${airPrice + hotelPrice}"/>
 						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
 						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
 						<p class="pkgPrice">${price}원 부터~</p>
