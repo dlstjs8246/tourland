@@ -10,6 +10,17 @@
   section nav ul li:nth-child(3) {
 	background: mistyrose;
 }
+ #datailRealContent{
+   height: 550px;
+ }
+ #btnReturnToList{
+    width:100px;
+    height:30px;
+    border:none;
+    background: mistyrose;
+    margin-bottom:10px; 
+   
+  }
 </style>
 </head>
 <body>   
@@ -31,20 +42,20 @@
 				   <div id="datailRealContent">
 				       ${custBoardVO.content}
 				   </div>
+				   
 				</div>
-				
+				<div class="box-footer">
+							 <button type="button" class="btn btn-primary" id="btnReturnToList">목록으로</button>
+				</div>
 				
 		     </div>
 		     
 		</section>
-		<script>
-	$("#btnSearch").click(function(){
-		var searchType = $("#searchType").val();
-		var keyword = $("#keywordInput").val();
-		location.href = "tourlandBoardNotice?searchType="+searchType+"&keyword="+keyword;
-		//searchBoardController의 listPage GET 으로 받음 
-		
-	})
+<script>
+	$("#btnReturnToList").click(function(){
+		location.href = "tourlandCustBoard";
+	 })
+	
 </script>
 		<%@ include file="../../include/userFooter.jsp"%>
 </body>

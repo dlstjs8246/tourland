@@ -893,7 +893,6 @@ public class CustomerController {
 	}
 	@RequestMapping(value = "tourlandCustBoardRegister", method = RequestMethod.POST)
 	public String tourlandCustBoardRegisterPost(CustBoardVO vo, Model model) throws Exception {
-        System.out.println(vo);
 		custBoardService.insertCustBoard(vo);
 
 		return "redirect:/customer/tourlandCustBoardDetail?no=" + vo.getNo();
@@ -901,6 +900,21 @@ public class CustomerController {
 	
 	
 	//상품문의 사항
+	@RequestMapping(value = "tourlandProductBoardRegister", method = RequestMethod.GET)
+	public String tourlandProductBoardRegister(SearchCriteria cri, Model model) {
+		int lastNo = 0;
+		try {
+			List<PlanBoardVO> custBoardList = planBoardService.listSearchCriteriaPlanBoard(cri);
+			lastNo = custBoardList.get(0).getNo() + 1;
+		} catch (Exception e) {
+			lastNo = 1;
+		}
+
+		model.addAttribute("autoNo", lastNo); // 가장 나중 번호로 자동세팅
+
+		return "/user/board/tourlandProductBoardRegister";
+	}
+	
 	@RequestMapping(value="tourlandProductBoard", method=RequestMethod.GET)
 	public String tourlandProductBoard(SearchCriteria cri, Model model) throws Exception { 
 		List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
