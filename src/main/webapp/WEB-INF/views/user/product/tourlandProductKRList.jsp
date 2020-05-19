@@ -168,6 +168,7 @@ div.pkgInfoBox .pkgTitle {
 
 </style>
 <script>
+var price = 0;
 function replaceAll(str, searchStr, replaceStr) {
 	return str.split(searchStr).join(replaceStr);
 }
@@ -181,11 +182,32 @@ function getFormatDate(date){
     day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
     return  year + '' + month + '' + day;
 }
+function calPrice(obj) {
+	$(obj.air).each(function(i,obj){
+		 if(obj.seat=='E') {
+			 price += obj.price;
+		 } 
+	 })
+	 $(obj.hotel).each(function(i,obj){
+		 if(obj.roomtype=='N') {
+			 var checkinDate = new Date(obj.checkin);
+			 var checkoutDate = new Date(obj.checkout);
+			 var dateDiffDate = new Date();
+			 dateDiffDate.setDate(checkoutDate.getDate()-checkinDate.getDate());
+			 price += (obj.price * dateDiffDate.getDate());
+		 } 
+	 }) 
+	 return price.toLocaleString();
+}
 /* 리스트 좌측 검색 박스에서 검색했을 때 데이터를 불러오는 Ajax */
 function getSearchResult(){
 	var ddate = $(".datepicker").val();//출발일 선택
 	var tourDays = $("#rdate").val();//여행일 선택
 	var cnt = $("#cnt").val(); //인원
+	if(ddate=="") {
+		alert("출발일을 선택해주세요");
+		return false;
+	}
 	$.ajax({
 		url : "tourlandProductKRSearchList",
 		type : "get",
@@ -195,8 +217,7 @@ function getSearchResult(){
 			 $(".pkgListBox").remove();
 			 $(".pagination").empty();
 			 $("#totalCount").html(rs.list.length);
-			 $(rs.list).each(function(i, obj) {
-				 
+			 $(rs.list).each(function(i, obj) {	 
 				 var $input1 = $("<input>").attr("type", "hidden").attr("value", obj.pno).attr("id", "pno");
 				 
 				 var $div1 = $("<div>").addClass("pkgImg");
@@ -205,8 +226,8 @@ function getSearchResult(){
 				 
 				 var $div2 = $("<div>").addClass("pkgInfoBox");
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
-				 var price = Math.ceil(obj.pprice/obj.tour[0].capacity).toLocaleString();
-				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
+				 var localePrice = calPrice(obj);
+				 var $p2 = $("<p>").addClass("pkgPrice").html(localePrice+"원 부터~").css("text-align","right");
 				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire)+"까지");
 				 
 				 var $p4 = $("<p>").addClass("pkgReserv");
@@ -484,9 +505,10 @@ function getLowPriceList(page){
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
 						<c:set var="airPrice" value="0"/>
 						<c:set var="hotelPrice" value="0"/>
-						<c:forEach var="f" items="${product.air}">
-							<c:set var="airPrice" value="${f.price}"/>
+						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.tour)-2}" end="${fn:length(product.tour)-1}">
+							<c:set var="airPrice" value="${airPrice+f.price}"/>
 						</c:forEach>
+						<c:out value="${airPrice}"/>
 						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
 							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
 							<fmt:formatDate value="${h.checkout}" pattern="yyyyMMdd" var="checkout"/>
@@ -497,6 +519,7 @@ function getLowPriceList(page){
 							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
 							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
 						</c:forEach>
+						<c:out value="${hotelPrice}"/>
 						<c:set var="N" value="${airPrice + hotelPrice}"/>
 						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
 						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>

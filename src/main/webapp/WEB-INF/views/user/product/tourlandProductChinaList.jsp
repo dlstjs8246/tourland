@@ -472,8 +472,8 @@ function getLowPriceList(page){
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
 						<c:set var="airPrice" value="0"/>
 						<c:set var="hotelPrice" value="0"/>
-						<c:forEach var="f" items="${product.air}">
-							<c:set var="airPrice" value="${f.price}"/>
+						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.tour)-2}" end="${fn:length(product.tour)-1}">
+							<c:set var="airPrice" value="${airPrice+f.price}"/>
 						</c:forEach>
 						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
 							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
