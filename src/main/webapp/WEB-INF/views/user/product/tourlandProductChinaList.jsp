@@ -180,6 +180,16 @@ function getFormatDate(date){
     return  year + '' + month + '' + day;
 }
 
+function getFormatDate2(date){
+	var date = new Date(date);
+    var year = date.getFullYear()+"/";              //yyyy
+    var month = (date.getMonth()+1)+"/";          //M
+    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
+    var day = date.getDate();                   //d
+    day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
+    return  year + '' + month + '' + day;
+}
+
 /* 리스트 좌측 검색 박스에서 검색했을 때 데이터를 불러오는 Ajax */
 function getSearchResult(){
 	var ddate = $(".datepicker").val();//출발일 선택
@@ -206,7 +216,7 @@ function getSearchResult(){
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
 				 var price = Math.ceil(obj.pprice/obj.tour[0].capacity).toLocaleString();
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
-				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire)+"까지");
+				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate2(obj.pexpire)+"까지");
 				 
 				 var $p4 = $("<p>").addClass("pkgReserv");
 				 var $btn = $("<button>").addClass("pkgReservBtn").html("지금 바로 예약");
@@ -235,7 +245,7 @@ function getList(page){
 		type : "get",
 		dataType : "json",
 		success : function(rs){
-			 $(".pkgListBox").remove();
+			 $("#pkgListBoxWrap").empty();
 			 $("#totalCount").html(rs.count);
 			 $(rs.list).each(function(i, obj) {
 				 
@@ -249,7 +259,7 @@ function getList(page){
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
 				 var price = Math.ceil(obj.pprice/obj.tour[0].capacity).toLocaleString();
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
-				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire)+"까지");
+				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate2(obj.pexpire)+"까지");
 				 
 				 var $p4 = $("<p>").addClass("pkgReserv");
 				 var $btn = $("<button>").addClass("pkgReservBtn").html("지금 바로 예약");
@@ -261,7 +271,7 @@ function getList(page){
 				 
 				 $p4.append($btn);
 				 var $pkgListBox = $("<div class='pkgListBox'>").append($div1).append($div2).append($p4);
-				 $("#pkgOrderBy").after($pkgListBox);
+				 $("#pkgListBoxWrap").append($pkgListBox);
 				 
 			 })
 			 /* 페이징 부분 */
@@ -302,10 +312,9 @@ function getLowPriceList(page){
 		type : "get",
 		dataType : "json",
 		success : function(rs){
-			 $(".pkgListBox").remove();
+			 $("#pkgListBoxWrap").empty();
 			 $("#totalCount").html(rs.count);
 			 $(rs.list).each(function(i, obj) {
-				 
 				 var $input1 = $("<input>").attr("type", "hidden").attr("value", obj.pno).attr("id", "pno");
 				 
 				 var $div1 = $("<div>").addClass("pkgImg");
@@ -328,7 +337,7 @@ function getLowPriceList(page){
 				 
 				 $p4.append($btn);
 				 var $pkgListBox = $("<div class='pkgListBox'>").append($input1).append($div1).append($div2).append($p4);
-				 $("#pkgOrderBy").after($pkgListBox);
+				 $("#pkgListBoxWrap").append($pkgListBox);
 				 
 			 })
 			 /* 페이징 부분 */
@@ -391,11 +400,24 @@ function getLowPriceList(page){
 			var pno = $(this).parent().parent().find("#pno").val();
 			var price = replaceAll($(this).attr("data-price"),",","");
 			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
+			 if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){			 
+				 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
+				 $.cookie("currentProductPrice2",$.cookie('currentProductPrice'),{expires:1, path:"/"});
+				 $.removeCookie('currentProduct');
+				 $.removeCookie('currentProductPrice');
+				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+				 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+			 }else{
+				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+				 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+			 }
 		})
 		/* AJAX 리스트에 동적으로 생성된 '지금 바로 예약하기' 버튼  */
 		$(document).on("click", ".pkgReservBtn", function(){
 			var pno = $(this).parent().parent().find("#pno").val();
 			var price = replaceAll($(this).attr("data-price"),",","");
+		
+			
 			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 		})
 	})
@@ -457,16 +479,13 @@ function getLowPriceList(page){
 				<p id="totalCnt">
 					베이징 : 검색된 상품 <span id="totalCount">${count}</span>건
 				</p>
+				
 				<div id="pkgOrderBy">
 					<button id="byPrice">낮은 가격 순</button>
 					<button id="listAll">전체 리스트 보기</button>
 				</div>
-				<c:forEach var="product" items="${list}">
-				<div class="pkgListBox">
-					<input type="hidden" value="${product.pno}" id="pno">
-					<div class="pkgImg">
-						<img src="displayFile/product?filename=${product.pic}">
-					</div>
+				<div id="pkgListBoxWrap">
+					<c:forEach var="product" items="${list}">
 					<div class="pkgInfoBox">
 						<p class="pkgTitle">${product.pname}</p>
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
@@ -494,8 +513,8 @@ function getLowPriceList(page){
 					<p class="pkgReserv">
 						<button class="pkgReservBtn" data-price="${price}">지금 바로 예약</button>
 					</p>
+					</c:forEach>
 				</div>
-				</c:forEach>
 				<ul class="pagination">
 					<c:if test="${pageMaker.prev == true}">
 						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${pageMaker.startPage-1}">&laquo;</a></li>
@@ -514,21 +533,5 @@ function getLowPriceList(page){
 </body>
 
 
-<script>
-	$(function() {
-		$(".pkgReservBtn").click(function() {
-			var pno = $(this).parent().parent().find("#pno").val();
-			 if($.cookie('currentProduct') != null){			 
-				 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
-				 $.removeCookie('currentProduct');
-				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
-			 }else{
-				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
-			 }
-			
-			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno;
-		})
-	})
-</script>
 
 </html>

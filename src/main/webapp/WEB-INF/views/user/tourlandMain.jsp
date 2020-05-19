@@ -308,17 +308,60 @@
 	  })
 	  
 	  //최근 본 상품의 이미지를 누르면 링크로 이동 
-	  
-	  $(".currentP1").click(function(){
+<<<<<<< HEAD
+=======
+	  $("#currentP1").click(function(){
 		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno};
 	  })
-	  $(".currentP2").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno};
+	  $("#currentP2").click(function(){
+		 /* location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}; */ 
+	  })
+	  //메인 중앙 검색 박스
+	  $("#searchDivBtn button").click(function(){
+		  var tourDays = $("#tourDays select").val();
+		  var to = $("#toDiv select").val();
+		  var capa = $("#capa select").val();
+		  var date = $(".datepicker").val();
+		  
+		  if(tourDays =="선택" || to =="선택" || capa == "선택" || date == ""){
+			  alert("모든 항목을 선택해주세요.");
+			  return false;
+		  }else {
+			  location.href = "${pageContext.request.contextPath}/customer/tourlandProductMainSearchList?tourDays="+tourDays+"&to="+to+"&capa="+capa+"&date="+date;
+		  }
 	  })
 	  
+>>>>>>> refs/heads/hana_tour34
+	  
+	 if(${currentProductPrice} != null){
+     	  $(".currentP1").click(function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+${currentProductPrice};
+	    })
+	  }
+	  
+	 if(${currentProductPrice2} != null){
+	 
+	 $(".currentP2").click(function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+${currentProductPrice2};
+	   })
+	 }  
   })
 	  
 </script>
+<%-- <c:if test="${currentProduct != null}">
+    <script>
+       $(".currentP1").click(function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+$.cookie("currentProductPrice");
+	    })
+    </script>
+</c:if>
+<c:if test="${currentProduct2 != null}">
+    <script>
+       $(".currentP2").click(function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+$.cookie("currentProductPrice2");
+	    })
+    </script>
+</c:if> --%>
 	        <!-- 팝업 -->   
 	         <div id="popup1" style=" margin-left:10%;">  <!-- 1번 팝업 -->
 	                        <c:if test="${popup1 == null }">
@@ -381,25 +424,6 @@
 				</section>
 				
 				<section id="section2">
-					<!-- <div id="inOutDiv" class="divBox">
-						<h2>구분</h2>
-						<p><input type="radio" name="out" >해외</p>
-						<p><input type="radio" name="in" >국내</p>
-					</div>
-					<div id="tourDiv" class="divBox">
-						<h2>상세 구분</h2>
-						<p><input type="radio" name="out" >항공</p>
-						<p><input type="radio" name="in" >호텔</p>
-						<p><input type="radio" name="in" >현지 투어</p>
-						<p><input type="radio" name="in" >렌트카</p>
-					</div> -->
-					<div id="fromDiv" class="divBox">
-						<h2>출발지</h2>
-						<select>
-							<option>선택</option>
-							<option>인천</option>
-						</select>
-					</div>
 					<div id="toDiv" class="divBox">
 						<h2>도착지</h2>
 						<select>
@@ -409,29 +433,38 @@
 							<option>중국</option>
 						</select>
 					</div>
-					<div id="toDiv" class="divBox">
+					<div id="tourDays" class="divBox">
+						<h2>여행일</h2>
+						<select>
+							<option>선택</option>
+							<option>3일</option>
+							<option>5일</option>
+							<option>7일</option>
+						</select>
+					</div>
+					<div id="capa" class="divBox">
 						<h2>인원</h2>
 						<select>
 							<option>선택</option>
-							<option>성인 2명</option>
-							<option>성인 3명</option>
-							<option>성인 4명</option>
-							<option>성인 5명</option>
-							<option>성인 6명</option>
-							<option>성인 7명</option>
-							<option>성인 8명</option>
-							<option>성인 9명</option>
-							<option>성인 10명</option>
-							<option>성인 11명</option>
-							<option>성인 12명</option>
-							<option>성인 13명</option>
-							<option>성인 14명</option>
-							<option>성인 15명</option>
-							<option>성인 16명</option>
-							<option>성인 17명</option>
-							<option>성인 18명</option>
-							<option>성인 19명</option>
-							<option>성인 20명</option>
+							<option>2명</option>
+							<option>3명</option>
+							<option>4명</option>
+							<option>5명</option>
+							<option>6명</option>
+							<option>7명</option>
+							<option>8명</option>
+							<option>9명</option>
+							<option>10명</option>
+							<option>11명</option>
+							<option>12명</option>
+							<option>13명</option>
+							<option>14명</option>
+							<option>15명</option>
+							<option>16명</option>
+							<option>17명</option>
+							<option>18명</option>
+							<option>19명</option>
+							<option>20명</option>
 						</select>
 					</div>
 					<div id="dateDiv" class="divBox">
