@@ -70,7 +70,7 @@
 								   top: 20px; left: 30px;
 								   color: #ff7f00; 
 								   text-shadow: 1px 1px 1px #000;}
-	section#section3 .popular p { position: absolute; 
+	section#section3 .popular p { position: absolute;  
 								  top: 50px; left: 30px;
 								  color: #fff;}
 	section#section3 #popInfo { width: 580px; height: 60px; 
@@ -231,7 +231,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
 <script>
-
+   
 	  $(function(){
 		  
 		  if($.cookie("popup1") != null ){ 
@@ -306,16 +306,7 @@
 			  $("#arrowSide").html('<i class="fas fa-caret-right" style=" margin-left:7px; display:block; width:18px; height:22px; line-height:22px;" id="arrows"></i>');
 	
 	  })
-	  
-	  //최근 본 상품의 이미지를 누르면 링크로 이동 
-<<<<<<< HEAD
-=======
-	  $("#currentP1").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno};
-	  })
-	  $("#currentP2").click(function(){
-		 /* location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}; */ 
-	  })
+
 	  //메인 중앙 검색 박스
 	  $("#searchDivBtn button").click(function(){
 		  var tourDays = $("#tourDays select").val();
@@ -330,38 +321,24 @@
 			  location.href = "${pageContext.request.contextPath}/customer/tourlandProductMainSearchList?tourDays="+tourDays+"&to="+to+"&capa="+capa+"&date="+date;
 		  }
 	  })
-	  
->>>>>>> refs/heads/hana_tour34
-	  
-	 if(${currentProductPrice} != null){
-     	  $(".currentP1").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+${currentProductPrice};
-	    })
-	  }
-	  
-	 if(${currentProductPrice2} != null){
 	 
-	 $(".currentP2").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+${currentProductPrice2};
-	   })
-	 }  
-  })
-	  
+
 </script>
-<%-- <c:if test="${currentProduct != null}">
+ <c:if test="${currentProductPrice != null}">
     <script>
-       $(".currentP1").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+$.cookie("currentProductPrice");
+       //최근 본 상품의 이미지를 누르면 링크로 이동 
+       $(document).on("click",".currentP1",function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+${currentProductPrice};
 	    })
     </script>
 </c:if>
 <c:if test="${currentProduct2 != null}">
     <script>
-       $(".currentP2").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+$.cookie("currentProductPrice2");
+    $(document).on("click",".currentP2",function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+${currentProductPrice2};
 	    })
     </script>
-</c:if> --%>
+</c:if> 
 	        <!-- 팝업 -->   
 	         <div id="popup1" style=" margin-left:10%;">  <!-- 1번 팝업 -->
 	                        <c:if test="${popup1 == null }">
@@ -601,7 +578,7 @@
 						<a href="${pageContext.request.contextPath }/customer/tourlandBoardNotice">공지사항</a>
 						<a href="${pageContext.request.contextPath }/customer/tourlandBoardFAQ">FAQ</a>
 						<a href="${pageContext.request.contextPath }/customer/tourlandCustBoard">고객의 소리</a>
-						<a href="${pageContext.request.contextPath }/customer/tourlandProductBoard">상품 문의사항</a>
+						<a href="${pageContext.request.contextPath }/customer/tourlandPlanBoard">상품 문의사항</a>
 					</div>
 					
 					<div id="slideBoxMain">

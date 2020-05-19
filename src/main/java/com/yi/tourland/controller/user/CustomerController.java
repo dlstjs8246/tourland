@@ -897,7 +897,6 @@ public class CustomerController {
 	@RequestMapping(value = "tourlandCustBoardDetail", method = RequestMethod.GET)
 	public String tourlandCustBoardDetail(int no, SearchCriteria cri, Model model) throws Exception {
 		CustBoardVO vo = custBoardService.readByNoCustBoard(no);
-
 		model.addAttribute("custBoardVO", vo);
 		model.addAttribute("cri", cri);
 
@@ -927,9 +926,9 @@ public class CustomerController {
 	}
 	
 	
-	//상품문의 사항
-	@RequestMapping(value = "tourlandProductBoardRegister", method = RequestMethod.GET)
-	public String tourlandProductBoardRegister(SearchCriteria cri, Model model) {
+	//상품문의 사항 글쓰기
+	@RequestMapping(value = "tourlandPlanBoardRegister", method = RequestMethod.GET)
+	public String tourlandPlanBoardRegister(SearchCriteria cri, Model model) {
 		int lastNo = 0;
 		try {
 			List<PlanBoardVO> custBoardList = planBoardService.listSearchCriteriaPlanBoard(cri);
@@ -940,11 +939,17 @@ public class CustomerController {
 
 		model.addAttribute("autoNo", lastNo); // 가장 나중 번호로 자동세팅
 
-		return "/user/board/tourlandProductBoardRegister";
+		return "/user/board/tourlandPlanBoardRegister";
 	}
 	
-	@RequestMapping(value="tourlandProductBoard", method=RequestMethod.GET)
-	public String tourlandProductBoard(SearchCriteria cri, Model model) throws Exception { 
+	@RequestMapping(value = "tourlandPlanBoardRegister", method = RequestMethod.POST)
+	public String tourlandPlanBoardRegisterPost(PlanBoardVO vo) throws Exception {
+		planBoardService.insertPlanBoard(vo);
+		return "redirect:/customer/tourlandPlanBoardDetail?no="+vo.getNo();
+	}
+	
+	@RequestMapping(value="tourlandPlanBoard", method=RequestMethod.GET)
+	public String tourlandPlanBoard(SearchCriteria cri, Model model) throws Exception { 
 		List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
@@ -952,15 +957,15 @@ public class CustomerController {
 		model.addAttribute("list", list);
 		model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("cri", cri);
-		return "/user/board/tourlandProductBoard"; 
+		return "/user/board/tourlandPlanBoard"; 
 	}
 	
-	@RequestMapping(value = "tourlandProductBoardDetail", method = RequestMethod.GET)
-	public String tourlandProductBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model) throws Exception {
+	@RequestMapping(value = "tourlandPlanBoardDetail", method = RequestMethod.GET)
+	public String tourlandPlanBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model) throws Exception {
 		vo = planBoardService.readByVoPlanBoard(vo);
 		model.addAttribute("plan", vo);
 		model.addAttribute("cri", cri);
-		return "/user/board/tourlandProductBoardDetail";
+		return "/user/board/tourlandPlanBoardDetail";
 	}
 
 	
