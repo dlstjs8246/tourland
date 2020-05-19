@@ -33,9 +33,6 @@
 		update coupon set cname = #{cname}, pdate=#{pdate}, edate=#{edate}, ccontent=#{ccontent}, mrate=#{mrate} where cno=#{cno}
 	</update>
 	<select id="userCouponList" resultType="CouponVO">
-		select * from usercoupon uc join user u on uc.userno = u.userno join coupon c on uc.cno = c.cno where u.userno = #{userno}
+		select * from usercoupon uc join user u on uc.userno = u.userno join coupon c on uc.cno = c.cno where u.userno = #{userno} order by edate asc
 	</select>
-	<update id="editCouponNo1">
-		update coupon set  edate=#{edate} where cno=#{cno}
-	</update>
 </mapper>

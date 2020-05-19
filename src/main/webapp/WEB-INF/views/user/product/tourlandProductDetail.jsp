@@ -44,16 +44,20 @@
 <body>
 	<%@ include file="../../include/userHeader.jsp"%>
 	<script>
+		var price = 0;
+		var selCapacity = 0;
+		var airCapacity = 0;
+		var hotelCapacity = 0; 
+		var tourCapacity = 0;
+		var rentcarCapacity = 0;
+		var airTotalPrice  = 0;
+		var hotelTotalPrice = 0;
+		var tourTotalPrice = 0;
+		var rentTotalPrice = 0;
 		function replaceAll(str, searchStr, replaceStr) {
 		   return str.split(searchStr).join(replaceStr);
 		}
 		$(function(){
-			var price = 0;
-			var selCapacity = 0;
-			var airCapacity = 0;
-			var hotelCapacity = 0;
-			var tourCapacity = 0;
-			var rentcarCapacity = 0;
 			$("#smallImgBox li").each(function(i,obj){
 				$(this).find("img").attr("src",$("#proDetail img").eq(i).attr("src"));
 			})
@@ -80,11 +84,6 @@
 					$(this).find("option").eq(0).prop("selected",true);
 					return false;
 				}
-				if($(".selAir").eq(0).find("option:selected").val()!="" && selCapacity <= 5 && $(".selAir").index($(this))==1 || $(".selAir").index($(this))==2) {
-					alert("인원이 5명 이하라 항공 옵션을 더 추가할 필요가 없습니다.");  
-					$(this).find("option").eq(0).prop("selected",true);
-					return false;
-				}
 				var selOption = $(this).find("option:selected").val();
 				var airSelect = $("<select class='airSelect'>").html(" ");
 				var p = $("<p>").html("탑승인원 ");
@@ -96,6 +95,7 @@
 					}
 					p.append(airSelect);
 					$(this).parent().after(p);
+					$("#price").text(price);
 					break;
 				case "B":
 					for(var i=1;i<=${vo.air[3].capacity};i++) { 
@@ -104,6 +104,8 @@
 					}
 					p.append(airSelect);
 					$(this).parent().after(p);
+					price += (airDPrice + airRPrice);
+					$("#price").text(price);
 					break;
 				case "E":
 					for(var i=1;i<=${vo.air[5].capacity};i++) {
@@ -112,6 +114,7 @@
 					}
 					p.append(airSelect);
 					$(this).parent().after(p); 
+					$("#price").text(price); 
 					break;
 				}
 			})
@@ -119,11 +122,17 @@
 				airCapacity = 0;
 				$(".airSelect").each(function(i,obj){
 					airCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
-				}) 
+				})
 				if(selCapacity<airCapacity) {
 					alert("현재 예약인원보다 항공기 탑승인원이 더 많을 수 없습니다");
 					$(this).find("option").eq(0).prop("selected",true);  
+					return false;
 				}
+				var airTotalPrice = ${vo.air[0].price * vo.air[0].capacity};
+				var airPrice = ${vo.air[0].price} * airCapacity;
+				price -= airTotalPrice;
+				price += airPrice;
+				$("#price").text(price);
 			})
 			$(".selHotel").change(function(){
 				selCapacity = $("#capacity option:selected").val().substring(0,$("#capacity option:selected").val().length-1);
@@ -132,11 +141,6 @@
 					alert("호텔옵션1을 먼저 채워주세요"); 
 					$(this).find("option").eq(0).prop("selected",true);
 					return false;
-				}
-				if($(".selHotel").eq(0).find("option:selected").val()!="" && selCapacity <= 5 && $(".selHotel").index($(this))==1 || $(".selHotel").index($(this))==2) {
-					alert("인원이 5명 이하라 호텔 옵션을 더 추가할 필요가 없습니다.");  
-					$(this).find("option").eq(0).prop("selected",true);
-					return false; 
 				}
 				var selOption = $(this).find("option:selected").val();
 				var hotelSelect = $("<select class='hotelSelect'>").html(" ");
@@ -209,8 +213,6 @@
 							<c:forEach var="t" items="${vo.tour}" begin="0" end="0">
 								<c:set var="capacity" value="${t.capacity}"/>
 							</c:forEach>
-							<c:set var="N" value="${vo.pprice/capacity}"/>
-							<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
 							<li class="selOption">
 								<p>
 									예약인원
@@ -305,7 +307,7 @@
 									</select>
 								</p>
 							</li>
-							<li id="infoPrice" style="clear : both;">가격 : <span id="price">${price}</span>원</li>
+							<li id="infoPrice" style="clear : both;">가격 : <span id="price"><fmt:formatNumber value="${price}" pattern="###,###"/></span>원</li>
 						</ul>
 						<div id="btnsBox">
 						<button id="doReserv">예약하기</button>

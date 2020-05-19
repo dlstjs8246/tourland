@@ -199,9 +199,9 @@
      background:linen;
      position: absolute;
      width:110px;
-     height: 350px;
+     height: 410px;
      top:300px;
-     right:0;
+     right:-4px;
      padding: 5px 5px;
      border:0.5px solid gainsboro;
    }
@@ -292,16 +292,27 @@
 			$('html, body').animate({ scrollTop : 0 }, 600); // 이동 스르륵
 			return false;
 		} );
-	  $("#slExit").click(function(){
-		  $("#slideBoxMain").css("margin-right","-120px");
+	  //닫기화살표 누르면
+	  $(document).on("click","#arrows",function(){
+		 
+			  $("#slideBoxMain").css("margin-right","-118px");
+			  $("#arrowSide").html('<i class="fas fa-caret-left" style="margin-left:4px;" id="arrowsBack"></i>');
+		
+		  
 	  })
-	  
+	  $(document).on("click","#arrowsBack",function(){
+
+			  $("#slideBoxMain").css("margin-right","0");
+			  $("#arrowSide").html('<i class="fas fa-caret-right" style=" margin-left:7px; display:block; width:18px; height:22px; line-height:22px;" id="arrows"></i>');
+	
+	  })
 	  
 	  //최근 본 상품의 이미지를 누르면 링크로 이동 
-	  $("#currentP1").click(function(){
+	  
+	  $(".currentP1").click(function(){
 		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno};
 	  })
-	  $("#currentP2").click(function(){
+	  $(".currentP2").click(function(){
 		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno};
 	  })
 	  
@@ -358,14 +369,14 @@
 				<section id="section1">
 					<div id="imgBox">
 						<div class="box1">
-							<img src="${pageContext.request.contextPath}/images/cancun.jpg">
+							<img src="${pageContext.request.contextPath}/images/maincoupon.jpg">
 						</div>
 						<div class="box2 marg">
-							<img src="${pageContext.request.contextPath}/images/hotel.jpg">
-						</div>
+							<img src="${pageContext.request.contextPath}/images/japan/deluxroom2.jpg">
+						</div>    
 						<div class="box2">
-							<img src="${pageContext.request.contextPath}/images/jeju.jpg">
-						</div>
+							<img src="${pageContext.request.contextPath}/images/jeju/tour26.jpg">
+						</div>    
 					</div>
 				</section>
 				
@@ -439,19 +450,29 @@
 				<section id="section3">
 					<div class="popular" id="first">
 						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/camping.jpg">
-							<div id="popInfo">
-								~ 4/30일 까지 단독 할인
-							</div>
-						</a>
+							<h3>일본 특가 상품</h3>
+							<p>신주쿠 교엔 / 파격적인 가격</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/japan/sinjuku.jpg">
+							<div id="popInfo">   
+								~ 6/30일 까지 단독 할인
+							</div>   
+						</a>        
 					</div>
 					<div class="popular">
 						<a href="#">
-							<h3>여름 휴가 랭킹 1위</h3>
-							<p>서울 출발</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/polynesia.jpg">
+							<h3>여름 휴가 랭킹 1위 /제주</h3>
+							<p>떠나요 둘이서~</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/jeju/tour1.jpg">
+							<div class="popInfo2">
+								~ 7/30일 까지 단독 할인     
+							</div>
+						</a>  
+					</div>
+					<div class="popular">
+						<a href="#">
+							<h3>얼리버드 상품</h3>
+							<p>제주 성산봉</p>   
+							<img alt="" src="${pageContext.request.contextPath}/images/jeju/tour11.jpg">
 							<div class="popInfo2">
 								~ 4/30일 까지 단독 할인
 							</div>
@@ -459,51 +480,41 @@
 					</div>
 					<div class="popular">
 						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
+							<h3>일본 땡처리 항공</h3>
+							<p>친구와 같이 떠나는 도쿄 디즈니랜드</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/japan/land.jpg">
 							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
+								~ 7/30일 까지 단독 할인    
+							</div>
+						</a>
+					</div>      
+					<div class="popular">
+						<a href="#">   
+							<h3>절호의 찬스</h3>
+							<p>만리장성</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/china/manri2.jpg">
+							<div class="popInfo2">
+								~ 7/30일 까지 단독 할인
 							</div>
 						</a>
 					</div>
 					<div class="popular">
 						<a href="#">
 							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
+							<p>청나라 시대의 궁, 원명원</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/china/wonmyung.jpg">
 							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
+								~ 6/30일 까지 단독 할인
 							</div>
 						</a>
 					</div>
 					<div class="popular">
 						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
+							<h3>테마 찬스 상품 / 제주 애월읍</h3>
+							<p>효리네 민박의 그 곳</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/jeju/tour13.jpg">
 							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
-							</div>
-						</a>
-					</div>
-					<div class="popular">
-						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
-							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
-							</div>
-						</a>
-					</div>
-					<div class="popular">
-						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
-							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
+								~ 8/30일 까지 단독 할인
 							</div>
 						</a>
 					</div>
@@ -561,23 +572,23 @@
 					</div>
 					
 					<div id="slideBoxMain">
-					 <div id="slExit" style="position: absolute; left:-19px; top:170px; background:mistyrose; width:18px;" ><i class="fas fa-caret-right" style="margin-left:8px;" id="arrows"></i></div>
+					 <div id="slExit" style="position: absolute; left:-18px; top:200px; background:mistyrose; width:18px;"><span id="arrowSide" style="width:18px; 25px;"><i class="fas fa-caret-right" style="margin-left:8px;" id="arrows"></i></span></div>
 					   <ul>
 					     <li style="background: mistyrose;"><a href="${pageContext.request.contextPath }/customer/tourlandMyReserv" style="display:block;">예약확인/결제</a></li>
 					     <li>최근 본 상품</li>
-					     <li style="margin-bottom:80px;">
-					     <c:if test="${currentProduct.pic == null }"><span>최근 본 상품이 없습니다.</span>
-					     </c:if>
-					     <c:if test="${currentProduct.pic != null }">
-					       <img src="displayFile/product?filename=${currentProduct.pic}" style="width:100px; height: 100px;" id="currentP1">
-					     </c:if>
+					     <li style="margin-bottom:10px; height:130px;">
+					          <c:if test="${currentProduct.pic == null }"><span>최근 본 상품이 없습니다.</span> </c:if>
+					          <c:if test="${currentProduct.pic != null }">
+					                  <img src="displayFile/product?filename=${currentProduct.pic}" style="width:100px; height: 100px;" class="currentP1">
+					                  <span style="width:100px; white-space:nowrap; overflow: hidden; display: block;" class="currentP1">${currentProduct.pname }</span>
+					          </c:if>
 					     </li>
-					     <li>
-					      <c:if test="${currentProduct2.pic == null }">
-					     </c:if>
-					     <c:if test="${currentProduct2.pic != null }">
-					     <img src="displayFile/product?filename=${currentProduct2.pic}" style="width:100px; height: 100px; " id="currentP2">
-					     </c:if>
+					     <li style="margin-bottom:10px; height:130px;">
+						      <c:if test="${currentProduct2.pic == null }"></c:if>
+						      <c:if test="${currentProduct2.pic != null }"> 
+						              <img src="displayFile/product?filename=${currentProduct2.pic}" style="width:100px; height: 100px; " class="currentP2">
+						              <span style="width:100px; white-space:nowrap; overflow: hidden; display: block;" class="currentP2">${currentProduct2.pname }</span>
+						     </c:if>
 					     </li>
 					   </ul>
 					   <span id="slSpan"><i class="fas fa-angle-up" style="color:silver;"></i> Top</span>

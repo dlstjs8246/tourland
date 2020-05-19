@@ -10,7 +10,15 @@
 <style>
   section nav ul li:nth-child(4) {
 	background: mistyrose;
-}
+  }
+
+  #btnWrite{
+     width: 100px;
+     padding:5px;
+     background:mistyrose;
+     border:none;
+     margin-left:40px;
+  }
 </style>
 </head>
 
@@ -18,7 +26,7 @@
 	<%@ include file="../../include/userHeader.jsp"%>
 		<section>
 		<%@ include file="../../include/userBoardMenu.jsp"%>   
-				<div id="myreserv">
+				<div id="myreserv" >
 				<h1>상품 문의 사항</h1>
 				<div id="searchDiv">
 					<select name="searchType" id="searchType">
@@ -34,7 +42,8 @@
 					<input type="text" name="keyword" id="keywordInput" placeholder="검색어를 입력해주세요">
 					<button id="btnSearch">검색</button>
 				</div>
-					<table id="reserv">
+				<button id="btnWrite">글쓰기</button>
+					<table id="reserv" style="margin-top:15px;">
 						<tr>
 							<th class="nono">번호</th>
 							<th style="width:400px;">제목</th>
@@ -163,7 +172,12 @@
 										+ searchType + "&searchType2="
 										+ searchType2 + "&keyword=" + keyword;
 							})
-		</script>
+		//글쓰기 버튼 누르면
+	$("#btnWrite").click(function(){
+		location.href="tourlandProductBoardRegister";
+	})
+							
+</script>
 		<%@ include file="../../include/userFooter.jsp"%>
 </body>
 </html>

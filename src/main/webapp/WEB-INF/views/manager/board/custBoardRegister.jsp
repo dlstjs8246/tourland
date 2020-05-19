@@ -16,7 +16,7 @@
 		<div class="col-sm-12">
 			<div class="box box-primary">
 				<div class="box-header">
-					<h3 class="box-title">고객의 소리 조회</h3>
+					<h3 class="box-title">고객의 소리 등록</h3>
 				</div>
 				<form role="form" action="custBoardRegister" method="post" id="bannerForm">
 					<div class="box-body">

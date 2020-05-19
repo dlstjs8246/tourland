@@ -167,7 +167,9 @@ div.pkgInfoBox .pkgTitle {
 .pagination li .pageNumA { display: block; height: 100%;}
 </style>
 <script>
-
+function replaceAll(str, searchStr, replaceStr) {
+	return str.split(searchStr).join(replaceStr);
+} 
 /* yyyy-MM-dd 형식으로 변경하는 메서드  */
 function getFormatDate(date){
 	var date = new Date(date);
@@ -389,6 +391,7 @@ function getLowPriceList(page){
 		/* 지금 바로 예약하기 버튼 */
 		$(".pkgReservBtn").click(function() {
 			var pno = $(this).parent().parent().find("#pno").val();
+			var price = replaceAll($(this).attr("data-price"),",","");
 			if($.cookie('currentProduct') != null){			 
 				 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
 				 $.removeCookie('currentProduct');
@@ -396,7 +399,7 @@ function getLowPriceList(page){
 			 }else{
 				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
 			 }
-			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno;
+			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 		})
 		/* AJAX 리스트에 동적으로 생성된 '지금 바로 예약하기' 버튼  */
 		/* $(document).on("click", ".pkgReservBtn", function(){
@@ -473,17 +476,30 @@ function getLowPriceList(page){
 					</div>
 					<div class="pkgInfoBox">
 						<p class="pkgTitle">${product.pname}</p>
-						<c:forEach var="t" items="${product.tour}" begin="0" end="0">
-							<c:set var="capacity" value="${t.capacity}"/>
+						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
+						<c:set var="airPrice" value="0"/>
+						<c:set var="hotelPrice" value="0"/>
+						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.tour)-2}" end="${fn:length(product.tour)-1}">
+							<c:set var="airPrice" value="${airPrice+f.price}"/>
 						</c:forEach>
-						<c:set var="N" value="${product.pprice/capacity}"/>
+						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
+							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
+							<fmt:formatDate value="${h.checkout}" pattern="yyyyMMdd" var="checkout"/>
+							<fmt:parseDate value="${checkin}" pattern="yyyyMMdd" var="checkinDate"/>
+							<fmt:parseDate value="${checkout}" pattern="yyyyMMdd" var="checkoutDate"/>
+							<fmt:parseNumber value="${checkinDate.time / (1000*60*60*24)}" integerOnly="true" var="checkinTime"/>
+							<fmt:parseNumber value="${checkoutDate.time / (1000*60*60*24)}" integerOnly="true" var="checkoutTime"/>
+							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
+							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
+						</c:forEach>
+						<c:set var="N" value="${airPrice + hotelPrice}"/>
 						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
 						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
 						<p class="pkgPrice">${price}원 부터~</p>
 						<p class="pkgDate">~ ${expire}까지</p>
 					</div>
 					<p class="pkgReserv">
-						<button class="pkgReservBtn">지금 바로 예약</button>
+						<button class="pkgReservBtn" data-price="${price}">지금 바로 예약</button>
 					</p>
 				</div>
 				</c:forEach>
