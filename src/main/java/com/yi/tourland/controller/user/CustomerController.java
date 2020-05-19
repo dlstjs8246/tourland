@@ -2,15 +2,18 @@ package com.yi.tourland.controller.user;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.CookieHandler;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -26,7 +29,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.yi.tourland.domain.PageMaker;
 import com.yi.tourland.domain.SearchCriteria;
@@ -184,7 +189,25 @@ public class CustomerController {
 
 	//메인
 	@RequestMapping(value="tourlandMain", method=RequestMethod.GET)
-	public String tourlandMain(Model model, HttpServletResponse response) throws Exception {
+	public String tourlandMain(Model model, HttpServletResponse response, HttpServletRequest request) throws Exception {
+	 //쿠키불러오기
+		Cookie[] currentC = request.getCookies();
+		if(currentC != null) {
+		for(Cookie c : currentC) {
+			 if(c.getName().contentEquals("currentProduct")) {
+				 ProductVO currentP = new ProductVO();
+				 currentP.setPno(Integer.parseInt(c.getValue()));
+				 ProductVO dbcurrentP = productService.productByNo(currentP);
+				 model.addAttribute("currentProduct",dbcurrentP);
+			 }if(c.getName().contentEquals("currentProduct2")) {
+				 ProductVO currentP = new ProductVO();
+				 currentP.setPno(Integer.parseInt(c.getValue()));
+				 ProductVO dbcurrentP = productService.productByNo(currentP);
+				 model.addAttribute("currentProduct2",dbcurrentP);
+			 }
+		   }
+		}
+		
 	//팝업 불러오기
 	    PopupVO popup1 = popupService.setPopup("L");
 		if(popup1 != null) {
@@ -230,7 +253,7 @@ public class CustomerController {
 		try {
 			List<UserVO> userList = userService.listSearchCriteriaUser(cri, 0);
 			List<UserVO> secessuserList = userService.listSearchCriteriaUser(cri, 1);
-
+			
 			lastNo = userList.get(0).getUserno();
 			lastNo2 = secessuserList.get(0).getUserno();
 			if (lastNo > lastNo2) {
@@ -245,16 +268,19 @@ public class CustomerController {
 		}
 		return "/user/tourlandRegisterForm"; 
 	}
-	
+
+	//신규 회원 가입
+	//ModelAndView 클래스 사용(회원 가입 후 CustomerController에서 LoginController 커맨드로 redirect 바로 이동할 수 없기 때문)
 	@RequestMapping(value = "tourlandRegister", method = RequestMethod.POST)
-	public String tourlandRegisterPost(UserVO vo, RedirectAttributes rattr) throws Exception {
+	public ModelAndView tourlandRegisterPost(UserVO vo, RedirectAttributes rattr) throws Exception {
 		try{
 			userService.insertUser(vo);
 			rattr.addFlashAttribute("registerSuccess","aa");
+			
 		}catch (Exception e) {
 		
 		}
-		return "redirect:loginForm"; 
+		return new ModelAndView(new RedirectView("/loginForm",true)); //ModelAndView는 포워드로도 리다이렉트로도 보낼 수 있는거
 	}
 	
 	// 아이디 존재유무 체크
@@ -392,9 +418,34 @@ public class CustomerController {
 	}
 	//마이 페이지 - 내 쿠폰
 	@RequestMapping(value="tourlandMyCoupon", method=RequestMethod.GET)
-	public String tourlandMyCoupon(SearchCriteria cri, Model model) throws Exception { 
-		List<CouponVO> list = couponService.couponUserList(cri);
-		model.addAttribute("list", list);
+	public String tourlandMyCoupon(SearchCriteria cri, Model model, HttpSession session) throws Exception { 
+	
+		if(session.getAttribute("Auth")!=null) {
+			//세션에 로그인 정보가 있으면 해당 고객 불러오기
+			UserVO vo = (UserVO) session.getAttribute("Auth");
+			//1번 쿠폰(가입 축하 쿠폰) 의 만료일을 고객의 가입한 날짜로부터 이
+			Calendar cal = Calendar.getInstance();
+			Date now = new Date();
+			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String to = transFormat.format(now);
+			String year = to.substring(0, to.indexOf("-"));
+			String month = to.substring(to.indexOf("-")+1, to.lastIndexOf("-"));
+			String date = to.substring(to.lastIndexOf("-")+1);
+			//캘린더에 날짜 세팅
+			cal.set(Integer.parseInt(year), Integer.parseInt(month)-1,Integer.parseInt(date)-1);
+		
+			//더해줌 
+			cal.add(Calendar.DATE, 7);
+			String edate = transFormat.format(cal.getTime());
+			CouponVO coupon = new CouponVO();
+			coupon.setCno(1);
+			coupon.setEdate(edate);
+			
+			couponService.editCouponNo1(coupon);
+			List<CouponVO> list = couponService.userCouponList(vo);
+			model.addAttribute("list", list);
+		}
+	
 		return "/user/mypage/tourlandMyCoupon"; 
 	}    
 	//상품 리스트   (제주 패키지)

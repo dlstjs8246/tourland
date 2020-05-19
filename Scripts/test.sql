@@ -32,6 +32,9 @@ select * from prentstatus;
 select * from pairstatus;
 select * from ptourstatus;
 
+-- 최근본 상품 쿠키 생성 위함
+select * from product where pno = 180;
+
 -- 팝업
 select  * from popup;
 delete from popup where position in ('R','L');

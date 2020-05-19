@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.CouponVO;
+import com.yi.tourland.domain.mng.UserVO;
 
 public interface CouponDAO {
 	//쿠폰 리스트
@@ -20,4 +21,7 @@ public interface CouponDAO {
 	public void removeCoupon(int cno) throws Exception;
 	//쿠폰 수정
 	public void editCoupon(CouponVO coupon) throws  Exception;
+	//해당 고객의 쿠폰
+	public List<CouponVO> userCouponList(UserVO vo) throws Exception;
+	public void editCouponNo1(CouponVO coupon) throws Exception;
 }

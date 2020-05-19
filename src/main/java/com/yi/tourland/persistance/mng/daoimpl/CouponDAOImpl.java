@@ -1,6 +1,8 @@
 package com.yi.tourland.persistance.mng.daoimpl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.CouponVO;
+import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.persistance.mng.dao.CouponDAO;
 
 @Repository
@@ -48,5 +51,17 @@ public class CouponDAOImpl implements CouponDAO {
 	@Override
 	public List<CouponVO> couponUserList(SearchCriteria cri) throws Exception {
 		return sqlSession.selectList(namespace+"couponUserList", cri);
+	}
+	@Override
+	public List<CouponVO> userCouponList(UserVO vo) throws Exception {
+		/*
+		 * Map<String,Object> map = new HashMap<>(); map.put("cri", cri); map.put("vo",
+		 * vo);
+		 */
+		return sqlSession.selectList(namespace + "userCouponList", vo);
+	}
+	@Override
+	public void editCouponNo1(CouponVO coupon) throws Exception {
+		sqlSession.update(namespace + "editCouponNo1", coupon);
 	}
 }
