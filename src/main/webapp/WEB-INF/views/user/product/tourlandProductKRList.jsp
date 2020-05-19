@@ -182,7 +182,6 @@ function getFormatDate(date){
     day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
     return  year + '' + month + '' + day;
 }
-<<<<<<< HEAD
 function calPrice(obj) {
 	$(obj.air).each(function(i,obj){
 		 if(obj.seat=='E') {
@@ -199,7 +198,6 @@ function calPrice(obj) {
 		 } 
 	 }) 
 	 return price.toLocaleString();
-=======
 function getFormatDate2(date){
 	var date = new Date(date);
     var year = date.getFullYear()+"/";              //yyyy
