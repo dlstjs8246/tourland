@@ -568,7 +568,7 @@
 						<a href="${pageContext.request.contextPath }/customer/tourlandBoardNotice">공지사항</a>
 						<a href="${pageContext.request.contextPath }/customer/tourlandBoardFAQ">FAQ</a>
 						<a href="${pageContext.request.contextPath }/customer/tourlandCustBoard">고객의 소리</a>
-						<a href="${pageContext.request.contextPath }/customer/tourlandProductBoard">상품 문의사항</a>
+						<a href="${pageContext.request.contextPath }/customer/tourlandPlanBoard">상품 문의사항</a>
 					</div>
 					
 					<div id="slideBoxMain">

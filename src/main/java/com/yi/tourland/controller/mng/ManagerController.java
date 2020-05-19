@@ -1952,20 +1952,6 @@ public class ManagerController {
 			model.addAttribute("respond", respond);
 			return "/manager/board/planBoardDetail";
 		}
-		//상품게시판의 리스트 상세보기
-//		@RequestMapping(value = "planBoardDetail", method = RequestMethod.GET)
-//		public ModelAndView planBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model,String respond) throws Exception {
-//			try{
-//				vo = planBoardService.readByVoPlanBoard(vo);
-//				model.addAttribute("vo", vo);
-//				model.addAttribute("cri", cri);
-//				model.addAttribute("respond", respond);
-//			}catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//			
-//			return new ModelAndView(new RedirectView("/manager/board/planBoardDetail",true));
-//		}
 		
 		//달려져있는 답변내용 수정,삭제 하는 페이지
 		@RequestMapping(value = "planBoardModify", produces = "application/text; charset=utf8", method = RequestMethod.GET)
