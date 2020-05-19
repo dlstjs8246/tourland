@@ -369,14 +369,14 @@
 				<section id="section1">
 					<div id="imgBox">
 						<div class="box1">
-							<img src="${pageContext.request.contextPath}/images/cancun.jpg">
+							<img src="${pageContext.request.contextPath}/images/maincoupon.jpg">
 						</div>
 						<div class="box2 marg">
-							<img src="${pageContext.request.contextPath}/images/hotel.jpg">
-						</div>
+							<img src="${pageContext.request.contextPath}/images/japan/deluxroom2.jpg">
+						</div>    
 						<div class="box2">
-							<img src="${pageContext.request.contextPath}/images/jeju.jpg">
-						</div>
+							<img src="${pageContext.request.contextPath}/images/jeju/tour26.jpg">
+						</div>    
 					</div>
 				</section>
 				
@@ -450,19 +450,29 @@
 				<section id="section3">
 					<div class="popular" id="first">
 						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/camping.jpg">
-							<div id="popInfo">
-								~ 4/30일 까지 단독 할인
-							</div>
-						</a>
+							<h3>일본 특가 상품</h3>
+							<p>신주쿠 교엔 / 파격적인 가격</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/japan/sinjuku.jpg">
+							<div id="popInfo">   
+								~ 6/30일 까지 단독 할인
+							</div>   
+						</a>        
 					</div>
 					<div class="popular">
 						<a href="#">
-							<h3>여름 휴가 랭킹 1위</h3>
-							<p>서울 출발</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/polynesia.jpg">
+							<h3>여름 휴가 랭킹 1위 /제주</h3>
+							<p>떠나요 둘이서~</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/jeju/tour1.jpg">
+							<div class="popInfo2">
+								~ 7/30일 까지 단독 할인     
+							</div>
+						</a>  
+					</div>
+					<div class="popular">
+						<a href="#">
+							<h3>얼리버드 상품</h3>
+							<p>제주 성산봉</p>   
+							<img alt="" src="${pageContext.request.contextPath}/images/jeju/tour11.jpg">
 							<div class="popInfo2">
 								~ 4/30일 까지 단독 할인
 							</div>
@@ -470,51 +480,41 @@
 					</div>
 					<div class="popular">
 						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
+							<h3>일본 땡처리 항공</h3>
+							<p>친구와 같이 떠나는 도쿄 디즈니랜드</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/japan/land.jpg">
 							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
+								~ 7/30일 까지 단독 할인    
+							</div>
+						</a>
+					</div>      
+					<div class="popular">
+						<a href="#">   
+							<h3>절호의 찬스</h3>
+							<p>만리장성</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/china/manri2.jpg">
+							<div class="popInfo2">
+								~ 7/30일 까지 단독 할인
 							</div>
 						</a>
 					</div>
 					<div class="popular">
 						<a href="#">
 							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
+							<p>청나라 시대의 궁, 원명원</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/china/wonmyung.jpg">
 							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
+								~ 6/30일 까지 단독 할인
 							</div>
 						</a>
 					</div>
 					<div class="popular">
 						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
+							<h3>테마 찬스 상품 / 제주 애월읍</h3>
+							<p>효리네 민박의 그 곳</p>
+							<img alt="" src="${pageContext.request.contextPath}/images/jeju/tour13.jpg">
 							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
-							</div>
-						</a>
-					</div>
-					<div class="popular">
-						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
-							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
-							</div>
-						</a>
-					</div>
-					<div class="popular">
-						<a href="#">
-							<h3>특가 상품</h3>
-							<p>친구와 같이 떠나는 상품</p>
-							<img alt="" src="${pageContext.request.contextPath}/images/flowers.jpg">
-							<div class="popInfo2">
-								~ 4/30일 까지 단독 할인
+								~ 8/30일 까지 단독 할인
 							</div>
 						</a>
 					</div>
