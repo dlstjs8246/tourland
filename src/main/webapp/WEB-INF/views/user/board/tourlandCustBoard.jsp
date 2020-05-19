@@ -11,6 +11,14 @@
   section nav ul li:nth-child(3) {
 	background: mistyrose;
 }
+
+  #btnWrite{
+     width: 100px;
+     padding:5px;
+     background:mistyrose;
+     border:none;
+     margin-left:40px;
+  }
 </style>
 </head>
 
@@ -30,7 +38,8 @@
 					<input type="text" name="keyword" id="keywordInput" placeholder="검색어를 입력해주세요">
 					<button id="btnSearch">검색</button>
 				</div>
-					<table id="reserv">
+				<button id="btnWrite">글쓰기</button>
+					<table id="reserv" style="margin-top:15px;">
 						<tr>
 							<th class="nono">번호</th>
 							<th class="thTitle">제목</th>
@@ -80,6 +89,11 @@
 		var keyword = "${cri.keyword}";
 		location.href = "${pageContext.request.contextPath}/customer/tourlandCustBoardDetail?no="+no+"&page=${pageMaker.cri.page}&searchType="+searchType+"&keyword="+keyword;
 		
+	})
+	
+	//글쓰기 버튼 누르면
+	$("#btnWrite").click(function(){
+		location.href="tourlandCustBoardRegister";
 	})
 </script>
 		<%@ include file="../../include/userFooter.jsp"%>
