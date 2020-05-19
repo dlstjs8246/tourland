@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.google.gson.JsonObject;
 import com.yi.tourland.domain.PageMaker;
@@ -1941,6 +1943,7 @@ public class ManagerController {
 			return "/manager/board/planBoardList";
 		}
 		
+		//상품게시판의 리스트 상세보기
 		@RequestMapping(value = "planBoardDetail", method = RequestMethod.GET)
 		public String planBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model,String respond) throws Exception {
 			vo = planBoardService.readByVoPlanBoard(vo);
@@ -1949,7 +1952,22 @@ public class ManagerController {
 			model.addAttribute("respond", respond);
 			return "/manager/board/planBoardDetail";
 		}
-		//답변내용 달기
+		//상품게시판의 리스트 상세보기
+//		@RequestMapping(value = "planBoardDetail", method = RequestMethod.GET)
+//		public ModelAndView planBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model,String respond) throws Exception {
+//			try{
+//				vo = planBoardService.readByVoPlanBoard(vo);
+//				model.addAttribute("vo", vo);
+//				model.addAttribute("cri", cri);
+//				model.addAttribute("respond", respond);
+//			}catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			
+//			return new ModelAndView(new RedirectView("/manager/board/planBoardDetail",true));
+//		}
+		
+		//달려져있는 답변내용 수정,삭제 하는 페이지
 		@RequestMapping(value = "planBoardModify", produces = "application/text; charset=utf8", method = RequestMethod.GET)
 		public String planBoardModify(PlanBoardVO vo, SearchCriteria cri, Model model,int no, String respond) throws Exception {
 			vo = planBoardService.readByNoPlanBoard(no);
@@ -1960,7 +1978,7 @@ public class ManagerController {
 			model.addAttribute("cri", cri);
 			return "/manager/board/planBoardModify";
 		}
-		//답변내용 수정
+		//모달로 수정된 답변내용을 받는거 
 		@ResponseBody
 		@RequestMapping(value = "planBoardModifyApi", produces = "application/text; charset=utf8", method = RequestMethod.GET)
 		public ResponseEntity<String> planBoardModifyAjax(PlanBoardVO vo, SearchCriteria cri, Model model,int no, String respondText) throws Exception {
@@ -1989,9 +2007,6 @@ public class ManagerController {
 			return "redirect:planBoardList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 					+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 		}
-
-		
-		
 		//결제 관리
 		
 		@RequestMapping(value = "paymentList", method = RequestMethod.GET)
