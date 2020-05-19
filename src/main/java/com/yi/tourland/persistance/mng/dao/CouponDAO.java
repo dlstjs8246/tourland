@@ -23,5 +23,4 @@ public interface CouponDAO {
 	public void editCoupon(CouponVO coupon) throws  Exception;
 	//해당 고객의 쿠폰
 	public List<CouponVO> userCouponList(UserVO vo) throws Exception;
-	public void editCouponNo1(CouponVO coupon) throws Exception;
 }
