@@ -392,12 +392,16 @@ function getLowPriceList(page){
 		$(".pkgReservBtn").click(function() {
 			var pno = $(this).parent().parent().find("#pno").val();
 			var price = replaceAll($(this).attr("data-price"),",","");
-			if($.cookie('currentProduct') != null){			 
+			 if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){			 
 				 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
+				 $.cookie("currentProductPrice2",$.cookie('currentProductPrice'),{expires:1, path:"/"});
 				 $.removeCookie('currentProduct');
+				 $.removeCookie('currentProductPrice');
 				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+				 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
 			 }else{
 				 $.cookie("currentProduct",pno,{expires:1, path:"/"});
+				 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
 			 }
 			location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 		})

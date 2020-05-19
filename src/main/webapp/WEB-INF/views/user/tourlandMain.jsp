@@ -309,16 +309,35 @@
 	  
 	  //최근 본 상품의 이미지를 누르면 링크로 이동 
 	  
-	  $(".currentP1").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno};
-	  })
-	  $(".currentP2").click(function(){
-		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno};
-	  })
+	 if(${currentProductPrice} != null){
+     	  $(".currentP1").click(function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+${currentProductPrice};
+	    })
+	  }
 	  
+	 if(${currentProductPrice2} != null){
+	 
+	 $(".currentP2").click(function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+${currentProductPrice2};
+	   })
+	 }  
   })
 	  
 </script>
+<%-- <c:if test="${currentProduct != null}">
+    <script>
+       $(".currentP1").click(function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+$.cookie("currentProductPrice");
+	    })
+    </script>
+</c:if>
+<c:if test="${currentProduct2 != null}">
+    <script>
+       $(".currentP2").click(function(){
+		  location.href= "tourlandProductDetail?pno="+${currentProduct2.pno}+"&price="+$.cookie("currentProductPrice2");
+	    })
+    </script>
+</c:if> --%>
 	        <!-- 팝업 -->   
 	         <div id="popup1" style=" margin-left:10%;">  <!-- 1번 팝업 -->
 	                        <c:if test="${popup1 == null }">

@@ -204,6 +204,12 @@ public class CustomerController {
 				 currentP.setPno(Integer.parseInt(c.getValue()));
 				 ProductVO dbcurrentP = productService.productByNo(currentP);
 				 model.addAttribute("currentProduct2",dbcurrentP);
+			 }if(c.getName().contentEquals("currentProductPrice")) {
+				 String currentProductPrice =  c.getValue();
+				 model.addAttribute("currentProductPrice",currentProductPrice);
+			 }if(c.getName().contentEquals("currentProductPrice2")) {
+				 String currentProductPrice2 =  c.getValue();
+				 model.addAttribute("currentProductPrice2",currentProductPrice2);
 			 }
 		   }
 		}
