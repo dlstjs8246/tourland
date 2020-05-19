@@ -50,7 +50,7 @@ $(function(){
 					<c:forEach items="${couponList }" var="c">
 						<tr>
 							<td>${c.cno }</td>
-							<td><a href="${pageContext.request.contextPath }/couponDetail?cno=${c.cno }&page=${cri.page}">${c.cname } </a></td>
+							<td><a href="${pageContext.request.contextPath }/manager/couponDetail?cno=${c.cno }&page=${cri.page}">${c.cname } </a></td>
 							<td><fmt:formatDate value="${c.pdate }" pattern="yyyy-MM-dd"/></td>
 							<td><fmt:formatDate value="${c.edate }" pattern="yyyy-MM-dd"/></td>
 							<td>${c.ccontent }</td>

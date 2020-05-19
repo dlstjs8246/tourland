@@ -2,9 +2,9 @@ package com.yi.tourland.controller.user;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.CookieHandler;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -419,31 +419,46 @@ public class CustomerController {
 	//마이 페이지 - 내 쿠폰
 	@RequestMapping(value="tourlandMyCoupon", method=RequestMethod.GET)
 	public String tourlandMyCoupon(SearchCriteria cri, Model model, HttpSession session) throws Exception { 
-	
+		//Auth 키가 있을 때 
 		if(session.getAttribute("Auth")!=null) {
-			//세션에 로그인 정보가 있으면 해당 고객 불러오기
-			UserVO vo = (UserVO) session.getAttribute("Auth");
-			//1번 쿠폰(가입 축하 쿠폰) 의 만료일을 고객의 가입한 날짜로부터 이
-			Calendar cal = Calendar.getInstance();
-			Date now = new Date();
-			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-			String to = transFormat.format(now);
-			String year = to.substring(0, to.indexOf("-"));
-			String month = to.substring(to.indexOf("-")+1, to.lastIndexOf("-"));
-			String date = to.substring(to.lastIndexOf("-")+1);
-			//캘린더에 날짜 세팅
-			cal.set(Integer.parseInt(year), Integer.parseInt(month)-1,Integer.parseInt(date)-1);
-		
-			//더해줌 
-			cal.add(Calendar.DATE, 7);
-			String edate = transFormat.format(cal.getTime());
-			CouponVO coupon = new CouponVO();
-			coupon.setCno(1);
-			coupon.setEdate(edate);
+			if(session.getAttribute("Auth") instanceof UserVO) { //세션 객체가 UserVO 일 경우 = 회원 일 경우
+				//세션에 로그인 정보가 있으면 해당 고객 불러오기
+				UserVO vo = (UserVO) session.getAttribute("Auth");
+				//해당 고객의 쿠폰 불러오기
+				List<CouponVO> list = couponService.userCouponList(vo);
+				
+				//쿠폰이 있을 때
+				if(list.size()!=0) {
+					List<CouponVO> available = new ArrayList<>();
+					List<CouponVO> expired= new ArrayList<>();
+					
+					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+					Date date = new Date();
+					String today = dateFormat.format(date);
+					
+					int result;
+					for(int i=0; i<list.size(); i++) {
+						result = today.compareTo(dateFormat.format(list.get(i).getEdate()));
+						if(result == 1 || result == 0) {//today > edate
+							expired.add(list.get(i));
+							
+						}else {
+							available.add(list.get(i));
+						}
+					}
+					
+					/* model.addAttribute("list", list); */
+					model.addAttribute("available", available);
+					model.addAttribute("expired", expired);
+					model.addAttribute("noListChk", 0);
+				}else {//쿠폰이 없을 때 
+					model.addAttribute("noListChk", 1);
+				}
+			}else {//관리자 일 경우 
+				model.addAttribute("noListChk", 2);
+			}
 			
-			couponService.editCouponNo1(coupon);
-			List<CouponVO> list = couponService.userCouponList(vo);
-			model.addAttribute("list", list);
+			
 		}
 	
 		return "/user/mypage/tourlandMyCoupon"; 
@@ -859,6 +874,29 @@ public class CustomerController {
 		model.addAttribute("cri", cri);
 
 		return "/user/board/tourlandCustBoardDetail";
+	}
+	
+	
+	@RequestMapping(value = "tourlandCustBoardRegister", method = RequestMethod.GET)
+	public String tourlandCustBoardRegister(SearchCriteria cri, Model model) {
+		int lastNo = 0;
+		try {
+			List<CustBoardVO> custBoardList = custBoardService.listSearchCriteriaCustBoard(cri);
+			lastNo = custBoardList.get(0).getNo() + 1;
+		} catch (Exception e) {
+			lastNo = 1;
+		}
+
+		model.addAttribute("autoNo", lastNo); // 가장 나중 번호로 자동세팅
+
+		return "/user/board/tourlandCustBoardRegister";
+	}
+	@RequestMapping(value = "tourlandCustBoardRegister", method = RequestMethod.POST)
+	public String tourlandCustBoardRegisterPost(CustBoardVO vo, Model model) throws Exception {
+        System.out.println(vo);
+		custBoardService.insertCustBoard(vo);
+
+		return "redirect:/customer/tourlandCustBoardDetail?no=" + vo.getNo();
 	}
 	
 	
