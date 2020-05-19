@@ -495,9 +495,9 @@ public class CustomerController {
 			cal.add(Calendar.DATE, Integer.parseInt(tourDays.substring(0,tourDays.length()-1)));
 			//더해준 날짜 string으로 변환 (실제로 돌아오는 날짜) 
 			String rdate = sdf.format(cal.getTime());
-			
 			//해당 조건에 맞는 리스트 검색
-			List<ProductVO> list = productService.tourlandProductKRSearchList(ddate, rdate,cnt);
+			List<ProductVO> list = productService.tourlandProductKRSearchList(ddate, rdate,cnt ,tourDays.substring(0,tourDays.length()-1));
+			
 			//맵에 넣음 
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("list", list);
@@ -593,7 +593,7 @@ public class CustomerController {
 			String rdate = sdf.format(cal.getTime());
 			
 			//해당 조건에 맞는 리스트 검색
-			List<ProductVO> list = productService.tourlandProductJapanSearchList(ddate, rdate,cnt);
+			List<ProductVO> list = productService.tourlandProductJapanSearchList(ddate, rdate,cnt , tourDays.substring(0,tourDays.length()-1));
 			//맵에 넣음 
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("list", list);
@@ -659,7 +659,6 @@ public class CustomerController {
 	//상품 리스트   (중국 패키지)
 		@RequestMapping(value="tourlandProductChinaList", method=RequestMethod.GET)
 		public String tourlandProductChinaList(SearchCriteria cri,Model model) throws SQLException {
-			System.out.println(cri.getPage());
 			List<ProductVO> list = productService.productListPageByChina(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
@@ -690,9 +689,7 @@ public class CustomerController {
 				String rdate = sdf.format(cal.getTime());
 				
 				//해당 조건에 맞는 리스트 검색
-				List<ProductVO> list = productService.tourlandProductChinaSearchList(ddate, rdate,cnt);
-				System.out.println(list.size() + " : 리스트사이즈");
-				System.out.println(list.get(0));
+				List<ProductVO> list = productService.tourlandProductChinaSearchList(ddate, rdate,cnt, tourDays.substring(0,tourDays.length()-1));
 				//맵에 넣음 
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("list", list);

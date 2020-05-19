@@ -99,6 +99,40 @@
 			</if>
 		</if>
 	</sql>
+	<sql id="searchBoxKR">
+		<if test='tourDays=="3"'>
+			where a2.ano like "KA301%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"KA302%" and a2.capacity >= #{cnt}
+		</if>
+		<if test='tourDays=="5"'>
+			where a2.ano like "KA311%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"KA312%" and a2.capacity >= #{cnt}
+		</if>
+		<if test='tourDays=="7"'>
+			where a2.ano like "KA321%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"KA322%" and a2.capacity >= #{cnt}
+		</if>
+	</sql>
+	<sql id="searchBoxJP">
+		<if test='tourDays=="3"'>
+			where a2.ano like "JA101%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"JA102%" and a2.capacity >= #{cnt}
+		</if>
+		<if test='tourDays=="5"'>
+			where a2.ano like "JA111%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"JA112%" and a2.capacity >= #{cnt}
+		</if>
+		<if test='tourDays=="7"'>
+			where a2.ano like "JA121%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"JA122%" and a2.capacity >= #{cnt}
+		</if>
+	</sql>
+	<sql id="searchBoxCN">
+		<if test='tourDays=="3"'>
+			where a2.ano like "AC201%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"AC202%" and a2.capacity >= #{cnt}
+		</if>
+		<if test='tourDays=="5"'>
+			where a2.ano like "AC211%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"AC212%" and a2.capacity >= #{cnt}
+		</if>
+		<if test='tourDays=="7"'>
+			where a2.ano like "AC221%" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano like"AC222%" and a2.capacity >= #{cnt}
+		</if>
+	</sql>
+	
 	<select id="productByNo" resultMap="product">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
@@ -220,7 +254,7 @@
 							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
 							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where a2.ano = "AC201" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano ="AC202" and a2.capacity >= #{cnt}
+							 	 	<include refid="searchBoxCN"/>
 	</select>
 	
 		<!-- 상품 리스트 검색 박스 Ajax (일본) -->
@@ -234,7 +268,7 @@
 							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
 							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where a2.ano = "JA101" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano ="JA102" and a2.capacity >= #{cnt}
+							 	<include refid="searchBoxJP"/>
 	</select>
 		<!-- 상품 리스트 검색 박스 Ajax (제주) -->
 	<select id="tourlandProductKRSearchList" resultMap="product"> 
@@ -247,7 +281,7 @@
 							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
 							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where a2.ano = "KA301" and a2.ddate like concat('%',#{ddate},'%') and a2.capacity >= #{cnt} or a2.rdate like concat('%',#{rdate},'%') and a2.ano ="KA302" and a2.capacity >= #{cnt}
+							 	<include refid="searchBoxKR"/>
 	</select>
 	
 	<!-- 상품 리스트 검색 박스 Ajax "낮은 가격 순" (중국) -->
