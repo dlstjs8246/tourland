@@ -476,6 +476,31 @@ public class CustomerController {
 		model.addAttribute("count",productService.totalCountBySearchProductDomestic());
 		return "/user/product/tourlandProductKRList"; 
 	}
+	//메인 검색 박스 - 상품 리스트
+	@RequestMapping(value="tourlandProductMainSearchList", method=RequestMethod.GET)
+	public String tourlandProductMainSearchList(Model model,SearchCriteria cri, String tourDays, String to, String capa, String date) throws SQLException {
+		if(to.equals("제주")) {
+				List<ProductVO> list = productService.productListPageByDomestic(cri);
+				PageMaker pageMaker = new PageMaker();
+				pageMaker.setCri(cri);
+				pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic());
+				model.addAttribute("list",list);
+				model.addAttribute("pageMaker",pageMaker);
+				model.addAttribute("cri",cri);
+				model.addAttribute("count",productService.totalCountBySearchProductDomestic());
+				model.addAttribute("date",date);
+				model.addAttribute("tourDays",tourDays);
+				model.addAttribute("capa",capa);
+				
+				return "/user/product/tourlandProductKRList"; 
+		}else if(to.equals("일본")) {
+			
+		}else { //중국
+		
+		}
+		return  null;
+		
+	}
 
 	//상품 리스트 검색  ajax (제주 패키지) 
 	@RequestMapping(value="tourlandProductKRSearchList", method=RequestMethod.GET)
