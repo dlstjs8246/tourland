@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.google.gson.JsonObject;
 import com.yi.tourland.domain.PageMaker;
@@ -720,7 +722,7 @@ public class ManagerController {
 		return "manager/product/productModify";
 	}
 	@RequestMapping(value = "productModify", method = RequestMethod.POST)
-	public String productModifyPost(int[] airNo, int[] hotelNo, int[] tourNo, int[] rentcarNo, ProductVO vo, MultipartFile file, SearchCriteria cri,String originalPic,Model model) throws Exception {
+	public String productModifyPost(int[] airNo, int[] hotelNo, int[] tourNo, int[] rentcarNo, ProductVO vo, MultipartFile file, SearchCriteria cri,String originalPic,Model model,HttpServletRequest req) throws Exception {
 		int pno = vo.getPno();
 		ProductVO delProd = new ProductVO(pno);
 		productService.deleteProduct(delProd);
@@ -769,7 +771,7 @@ public class ManagerController {
 			vo.setPic(originalPic);
 		}
 		productService.insertProduct(vo);
-		return "redirect:/productDetail?no="+vo.getPno()+"&page="+cri.getPage()+"&searchType="+cri.getSearchType()+"&keyword="+cri.getKeyword();
+		return "redirect:/manager/productDetail?no="+vo.getPno()+"&page="+cri.getPage()+"&searchType="+cri.getSearchType()+"&keyword="+cri.getKeyword();
 	}
 	@RequestMapping(value = "productDelete", method = RequestMethod.GET)
 	public String productDelete(int no,ProductVO vo,SearchCriteria cri,Model model) throws SQLException {
