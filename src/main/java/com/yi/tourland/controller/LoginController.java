@@ -46,6 +46,7 @@ public class LoginController {
 		UserVO dbUserIdPw = userService.readByIdPwUser(userVO.getUserid(),userVO.getUserpass());
 		EmployeeVO dbEmpId = empService.readByIdEmployee(empVO.getEmpid());
 		EmployeeVO dbEmpIdPw = empService.readByIdPwEmployee(empVO.getEmpid(),empVO.getEmppass());
+		
 		//직원아이디가 있는 경우
 		if(dbEmpId!=null) {
 			//퇴사한 직원인 경우

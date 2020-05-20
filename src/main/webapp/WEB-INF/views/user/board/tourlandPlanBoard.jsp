@@ -155,7 +155,7 @@
 						var searchType = "${cri.searchType}";
 						var searchType2 = "${cri.searchType2}";
 						var keyword = "${cri.keyword}";
-						location.href = "tourlandProductBoardDetail?no=" + no
+						location.href = "tourlandPlanBoardDetail?no=" + no
 								+ "&page=${pageMaker.cri.page}&searchType="
 								+ searchType + "&searchType2=" + searchType2
 								+ "&keyword=" + keyword;
@@ -168,13 +168,13 @@
 								var searchType2 = $(
 										"#searchType2 option:selected").val();
 								var keyword = $("#keywordInput").val();
-								location.href = "planBoardList?searchType="
+								location.href = "${pageContext.request.contextPath}/customer/tourlandPlanBoard?searchType="
 										+ searchType + "&searchType2="
 										+ searchType2 + "&keyword=" + keyword;
 							})
 		//글쓰기 버튼 누르면
 	$("#btnWrite").click(function(){
-		location.href="tourlandProductBoardRegister";
+		location.href="tourlandPlanBoardRegister";
 	})
 							
 </script>

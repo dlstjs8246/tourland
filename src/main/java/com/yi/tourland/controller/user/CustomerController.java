@@ -308,17 +308,21 @@ public class CustomerController {
 			}
 			return entity;
 		}
-	//ID, 비밀번호 찾기
+	//ID, 비밀번호 찾기 페이지
 	@RequestMapping(value="tourlandFindIdPw", method=RequestMethod.GET) 
 	public String tourlandFindIdPw() throws Exception { 
 		return "/user/tourlandFindIdPw"; 
 	}
+	
+	//입력데이터를 받아 아이디와 비밀번호 이메일로 전송하기
 	@RequestMapping(value="tourlandFindIdPw", method=RequestMethod.POST) 
 	public String tourlandFindIdPwPost() throws Exception {
 		
 		
 		return "/user/tourlandLoginForm"; 
 	}
+	
+	
 	
 	//마이페이지의 비밀번호 확인
 	@RequestMapping(value="EditPassword", method=RequestMethod.GET) 
@@ -928,26 +932,18 @@ public class CustomerController {
 	
 	//상품문의 사항 글쓰기
 	@RequestMapping(value = "tourlandPlanBoardRegister", method = RequestMethod.GET)
-	public String tourlandPlanBoardRegister(SearchCriteria cri, Model model) {
-		int lastNo = 0;
-		try {
-			List<PlanBoardVO> custBoardList = planBoardService.listSearchCriteriaPlanBoard(cri);
-			lastNo = custBoardList.get(0).getNo() + 1;
-		} catch (Exception e) {
-			lastNo = 1;
-		}
-
-		model.addAttribute("autoNo", lastNo); // 가장 나중 번호로 자동세팅
-
+	public String tourlandPlanBoardRegister() {
 		return "/user/board/tourlandPlanBoardRegister";
 	}
 	
 	@RequestMapping(value = "tourlandPlanBoardRegister", method = RequestMethod.POST)
 	public String tourlandPlanBoardRegisterPost(PlanBoardVO vo) throws Exception {
 		planBoardService.insertPlanBoard(vo);
-		return "redirect:/customer/tourlandPlanBoardDetail?no="+vo.getNo();
+		return "redirect:/customer/tourlandPlanBoard";
 	}
 	
+	
+	//상품문의사항 리스트
 	@RequestMapping(value="tourlandPlanBoard", method=RequestMethod.GET)
 	public String tourlandPlanBoard(SearchCriteria cri, Model model) throws Exception { 
 		List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
@@ -960,6 +956,7 @@ public class CustomerController {
 		return "/user/board/tourlandPlanBoard"; 
 	}
 	
+	//상품문의사항 상세보기
 	@RequestMapping(value = "tourlandPlanBoardDetail", method = RequestMethod.GET)
 	public String tourlandPlanBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model) throws Exception {
 		vo = planBoardService.readByVoPlanBoard(vo);
