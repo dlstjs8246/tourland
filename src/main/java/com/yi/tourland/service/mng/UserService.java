@@ -73,4 +73,7 @@ public class UserService {
 	public int totalSearchCountPaymentUser(SearchCriteria cri) throws Exception {
 		return dao.totalSearchCountPaymentUser(cri);
 	}
+	public UserVO readByNameBirthTel(String username,String userbirth,String usertel) throws Exception {
+		return dao.readByNameBirthTel(username,userbirth,usertel);
+	}
 }

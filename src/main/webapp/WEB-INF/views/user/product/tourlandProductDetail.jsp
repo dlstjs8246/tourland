@@ -11,11 +11,11 @@
 	section { width: 1000px; margin: 0 auto; }
 	div#proBox { border-bottom : 1px solid #929292; }
 	div#proBox h1 { height: 100px; line-height: 100px;}
-	div#imgBox { width: 500px; height: 400px;float: left;  }
-	div#bigImgBox { width: 500px; height: 600px;}  
-	div#bigImgBox img { height : 600px; width: 100%; } 
-	div#smallImgBox { width: 500px; height:220px;}
-	div#smallImgBox img { width:23%; height: 220px; float: left; margin:5px;}   
+	div#imgBox { width: 500px; height: 800px;float: left;  }
+	div#bigImgBox { width: 500px; height: 400px;}  
+	div#bigImgBox img { height : 400px; width: 100%; } 
+	div#smallImgBox { width: 500px; height:100px;}
+	div#smallImgBox img { width:23%; height: 100px; float: left; margin:5px;}   
 	
 	div#infoBox { width: 460px; height: 900px; overflow: hidden; padding-left:20px;}  
 	
@@ -201,7 +201,41 @@
 								<li><img src="${pageContext.request.contextPath}/resources/images/dokyo1.jpg"></li>
 							</ul>
 						</div>
-					</div>
+						<style>
+							#optionInfo { border-collapse: collapse; width: 480px;margin-left: 10px; margin-top: 50px;}
+							#optionInfo th { height: 50px; background: gainsboro;border-top: 1px solid #929292; border-bottom: 1px solid #929292; font-size: 18px; }
+							#optionInfo td { height: 30px; }
+							#optionInfo #include { color:forestgreen; }
+							#optionInfo #exclude { color:maroon; }
+							  
+						</style>
+						<table id="optionInfo">
+							<tr>   
+								<th colspan="3"><span id="include">O </span> 포함 사항</th>
+							</tr>
+							<tr>
+								<td>- 인천공항 공항세, 현지 공항세, 관광진흥 개발 기금</td>
+							</tr>
+							<tr>     
+								<td>- 유류할증료</td>
+							</tr>
+							<tr>
+								<td>- 최대 1억원 해외여행자 보험</td>
+							</tr>
+							<tr>
+								<th colspan="3"><span id="exclude">X </span> 불포함 사항</th>
+							</tr>
+							<tr>
+								<td>- 여권발급비용</td>
+							</tr>
+							<tr>
+								<td>- 개인경비</td>
+							</tr>
+							<tr>
+								<td>- 1일 자유일정시 중,석식 및 교통비, 개인경비</td>
+							</tr>
+						</table>
+			</div>
 					
 					<div id="infoBox">
 						<ul>

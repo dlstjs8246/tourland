@@ -155,10 +155,15 @@
 						var searchType = "${cri.searchType}";
 						var searchType2 = "${cri.searchType2}";
 						var keyword = "${cri.keyword}";
-						location.href = "tourlandProductBoardDetail?no=" + no
-								+ "&page=${pageMaker.cri.page}&searchType="
-								+ searchType + "&searchType2=" + searchType2
-								+ "&keyword=" + keyword;
+						var authority = "${mypage}";
+						
+						if(authority == "mypageemp"){
+						  location.href = "tourlandPlanBoardDetail?no=" + no +"&page=${pageMaker.cri.page}&searchType="+searchType + "&searchType2=" + searchType2+"&keyword=" + keyword;
+						}else if(authority == "mypageuser"){
+						    location.href = "${pageContext.request.contextPath}/customer/tourlandBoardPassCheck/planBoard?no=" + no +"&page=${pageMaker.cri.page}&searchType="+searchType + "&searchType2=" + searchType2+"&keyword=" + keyword;
+						}else{  //로그인페이지
+							location.href="${pageContext.request.contextPath }/loginForm";
+						}
 					})
 			$("#btnSearch")
 					.click(
@@ -168,13 +173,13 @@
 								var searchType2 = $(
 										"#searchType2 option:selected").val();
 								var keyword = $("#keywordInput").val();
-								location.href = "planBoardList?searchType="
+								location.href = "${pageContext.request.contextPath}/customer/tourlandPlanBoard?searchType="
 										+ searchType + "&searchType2="
 										+ searchType2 + "&keyword=" + keyword;
 							})
 		//글쓰기 버튼 누르면
 	$("#btnWrite").click(function(){
-		location.href="tourlandProductBoardRegister";
+		location.href="tourlandPlanBoardRegister";
 	})
 							
 </script>

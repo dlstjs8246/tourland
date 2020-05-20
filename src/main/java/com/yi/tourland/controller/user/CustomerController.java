@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +41,7 @@ import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.BannerVO;
 import com.yi.tourland.domain.mng.CouponVO;
 import com.yi.tourland.domain.mng.CustBoardVO;
+import com.yi.tourland.domain.mng.EmailVO;
 import com.yi.tourland.domain.mng.EmployeeVO;
 import com.yi.tourland.domain.mng.EventVO;
 import com.yi.tourland.domain.mng.FaqVO;
@@ -308,17 +312,51 @@ public class CustomerController {
 			}
 			return entity;
 		}
-	//ID, 비밀번호 찾기
+	//ID, 비밀번호 찾기 페이지
 	@RequestMapping(value="tourlandFindIdPw", method=RequestMethod.GET) 
 	public String tourlandFindIdPw() throws Exception { 
 		return "/user/tourlandFindIdPw"; 
 	}
+	
+	//입력데이터를 받아 아이디와 비밀번호 이메일로 전송하기
 	@RequestMapping(value="tourlandFindIdPw", method=RequestMethod.POST) 
-	public String tourlandFindIdPwPost() throws Exception {
+	public String tourlandFindIdPwPost(EmailVO vo,UserVO userVo,String username,String userbirth, String usertel, String useremail,Model model,HttpSession session) throws Exception {		
+		userVo.setUsername(username);
+		userVo.setUserbirth(userbirth);
+		userVo.setUsertel(usertel);
 		
+		//위의 정보들을 입력받아 DB에 같은 정보의 회원이 있는지 검색
+		UserVO dbUser = userService.readByNameBirthTel(username, userbirth, usertel);
+		if(dbUser==null) {
+			//입력된 정보의 회원이 없을때
+			model.addAttribute("NotInfo", "입력된 정보를 다시 한번 확인해 주세요.");
+			
+			//입력을 잘못하는경우에도 입력값을 남기기 위해 이 코드 만듬
+			model.addAttribute("emailStay", useremail);
+			model.addAttribute("inputStay", userVo);
+			return "/user/tourlandFindIdPw"; 
+		}
+		
+		if(dbUser!=null) {
+			//입력한 정보의 회원이 있는 경우 
+			model.addAttribute("sendMail", username);
+			session.setAttribute("send", "확인");
+		}
+		
+//		MimeMessagePreparator preparator = new MimeMessagePreparator() {
+//			@Override public void prepare(MimeMessage mimeMessage) throws Exception {
+//				final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+//				helper.setFrom("이게뭐야");
+//				helper.setTo("xodnjs1218@naver.com");
+//				helper.setSubject("메일제목");
+//				helper.setText("ㅇㅇㅇ");
+//			}
+//		};
 		
 		return "/user/tourlandLoginForm"; 
 	}
+	
+	
 	
 	//마이페이지의 비밀번호 확인
 	@RequestMapping(value="EditPassword", method=RequestMethod.GET) 
@@ -485,10 +523,11 @@ public class CustomerController {
 	//메인 검색 박스 - 상품 리스트
 	@RequestMapping(value="tourlandProductMainSearchList", method=RequestMethod.GET)
 	public String tourlandProductMainSearchList(Model model,SearchCriteria cri, String tourDays, String to, String capa, String date) throws SQLException {
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
 		if(to.equals("제주")) {
 				List<ProductVO> list = productService.productListPageByDomestic(cri);
-				PageMaker pageMaker = new PageMaker();
-				pageMaker.setCri(cri);
+				
 				pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic());
 				model.addAttribute("list",list);
 				model.addAttribute("pageMaker",pageMaker);
@@ -500,11 +539,32 @@ public class CustomerController {
 				
 				return "/user/product/tourlandProductKRList"; 
 		}else if(to.equals("일본")) {
-			
+				List<ProductVO> list = productService.productListPageByJapan(cri);
+				pageMaker.setTotalCount(productService.totalCountBySearchProductJapan());
+				model.addAttribute("list",list);
+				model.addAttribute("pageMaker",pageMaker);
+				model.addAttribute("cri",cri);
+				model.addAttribute("count",productService.totalCountBySearchProductJapan());
+				model.addAttribute("date",date);
+				model.addAttribute("tourDays",tourDays);
+				model.addAttribute("capa",capa);
+				
+				return "/user/product/tourlandProductJPList";
 		}else { //중국
-		
+				List<ProductVO> list = productService.productListPageByChina(cri);
+				
+				pageMaker.setTotalCount(productService.totalCountBySearchProductChina());
+				model.addAttribute("list",list);
+				model.addAttribute("pageMaker",pageMaker);
+				model.addAttribute("cri",cri);
+				model.addAttribute("count",productService.totalCountBySearchProductChina());
+				model.addAttribute("date",date);
+				model.addAttribute("tourDays",tourDays);
+				model.addAttribute("capa",capa);
+				
+				return "/user/product/tourlandProductChinaList"; 
 		}
-		return  null;
+
 		
 	}
 
@@ -894,8 +954,38 @@ public class CustomerController {
 		
 		return "/user/board/tourlandCustBoard"; 
 	}
+	
+	@RequestMapping(value = "tourlandBoardPassCheck/{where}", method = RequestMethod.GET)
+	public String tourlandBoardDetailCheck(@PathVariable("where")String where, int no, SearchCriteria cri, Model model) throws Exception {
+      if(where.contentEquals("custBoard")){
+			CustBoardVO vo = custBoardService.readByNoCustBoard(no);
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(custBoardService.totalSearchCountCustBoard(cri));
+			model.addAttribute("no",no);
+			model.addAttribute("custBoardVO", vo);
+			model.addAttribute("cri", cri);
+			model.addAttribute("pageMaker", pageMaker);
+
+		  }
+	  if(where.contentEquals("planBoard")) {
+		 List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(planBoardService.totalSearchCountPlanBoard(cri) < 10 ? 10 : planBoardService.totalSearchCountPlanBoard(cri));
+			model.addAttribute("no",no);
+			model.addAttribute("list", list);
+			model.addAttribute("pageMaker", pageMaker);
+			model.addAttribute("cri", cri); 
+	      }
+	 
+	    model.addAttribute("where",where);
+	 return "/user/board/tourlandBoardPassCheck";
+	}
+	
 	@RequestMapping(value = "tourlandCustBoardDetail", method = RequestMethod.GET)
 	public String tourlandCustBoardDetail(int no, SearchCriteria cri, Model model) throws Exception {
+		System.out.println("EnEm");
 		CustBoardVO vo = custBoardService.readByNoCustBoard(no);
 		model.addAttribute("custBoardVO", vo);
 		model.addAttribute("cri", cri);
@@ -928,26 +1018,18 @@ public class CustomerController {
 	
 	//상품문의 사항 글쓰기
 	@RequestMapping(value = "tourlandPlanBoardRegister", method = RequestMethod.GET)
-	public String tourlandPlanBoardRegister(SearchCriteria cri, Model model) {
-		int lastNo = 0;
-		try {
-			List<PlanBoardVO> custBoardList = planBoardService.listSearchCriteriaPlanBoard(cri);
-			lastNo = custBoardList.get(0).getNo() + 1;
-		} catch (Exception e) {
-			lastNo = 1;
-		}
-
-		model.addAttribute("autoNo", lastNo); // 가장 나중 번호로 자동세팅
-
+	public String tourlandPlanBoardRegister() {
 		return "/user/board/tourlandPlanBoardRegister";
 	}
 	
 	@RequestMapping(value = "tourlandPlanBoardRegister", method = RequestMethod.POST)
 	public String tourlandPlanBoardRegisterPost(PlanBoardVO vo) throws Exception {
 		planBoardService.insertPlanBoard(vo);
-		return "redirect:/customer/tourlandPlanBoardDetail?no="+vo.getNo();
+		return "redirect:/customer/tourlandPlanBoard";
 	}
 	
+	
+	//상품문의사항 리스트
 	@RequestMapping(value="tourlandPlanBoard", method=RequestMethod.GET)
 	public String tourlandPlanBoard(SearchCriteria cri, Model model) throws Exception { 
 		List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
@@ -960,8 +1042,9 @@ public class CustomerController {
 		return "/user/board/tourlandPlanBoard"; 
 	}
 	
+	//상품문의사항 상세보기
 	@RequestMapping(value = "tourlandPlanBoardDetail", method = RequestMethod.GET)
-	public String tourlandPlanBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model) throws Exception {
+	public String tourlandPlanBoardDetail(int no,PlanBoardVO vo, SearchCriteria cri, Model model) throws Exception {
 		vo = planBoardService.readByVoPlanBoard(vo);
 		model.addAttribute("plan", vo);
 		model.addAttribute("cri", cri);

@@ -26,4 +26,6 @@ public interface UserDAO {
 	// public void updateReplyCnt(int amount, int bno)throws Exception;
 	public List<UserVO> listSearchCriteriaPaymentUser(SearchCriteria cri)throws Exception;
 	public int totalSearchCountPaymentUser(SearchCriteria cri) throws Exception;
+	
+	public UserVO readByNameBirthTel(String username,String userbirth,String usertel)throws Exception;
 }

@@ -207,6 +207,19 @@ $(function(){
 })
 </script>     
 <body>
+<!-- 메인 검색 박스에서 검색한 내용을 들고와서 자동 검색 후 페이지 출력 -->
+<c:if test="${tourDays!=null }">
+	<script>
+	$(function(){
+		$(".datepicker").val("${date }");
+		$("#rdate option[value='${tourDays}']").attr("selected", "selected");
+		$("#cnt option[value='${capa}']").attr("selected", "selected");
+		$("#pkgSearchBtn").trigger("click");
+	})
+	
+	</script>
+	
+</c:if>
 	<section>
 		<div id="pkgTitleBox">
 			<h1>베이징</h1>
@@ -227,31 +240,31 @@ $(function(){
 				<input type="date" class="datepicker" name="ddate">
 				<p>여행일 선택</p>
 				<select id="rdate">
-					<option>3일</option>
-					<option>5일</option>
-					<option>7일</option>
+					<option value='3일'>3일</option>
+					<option value='5일'>5일</option>
+					<option value='7일'>7일</option>
 				</select>
 				<p>인원</p>
 				<select id="cnt">
-					<option>2명</option>
-					<option>3명</option>
-					<option>4명</option>
-					<option>5명</option>
-					<option>6명</option>
-					<option>7명</option>
-					<option>8명</option>
-					<option>9명</option>
-					<option>10명</option>
-					<option>11명</option>
-					<option>12명</option>
-					<option>13명</option>
-					<option>14명</option>
-					<option>15명</option>
-					<option>16명</option>
-					<option>17명</option>
-					<option>18명</option>
-					<option>19명</option>
-					<option>20명</option>
+					<option value='2명'>2명</option>
+					<option value='3명'>3명</option>
+					<option value='4명'>4명</option>
+					<option value='5명'>5명</option>
+					<option value='6명'>6명</option>
+					<option value='7명'>7명</option>
+					<option value='8명'>8명</option>
+					<option value='9명'>9명</option>
+					<option value='10명'>10명</option>
+					<option value='11명'>11명</option>
+					<option value='12명'>12명</option>
+					<option value='13명'>13명</option>
+					<option value='14명'>14명</option>
+					<option value='15명'>15명</option>
+					<option value='16명'>16명</option>
+					<option value='17명'>17명</option>
+					<option value='18명'>18명</option>
+					<option value='19명'>19명</option>
+					<option value='20명'>20명</option>
 				</select>
 				<p id="pkgBtnBox">
 					<button id="pkgSearchBtn">검색</button>

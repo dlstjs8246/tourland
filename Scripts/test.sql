@@ -342,24 +342,17 @@ select * from hotel order by no desc limit 10, 3;
 
 select * from hotel
 where hname like CONCAT('%','hidden','%');
-
 select * from user;
-
 select * from employee;
-
 select * from planboard;
-
 select * from hotel;
-
 select * from rentcar;
-
 select * from product;
-
 insert into planboard(title, content, writer, regdate, lcate, mcate, answer,respond)
 (select title, content, writer, regdate, lcate, mcate, answer,respond from planboard);
 
- select from user
- where userpass = password('test');
+select from user
+where userpass = password('test');
 
 select count(no)
 from planboard;
@@ -379,6 +372,12 @@ where userno=6;
 update user set username ='테스트', userbirth='1991-12-18 00:00:00', usertel='010-4333-3825', 
 useraddr='대구시 북구 태전동 254-30', userpassport=NULL, userpass='*94BDCEBE19083CE2A1F959FD02F964C7AF4CFC29' 
 where userno=6 
+
+select * from user;
+
+select userid,userpass
+from user
+where username='황태원' and userbirth='1991-12-18' and usertel='010-4245-3825';
 
 -- 하나 --------------------------------------------------------------------------------------------
 

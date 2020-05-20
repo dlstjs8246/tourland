@@ -78,7 +78,16 @@
    	 width: 250px; line-height: 50px;
 	}
 </style>
-
+<script>
+	$(function(){
+		$("#nav2 li").mouseover(function(){
+			$(this).find("a").css("color", "#ff7f00");
+		})
+		$("#nav2 li").mouseout(function(){
+			$(this).find("a").css("color", "#fff");
+		})
+	})    
+</script>
 <header>
 			<nav id="nav1">
 				<ul>

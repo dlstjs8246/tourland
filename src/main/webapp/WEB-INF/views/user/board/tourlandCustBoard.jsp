@@ -87,7 +87,16 @@
 		var no = $(this).attr("data-click");
 		var searchType = "${cri.searchType}";
 		var keyword = "${cri.keyword}";
-		location.href = "${pageContext.request.contextPath}/customer/tourlandCustBoardDetail?no="+no+"&page=${pageMaker.cri.page}&searchType="+searchType+"&keyword="+keyword;
+		var authority = "${mypage}";
+//	alert(authority);
+		if(authority == "mypageemp"){
+			location.href = "${pageContext.request.contextPath}/customer/tourlandCustBoardDetail?no="+no+"&page=${pageMaker.cri.page}&searchType="+searchType+"&keyword="+keyword;
+		}else if(authority == "mypageuser"){
+		    location.href = "${pageContext.request.contextPath}/customer/tourlandBoardPassCheck/custBoard?no="+no+"&page=${pageMaker.cri.page}&searchType="+searchType+"&keyword="+keyword;
+		}else{  //로그인페이지
+			location.href="${pageContext.request.contextPath }/loginForm";
+		}
+		//
 		
 	})
 	
