@@ -14,8 +14,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
 <style>
-
-/* /* 전체 */
+@font-face { font-family: 'Recipekorea'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Recipekorea.woff') format('woff'); font-weight: normal; font-style: normal; }
+ /* 전체 */
 	* { margin:0; 
 		padding:0; 
 		font-family: 'Noto Sans KR', sans-serif;
@@ -52,9 +52,11 @@
 				line-height: 80px;
 				margin-top: 50px; }
 	#main div#logo, #main div#search { margin-left: 50px;}						  
-	#main div#logo h1 a { color: #ff7f00; font-size: 60px; 
-					      font-family: 'Black Han Sans', sans-serif;
+	#main div#logo h1 a { color: #ff7f00; font-size: 50px; 
+					    font-family:'Recipekorea', sans-serif; 
+					   
 					      text-decoration: none;}
+
 	#main div#search input { border: none; border-bottom: 1px solid gray; }
 	
 	div#nav2 { clear: both; }
