@@ -43,7 +43,7 @@ function appendAjaxData(rs,url,classname) {
 		 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
 		 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire,"/")+"까지");
 		 var $p4 = $("<p>").addClass("pkgReserv");
-		 var $btn = $("<button>").addClass("pkgReservBtn").html("지금 바로 예약");
+		 var $btn = $("<button data-price='"+price+"' data-pno='"+obj.pno+"'>").addClass("pkgReservBtn").html("지금 바로 예약");
 		 
 		 $div1.append($img1);
 		 $div2.append($div1);
