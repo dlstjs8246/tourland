@@ -138,7 +138,7 @@
       position: relative;
       position: absolute;
       top: 150px;
-      z-index: 1;
+      z-index: 3;
        display: none;
     }
     
@@ -151,7 +151,7 @@
       position: absolute;
       top: 250px;
       left:100px;
-      z-index: 1;
+      z-index: 3;
       display: none;
     }
     
@@ -406,8 +406,8 @@ setInterval(function() {
 				<section id="section1">
 					<div id="imgBox"> 
 						<div class="box1"> <!-- 메인 슬라이드 박스  -->
-							<div><img src="${pageContext.request.contextPath}/images/maincoupon.jpg"></div>
-							<div><img src="${pageContext.request.contextPath}/images/mainevent1.jpg"></div>
+							<div><a href="${pageContext.request.contextPath }/loginForm"><img src="${pageContext.request.contextPath}/images/maincoupon.jpg" style="z-index:2" title="로그인 페이지로 이동합니다."></a></div>
+							<div><a href="${pageContext.request.contextPath }/customer/eventDetailPage?no=3"><img src="${pageContext.request.contextPath}/images/mainevent1.jpg" style="z-index:1" title="이벤트 상세 페이지로 이동합니다"></a></div>
 							<div><img src="${pageContext.request.contextPath}/images/mainevent2.jpg"></div>
 						</div>
 						<div class="box2 marg">
