@@ -51,25 +51,56 @@
 	<interceptors>
 		<interceptor>
 			<mapping path="/manager/**"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/EditPassword"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandMyInfoEdit"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/editProfile"/>
-			<mapping path="/customer/logoutWithdrawal"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
+			<mapping path="/customer/logoutWithdrawal"/>	
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandMyReserv"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandMyReview"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandMyWishes"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandMyCoupon"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandCustBoardDetail"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandCustBoardRegister"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandPlanBoardRegister"/>
+			<beans:ref bean="LoginInterceptor"/>
+		</interceptor>
+		<interceptor>
 			<mapping path="/customer/tourlandPlanBoardDetail"/>
 			<beans:ref bean="LoginInterceptor"/>
-
 		</interceptor>
 	</interceptors>
-	 
-	 
 	<context:component-scan base-package="com.yi.tourland.controller" />
-	
-
 </beans:beans>

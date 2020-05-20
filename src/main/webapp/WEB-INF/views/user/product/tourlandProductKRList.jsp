@@ -168,7 +168,6 @@ div.pkgInfoBox .pkgTitle {
 
 </style>
 <script>
-var price = 0;
 function replaceAll(str, searchStr, replaceStr) {
 	return str.split(searchStr).join(replaceStr);
 }
@@ -183,6 +182,7 @@ function getFormatDate(date){
     return  year + '' + month + '' + day;
 }
 function calPrice(obj) {
+	var price = 0;
 	$(obj.air).each(function(i,obj){
 		 if(obj.seat=='E') {
 			 price += obj.price;
@@ -239,6 +239,7 @@ function getSearchResult(){
 				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
 				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire)+"까지");
+				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire)+"까지");
 				 var $p4 = $("<p>").addClass("pkgReserv");
 				 var $btn = $("<button>").addClass("pkgReservBtn").html("지금 바로 예약");
 				 
@@ -278,7 +279,7 @@ function getList(page){
 				 
 				 var $div2 = $("<div>").addClass("pkgInfoBox");
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
-				 var price = Math.ceil(obj.pprice/obj.tour[0].capacity).toLocaleString();
+				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
 				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate2(obj.pexpire)+"까지");
 				 
@@ -348,7 +349,7 @@ function getLowPriceList(page){
 				 
 				 var $div2 = $("<div>").addClass("pkgInfoBox");
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
-				 var price = Math.ceil(obj.pprice/obj.tour[0].capacity).toLocaleString();
+				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
 				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate2(obj.pexpire)+"까지");
 				 
@@ -529,10 +530,9 @@ function getLowPriceList(page){
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
 						<c:set var="airPrice" value="0"/>
 						<c:set var="hotelPrice" value="0"/>
-						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.tour)-2}" end="${fn:length(product.tour)-1}">
+						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.air)-2}" end="${fn:length(product.air)-1}">
 							<c:set var="airPrice" value="${airPrice+f.price}"/>
 						</c:forEach>
-						<c:out value="${airPrice}"/>
 						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
 							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
 							<fmt:formatDate value="${h.checkout}" pattern="yyyyMMdd" var="checkout"/>
@@ -543,7 +543,6 @@ function getLowPriceList(page){
 							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
 							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
 						</c:forEach>
-						<c:out value="${hotelPrice}"/>
 						<c:set var="N" value="${airPrice + hotelPrice}"/>
 						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
 						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
