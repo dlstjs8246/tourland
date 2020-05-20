@@ -76,19 +76,22 @@ input[name='userid']{
 </head>
 <body>
 <%@ include file="../../include/userHeader.jsp"%>
-<c:if test="${mypage=='mypageuser'}">
+
 <script>
 $(function(){
 	$("form").submit(function(e){
 		var no = "${no}";
 		var searchType = "${cri.searchType}";
 		var keyword = "${cri.keyword}";
+		var searchType2 = "${cri.searchType2}";
 		var checkPass= $("input[name='checkPass']").val();
 		var userId = $("input[name='userid']").val();
-		
+		var twowayPath = $(this).attr("data-name");
+
+		// alert($(this).attr("data-name"));
 			 //아이디 중복 ajax로 처리하기
 			 $.ajax({
-				url:"EditPasswordCheck/"+userId+"/"+checkPass,
+				url:"${pageContext.request.contextPath}/customer/EditPasswordCheck/"+userId+"/"+checkPass,
 				type:"get",
 				dataType:"text",
 				success:function(res){
@@ -97,22 +100,48 @@ $(function(){
 						$(".error").css("display", "inline");
 						return false;
 					}else{
-						location.href = "${pageContext.request.contextPath}/customer/tourlandCustBoardDetail?no="+no+"&page=${pageMaker.cri.page}&searchType="+searchType+"&keyword="+keyword;
+						if(twowayPath =="custBoard"){
+						  location.href = "${pageContext.request.contextPath}/customer/tourlandCustBoardDetail?no="+no+"&page=${pageMaker.cri.page}&searchType="+searchType+"&keyword="+keyword;
+						}if(twowayPath =="planBoard"){
+							location.href = "${pageContext.request.contextPath}/customer/tourlandPlanBoardDetail?no="+ no +"&page=${pageMaker.cri.page}&searchType="+searchType + "&searchType2=" + searchType2+"&keyword=" + keyword;	
+						}
+						
 					}
 				}
 		    })
+
+		
 		return false; //submit버튼을 클릭하는거랑 아작스가 가는건 별개다 ajax는 지만 따로 갓다옴
 	})
 })
 </script>
-</c:if>
+
 	<section>
 		<%@ include file="../../include/userBoardMenu.jsp"%> 
 		<div id="editProfile">
 		<h1>내 글 열람</h1>
-			<span id="info">고객님의 비밀번호를 입력해주세요</span>
-		
-		<form action="tourlandCustBoardDetail" method="get">
+			<span id="info">본인이 작성한 글만 열람 가능합니다.</span>
+	<c:if test="${where == 'custBoard'}">
+		<form action="tourlandCustBoardDetail" method="get" data-name="custBoard">
+			<c:choose>
+				<c:when test="${mypage=='mypageuser'}">
+					 <input type="hidden" name="no" value="${no}">
+					<p>
+						<input type="hidden" name="userid" value="${Auth.userid}" readonly="readonly">
+					</p>
+					<p>
+						<label>비밀번호</label><input type="password" name="checkPass" placeholder="고객님의 로그인 비밀번호를 입력해주세요." required="required">
+					</p>
+						<span class="error">비밀번호가 일치하지 않습니다</span>
+				</c:when>
+			</c:choose>
+				<p id="btns">
+					<button type="submit" id="withdraw" style="cursor: pointer">확인</button>
+				</p>
+			</form>
+	 </c:if>
+	 <c:if test="${where == 'planBoard'}">
+		<form action="tourlandPlanBoardDetail" method="get" data-name="planBoard">
 			<c:choose>
 				<c:when test="${mypage=='mypageuser'}">
 					 <input type="hidden" name="no" value="${no}">
@@ -129,6 +158,7 @@ $(function(){
 					<button type="submit" id="withdraw" style="cursor: pointer">확인</button>
 				</p>
 			</form>
+		</c:if>
 		</div>
 	</section>
 <%@ include file="../../include/userFooter.jsp"%>

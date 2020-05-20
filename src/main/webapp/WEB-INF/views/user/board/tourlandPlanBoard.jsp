@@ -155,10 +155,15 @@
 						var searchType = "${cri.searchType}";
 						var searchType2 = "${cri.searchType2}";
 						var keyword = "${cri.keyword}";
-						location.href = "tourlandPlanBoardDetail?no=" + no
-								+ "&page=${pageMaker.cri.page}&searchType="
-								+ searchType + "&searchType2=" + searchType2
-								+ "&keyword=" + keyword;
+						var authority = "${mypage}";
+						
+						if(authority == "mypageemp"){
+						  location.href = "tourlandPlanBoardDetail?no=" + no +"&page=${pageMaker.cri.page}&searchType="+searchType + "&searchType2=" + searchType2+"&keyword=" + keyword;
+						}else if(authority == "mypageuser"){
+						    location.href = "${pageContext.request.contextPath}/customer/tourlandBoardPassCheck/planBoard?no=" + no +"&page=${pageMaker.cri.page}&searchType="+searchType + "&searchType2=" + searchType2+"&keyword=" + keyword;
+						}else{  //로그인페이지
+							location.href="${pageContext.request.contextPath }/loginForm";
+						}
 					})
 			$("#btnSearch")
 					.click(

@@ -600,7 +600,7 @@ setInterval(function() {
 						<a href="${pageContext.request.contextPath }/customer/tourlandPlanBoard">상품 문의사항</a>
 					</div>
 					
-					<div id="slideBoxMain">
+					<div id="slideBoxMain" style="cursor: pointer">
 					 <div id="slExit" style="position: absolute; left:-18px; top:200px; background:mistyrose; width:18px;"><span id="arrowSide" style="width:18px; 25px;"><i class="fas fa-caret-right" style="margin-left:8px;" id="arrows"></i></span></div>
 					   <ul>
 					     <li style="background: mistyrose;"><a href="${pageContext.request.contextPath }/customer/tourlandMyReserv" style="display:block;">예약확인/결제</a></li>
