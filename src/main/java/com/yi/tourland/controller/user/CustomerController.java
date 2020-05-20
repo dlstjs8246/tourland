@@ -894,8 +894,28 @@ public class CustomerController {
 		
 		return "/user/board/tourlandCustBoard"; 
 	}
+	
+	@RequestMapping(value = "tourlandBoardPassCheck", method = RequestMethod.GET)
+	public String tourlandBoardDetailCheck(int no, SearchCriteria cri, Model model) throws Exception {
+		CustBoardVO vo = custBoardService.readByNoCustBoard(no);
+		
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(custBoardService.totalSearchCountCustBoard(cri));
+		
+		
+		model.addAttribute("no",no);
+		model.addAttribute("custBoardVO", vo);
+		model.addAttribute("cri", cri);
+		model.addAttribute("pageMaker", pageMaker);
+		
+
+		return "/user/board/tourlandBoardPassCheck";
+	}
+	
 	@RequestMapping(value = "tourlandCustBoardDetail", method = RequestMethod.GET)
 	public String tourlandCustBoardDetail(int no, SearchCriteria cri, Model model) throws Exception {
+		System.out.println("EnEm");
 		CustBoardVO vo = custBoardService.readByNoCustBoard(no);
 		model.addAttribute("custBoardVO", vo);
 		model.addAttribute("cri", cri);
