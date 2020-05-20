@@ -30,7 +30,9 @@ insert into custboard values
 desc banner;
 insert into banner values
 (1,'중국 자금성','세계 최대 규모 궁궐','/2020/05/15/e5d4138a-3910-44cf-a9aa-368e3b9d484f_banner.jpg',0,'L'),
-(2,'일본 센소지','도쿄에서 가장 오래된 절','/2020/05/15/59b0e99c-ffd0-421a-8e09-8574b5eda653_banner2.jpg',0,'R');
+(2,'일본 센소지','도쿄에서 가장 오래된 절','/2020/05/15/59b0e99c-ffd0-421a-8e09-8574b5eda653_banner2.jpg',0,'R'),
+(3,'Tokyo Tower','일본의 명물 도쿄타워','/2020/05/19/31d5af5e-8686-41b3-865d-fea563e3ff6c_tower3.jpg',0,null),	
+(4,'중국 만리장성','역사가 살아 숨쉬는 곳','/2020/05/19/0ba966dd-2d60-453f-b083-2aa33aad6c5c_manri2.jpg',0,null);	
 
 -- 팝업
 desc popup ;

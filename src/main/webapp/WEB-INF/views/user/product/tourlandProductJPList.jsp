@@ -180,16 +180,24 @@ function getFormatDate(date){
     day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
     return  year + '' + month + '' + day;
 }
-function getFormatDate2(date){
-	var date = new Date(date);
-    var year = date.getFullYear()+"/";              //yyyy
-    var month = (date.getMonth()+1)+"/";          //M
-    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
-    var day = date.getDate();                   //d
-    day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
-    return  year + '' + month + '' + day;
+function calPrice(obj) {
+	var price = 0;
+	$(obj.air).each(function(i,obj){
+		 if(obj.seat=='E') {
+			 price += obj.price;
+		 } 
+	 })
+	 $(obj.hotel).each(function(i,obj){
+		 if(obj.roomtype=='N') {
+			 var checkinDate = new Date(obj.checkin);
+			 var checkoutDate = new Date(obj.checkout);
+			 var dateDiffDate = new Date();
+			 dateDiffDate.setDate(checkoutDate.getDate()-checkinDate.getDate());
+			 price += (obj.price * dateDiffDate.getDate());
+		 } 
+	 }) 
+	 return price.toLocaleString();
 }
-
 /* 리스트 좌측 검색 박스에서 검색했을 때 데이터를 불러오는 Ajax */
 function getSearchResult(){
 	var ddate = $(".datepicker").val();//출발일 선택
@@ -214,7 +222,7 @@ function getSearchResult(){
 				 
 				 var $div2 = $("<div>").addClass("pkgInfoBox");
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
-				 var price = Math.ceil(obj.pprice/obj.tour[0].capacity).toLocaleString();
+				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
 				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate2(obj.pexpire)+"까지");
 				 
@@ -257,7 +265,7 @@ function getList(page){
 				 
 				 var $div2 = $("<div>").addClass("pkgInfoBox");
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
-				 var price = Math.ceil(obj.pprice/obj.tour[0].capacity).toLocaleString();
+				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
 				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate2(obj.pexpire)+"까지");
 				 
@@ -324,7 +332,7 @@ function getLowPriceList(page){
 				 
 				 var $div2 = $("<div>").addClass("pkgInfoBox");
 				 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
-				 var price = Math.ceil(obj.pprice/obj.tour[0].capacity).toLocaleString();
+				 var price = calPrice(obj);
 				 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
 				 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate2(obj.pexpire)+"까지");
 				 
@@ -335,8 +343,8 @@ function getLowPriceList(page){
 				 $div2.append($p1);
 				 $div2.append($p2);
 				 $div2.append($p3);
-				 
 				 $p4.append($btn);
+				 $div2.append($p4);
 				 var $pkgListBox = $("<div class='pkgListBox'>").append($div1).append($div2).append($p4);
 				 $("#pkgListBoxWrap").append($pkgListBox);
 				 
@@ -488,7 +496,7 @@ function getLowPriceList(page){
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
 						<c:set var="airPrice" value="0"/>
 						<c:set var="hotelPrice" value="0"/>
-						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.tour)-2}" end="${fn:length(product.tour)-1}">
+						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.air)-2}" end="${fn:length(product.air)-1}">
 							<c:set var="airPrice" value="${airPrice+f.price}"/>
 						</c:forEach>
 						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
