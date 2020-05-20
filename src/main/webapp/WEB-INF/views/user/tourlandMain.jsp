@@ -23,8 +23,9 @@
 	section#section1 div#imgBox { width: 1200px;
 								  height: 400px;
 							      margin-top: 30px;  }
-	section#section1 div#imgBox .box1 { width: 810px; height:400px; float: left;}
-	section#section1 div#imgBox .box1 img { width: 100%; height: 100%;} 
+	section#section1 div#imgBox .box1 { width: 810px; height:400px; float: left; position: relative;}
+	section#section1 div#imgBox .box1 div{position: absolute; top:0; left:0;}
+	section#section1 div#imgBox .box1 img { width: 810px; height:400px; position: absolute;} 
 	section#section1 div#imgBox .box2 { width:380px; height: 195px; float: right;}
 	section#section1 div#imgBox .marg { margin-bottom: 10px;}
 	section#section1 div#imgBox .box2 img { width: 100%; height: 100%; }
@@ -137,6 +138,7 @@
       position: relative;
       position: absolute;
       top: 150px;
+      z-index: 3;
        display: none;
     }
     
@@ -149,6 +151,7 @@
       position: absolute;
       top: 250px;
       left:100px;
+      z-index: 3;
       display: none;
     }
     
@@ -227,15 +230,27 @@
 <body>
 	<div id="container">
 	<%@ include file="../include/userHeader.jsp"%>
-<!-- 쿠키 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
 
 <script>
-   
+
+//메인 배너 슬라이드
+/* $(".box1 > div:gt(0)").hide(); */
+
+setInterval(function() { 
+	  $('.box1 > div:first')
+	    .fadeOut(1000)
+	    .next()
+	    .fadeIn(1000)
+	    .end()
+	    .appendTo('.box1');
+	},  3000);
+	
 	  $(function(){
+		
 		  
 		  if($.cookie("popup1") != null ){ 
-		         $("#popup1").css("display","block"); 
+		         $("#popup1").css("display","block");
 		      }
 		  
 		  if($.cookie("popup2") != null ){ 
@@ -320,13 +335,15 @@
 		  }else {
 			  location.href = "${pageContext.request.contextPath}/customer/tourlandProductMainSearchList?tourDays="+tourDays+"&to="+to+"&capa="+capa+"&date="+date;
 		  }
-	  })
 	 
+		 
+	    })		 
+	  })
 
 </script>
  <c:if test="${currentProductPrice != null}">
     <script>
-       //최근 본 상품의 이미지를 누르면 링크로 이동 
+       //최근 본 상품의 이미지를 누르면 링크로 이동 이엘때문에 따로 처리, 동적 추가 docu on
        $(document).on("click",".currentP1",function(){
 		  location.href= "tourlandProductDetail?pno="+${currentProduct.pno}+"&price="+${currentProductPrice};
 	    })
@@ -387,9 +404,11 @@
 	          
 			<div id="mainBox">  
 				<section id="section1">
-					<div id="imgBox">
-						<div class="box1">
-							<img src="${pageContext.request.contextPath}/images/maincoupon.jpg">
+					<div id="imgBox"> 
+						<div class="box1"> <!-- 메인 슬라이드 박스  -->
+							<div><a href="${pageContext.request.contextPath }/loginForm"><img src="${pageContext.request.contextPath}/images/maincoupon.jpg" style="z-index:2" title="로그인 페이지로 이동합니다."></a></div>
+							<div><a href="${pageContext.request.contextPath }/customer/eventDetailPage?no=3"><img src="${pageContext.request.contextPath}/images/mainevent1.jpg" style="z-index:1" title="이벤트 상세 페이지로 이동합니다"></a></div>
+							<div><img src="${pageContext.request.contextPath}/images/mainevent2.jpg"></div>
 						</div>
 						<div class="box2 marg">
 							<img src="${pageContext.request.contextPath}/images/japan/deluxroom2.jpg">
