@@ -186,24 +186,7 @@ $(function(){
 		var page = $(this).html();
 		getList(page,"Japan");
 	})
-	/* 지금 바로 예약하기 버튼 */
-	$(".pkgReservBtn").click(function() {
-		var pno = $(this).attr("data-pno");
-		var price = replaceAll($(this).attr("data-price"),",","");
-		if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){			 
-			 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
-			 $.cookie("currentProductPrice2",$.cookie('currentProductPrice'),{expires:1, path:"/"});
-			 $.removeCookie('currentProduct');
-			 $.removeCookie('currentProductPrice');
-			 $.cookie("currentProduct",pno,{expires:1, path:"/"});
-			 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
-		 }else{
-			 $.cookie("currentProduct",pno,{expires:1, path:"/"});
-			 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
-		 }
-		location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
-		
-	})
+
 	/* AJAX 리스트에 동적으로 생성된 '지금 바로 예약하기' 버튼  */
 	$(document).on("click", ".pkgReservBtn", function(){
 		var pno = $(this).attr("data-pno");
