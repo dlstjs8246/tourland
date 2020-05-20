@@ -485,10 +485,11 @@ public class CustomerController {
 	//메인 검색 박스 - 상품 리스트
 	@RequestMapping(value="tourlandProductMainSearchList", method=RequestMethod.GET)
 	public String tourlandProductMainSearchList(Model model,SearchCriteria cri, String tourDays, String to, String capa, String date) throws SQLException {
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
 		if(to.equals("제주")) {
 				List<ProductVO> list = productService.productListPageByDomestic(cri);
-				PageMaker pageMaker = new PageMaker();
-				pageMaker.setCri(cri);
+				
 				pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic());
 				model.addAttribute("list",list);
 				model.addAttribute("pageMaker",pageMaker);
@@ -500,11 +501,32 @@ public class CustomerController {
 				
 				return "/user/product/tourlandProductKRList"; 
 		}else if(to.equals("일본")) {
-			
+				List<ProductVO> list = productService.productListPageByJapan(cri);
+				pageMaker.setTotalCount(productService.totalCountBySearchProductJapan());
+				model.addAttribute("list",list);
+				model.addAttribute("pageMaker",pageMaker);
+				model.addAttribute("cri",cri);
+				model.addAttribute("count",productService.totalCountBySearchProductJapan());
+				model.addAttribute("date",date);
+				model.addAttribute("tourDays",tourDays);
+				model.addAttribute("capa",capa);
+				
+				return "/user/product/tourlandProductJPList";
 		}else { //중국
-		
+				List<ProductVO> list = productService.productListPageByChina(cri);
+				
+				pageMaker.setTotalCount(productService.totalCountBySearchProductChina());
+				model.addAttribute("list",list);
+				model.addAttribute("pageMaker",pageMaker);
+				model.addAttribute("cri",cri);
+				model.addAttribute("count",productService.totalCountBySearchProductChina());
+				model.addAttribute("date",date);
+				model.addAttribute("tourDays",tourDays);
+				model.addAttribute("capa",capa);
+				
+				return "/user/product/tourlandProductChinaList"; 
 		}
-		return  null;
+
 		
 	}
 

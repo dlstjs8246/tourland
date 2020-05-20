@@ -208,6 +208,7 @@ $(function(){
 </script>
 
 <body>
+<!-- 메인 검색 박스에서 검색한 내용을 들고와서 자동 검색 후 페이지 출력 -->
 <c:if test="${tourDays!=null }">
 	<script>
 	$(function(){
