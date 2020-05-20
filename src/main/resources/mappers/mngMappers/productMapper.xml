@@ -286,31 +286,44 @@
 	
 	<!-- 상품 리스트 검색 박스 Ajax "낮은 가격 순" (중국) -->
 	<select id="tourlandProductChinaSearchLowPriceList" resultMap="product">
-	select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
+		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
 	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,4) = '베이징' order by pprice limit #{pageStart}, #{perPageNum}) p 
-								join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0
+		from (select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + tsum) as 'defaultPrice'
+		from (select p2.*,sum(t2.tprice) as 'tsum' from product p2 join ptourstatus t on p2.pno = t.pno join tour t2 on t.tno = t2.no group by p2.pno) p 
+		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no and a2.seat = 'E'
+		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no and h2.roomtype = 'N' and h2.checkin = date(a2.ddate)
+		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pdiv = 0 and substring(p.pname,2,4) = '베이징' group by p.pno order by defaultPrice limit #{pageStart},#{perPageNum}) p  
+		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
+		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
+		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pdiv = 0
 	</select>
 	
 		<!-- 상품 리스트 검색 박스 Ajax "낮은 가격 순" (일본) -->
 	<select id="tourlandProductJapanSearchLowPriceList" resultMap="product"> 
-	select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
+		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
 	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,3) = '도쿄' order by pprice asc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0
+		from (select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + tsum) as 'defaultPrice'
+		from (select p2.*,sum(t2.tprice) as 'tsum' from product p2 join ptourstatus t on p2.pno = t.pno join tour t2 on t.tno = t2.no group by p2.pno) p 
+		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no and a2.seat = 'E'
+		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no and h2.roomtype = 'N' and h2.checkin = date(a2.ddate)
+		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pdiv = 0 and substring(p.pname,2,3) = '도쿄' group by p.pno order by defaultPrice limit #{pageStart},#{perPageNum}) p  
+		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
+		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
+		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pdiv = 0
 	</select>
 		<!-- 상품 리스트 검색 박스 Ajax "낮은 가격 순" (제주) -->
 	<select id="tourlandProductKRSearchLowPriceList" resultMap="product"> 
@@ -319,10 +332,17 @@
 	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,3) = '제주' order by pprice asc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0 
+		from (select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + tsum) as 'defaultPrice'
+		from (select p2.*,sum(t2.tprice) as 'tsum' from product p2 join ptourstatus t on p2.pno = t.pno join tour t2 on t.tno = t2.no group by p2.pno) p 
+		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no and a2.seat = 'E'
+		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no and h2.roomtype = 'N' and h2.checkin = date(a2.ddate)
+		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pdiv = 0 and substring(p.pname,2,3) = '제주' group by p.pno order by defaultPrice limit #{pageStart},#{perPageNum}) p  
+		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
+		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
+		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pdiv = 0
 	</select>
 </mapper>

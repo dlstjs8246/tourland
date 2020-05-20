@@ -44,7 +44,7 @@
 <body>
 	<%@ include file="../../include/userHeader.jsp"%>
 	<script>
-		var price = 0;
+		var price = ${price};
 		var selCapacity = 0;
 		var airCapacity = 0;
 		var hotelCapacity = 0; 
@@ -69,11 +69,9 @@
 				$("#capacity").append(option);
 			}
 			$("#capacity").change(function(){
-				price = 0;
+				price = ${price};
 				selCapacity = Number($(this).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
-				price = Number("${vo.pprice/vo.tour[0].capacity}");
 				price *= selCapacity;
-				price = Math.ceil(price);
 				$("#price").html("<span>"+price.toLocaleString()+"</span>"); 
 			})
 			$(".selAir").change(function(){
@@ -94,8 +92,9 @@
 						airSelect.append(option);	
 					}
 					p.append(airSelect);
+					price += ${(vo.air[0].price + vo.air[1].price) - (vo.air[4].price + vo.air[5].price)};
 					$(this).parent().after(p);
-					$("#price").text(price);
+					$("#price").text(price.toLocaleString());
 					break;
 				case "B":
 					for(var i=1;i<=${vo.air[3].capacity};i++) { 
@@ -103,9 +102,9 @@
 						airSelect.append(option);	
 					}
 					p.append(airSelect);
+					price += ${(vo.air[2].price + vo.air[3].price) - (vo.air[4].price + vo.air[5].price)};
 					$(this).parent().after(p);
-					price += (airDPrice + airRPrice);
-					$("#price").text(price);
+					$("#price").text(price.toLocaleString());
 					break;
 				case "E":
 					for(var i=1;i<=${vo.air[5].capacity};i++) {
@@ -114,7 +113,6 @@
 					}
 					p.append(airSelect);
 					$(this).parent().after(p); 
-					$("#price").text(price); 
 					break;
 				}
 			})
@@ -128,11 +126,8 @@
 					$(this).find("option").eq(0).prop("selected",true);  
 					return false;
 				}
-				var airTotalPrice = ${vo.air[0].price * vo.air[0].capacity};
-				var airPrice = ${vo.air[0].price} * airCapacity;
-				price -= airTotalPrice;
-				price += airPrice;
-				$("#price").text(price);
+				var selOption = $(this).parent().find("select").eq(0).val(); 
+				alert(selOption);
 			})
 			$(".selHotel").change(function(){
 				selCapacity = $("#capacity option:selected").val().substring(0,$("#capacity option:selected").val().length-1);
@@ -182,6 +177,13 @@
 					$(this).find("option").eq(0).prop("selected",true);  
 				}
 			})
+			
+			$(".selAir").eq(0).val("E");
+			$(".selAir").eq(0).change();
+			$(".selHotel").eq(0).val("N");
+			$(".selHotel").eq(0).change();
+			$("#selRentcar").eq(0).val("DS");
+			$(".tourChk").prop("checked",true);
 		})
 	</script>
 		<section>
@@ -293,7 +295,7 @@
 								<p id="selTour">
 								투어옵션<br>
 									<c:forEach var="tour" items="${vo.tour}">
-										<input type="checkbox" name="tourChk" value="${tour.no}"> <span>${tour.tname}</span><br>
+										<input type="checkbox" name="tourChk" value="${tour.no}" class="tourChk"> <span>${tour.tname}</span><br>
 									</c:forEach>
 								</p>
 							</li>

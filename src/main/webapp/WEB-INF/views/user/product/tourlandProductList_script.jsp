@@ -30,6 +30,9 @@ function calPrice(obj) {
 			 price += (obj.price * dateDiffDate.getDate());
 		 } 
 	 }) 
+	 $(obj.tour).each(function(i,obj){
+		 price += obj.tprice;  
+	 })
 	 return price.toLocaleString();
 }
 function appendAjaxData(rs,url,classname) {

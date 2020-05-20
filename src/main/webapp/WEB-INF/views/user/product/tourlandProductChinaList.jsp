@@ -275,9 +275,10 @@ $(function(){
 							<img src="displayFile/product?filename=${product.pic}">
 						</div>
 						<p class="pkgTitle">${product.pname}</p>
-						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
+						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어 : 1번째, 렌터가 : 없음) -->
 						<c:set var="airPrice" value="0"/>
 						<c:set var="hotelPrice" value="0"/>
+						<c:set var="tourPrice" value="${product.tour[0].tprice}"/>
 						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.air)-2}" end="${fn:length(product.air)-1}">
 							<c:set var="airPrice" value="${airPrice+f.price}"/>
 						</c:forEach>
@@ -291,7 +292,7 @@ $(function(){
 							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
 							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
 						</c:forEach>
-						<c:set var="N" value="${airPrice + hotelPrice}"/>
+						<c:set var="N" value="${airPrice + hotelPrice + tourPrice}"/>
 						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
 						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
 						<p class="pkgPrice">${price}원 부터~</p>
