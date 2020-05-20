@@ -100,4 +100,13 @@ public class UserDAOImpl implements UserDAO{
 		return sqlSession.selectOne(namespace+"totalSearchCountPaymentUser",cri);
 	}
 
+	@Override
+	public UserVO readByNameBirthTel(String username, String userbirth, String usertel) throws Exception {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("username", username);
+		map.put("userbirth", userbirth);
+		map.put("usertel", usertel);
+		return sqlSession.selectOne(namespace+"readByNameBirthTel",map);
+	}
+
 }

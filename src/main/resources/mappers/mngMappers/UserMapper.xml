@@ -33,7 +33,6 @@
        where userno=#{userno}
     </update> 
 
-
 <!-- 유저 완전 삭제   -->
    <delete id="deleteUser">
        delete from user 
@@ -74,7 +73,12 @@
 	    <select id="totalSearchCountUser" resultType="int">
 	        select  count(userno) from user
 		    <include refid="search"/>  
-	    
 	    </select>
+	<!--이메일 보내기-->
+	<select id="readByNameBirthTel" resultType="UserVO">
+		select userid,userpass
+		from user
+		where username=#{username} and userbirth=#{userbirth} and usertel=#{usertel};
+	</select>
 
 </mapper>

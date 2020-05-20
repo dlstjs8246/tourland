@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +41,7 @@ import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.BannerVO;
 import com.yi.tourland.domain.mng.CouponVO;
 import com.yi.tourland.domain.mng.CustBoardVO;
+import com.yi.tourland.domain.mng.EmailVO;
 import com.yi.tourland.domain.mng.EmployeeVO;
 import com.yi.tourland.domain.mng.EventVO;
 import com.yi.tourland.domain.mng.FaqVO;
@@ -316,8 +320,38 @@ public class CustomerController {
 	
 	//입력데이터를 받아 아이디와 비밀번호 이메일로 전송하기
 	@RequestMapping(value="tourlandFindIdPw", method=RequestMethod.POST) 
-	public String tourlandFindIdPwPost() throws Exception {
+	public String tourlandFindIdPwPost(EmailVO vo,UserVO userVo,String username,String userbirth, String usertel, String useremail,Model model,HttpSession session) throws Exception {		
+		userVo.setUsername(username);
+		userVo.setUserbirth(userbirth);
+		userVo.setUsertel(usertel);
 		
+		//위의 정보들을 입력받아 DB에 같은 정보의 회원이 있는지 검색
+		UserVO dbUser = userService.readByNameBirthTel(username, userbirth, usertel);
+		if(dbUser==null) {
+			//입력된 정보의 회원이 없을때
+			model.addAttribute("NotInfo", "입력된 정보를 다시 한번 확인해 주세요.");
+			
+			//입력을 잘못하는경우에도 입력값을 남기기 위해 이 코드 만듬
+			model.addAttribute("emailStay", useremail);
+			model.addAttribute("inputStay", userVo);
+			return "/user/tourlandFindIdPw"; 
+		}
+		
+		if(dbUser!=null) {
+			//입력한 정보의 회원이 있는 경우 
+			model.addAttribute("sendMail", username);
+			session.setAttribute("send", "확인");
+		}
+		
+//		MimeMessagePreparator preparator = new MimeMessagePreparator() {
+//			@Override public void prepare(MimeMessage mimeMessage) throws Exception {
+//				final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+//				helper.setFrom("이게뭐야");
+//				helper.setTo("xodnjs1218@naver.com");
+//				helper.setSubject("메일제목");
+//				helper.setText("ㅇㅇㅇ");
+//			}
+//		};
 		
 		return "/user/tourlandLoginForm"; 
 	}

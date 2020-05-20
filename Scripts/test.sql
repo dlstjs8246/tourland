@@ -343,7 +343,7 @@ select * from user;
 
 select userid,userpass
 from user
-where username='황태원', userbirth='1991-12-18', usertel='010-4245-3825';
+where username='황태원' and userbirth='1991-12-18' and usertel='010-4245-3825';
 
 -- 하나 --------------------------------------------------------------------------------------------
 
