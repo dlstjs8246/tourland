@@ -955,22 +955,32 @@ public class CustomerController {
 		return "/user/board/tourlandCustBoard"; 
 	}
 	
-	@RequestMapping(value = "tourlandBoardPassCheck", method = RequestMethod.GET)
-	public String tourlandBoardDetailCheck(int no, SearchCriteria cri, Model model) throws Exception {
-		CustBoardVO vo = custBoardService.readByNoCustBoard(no);
-		
-		PageMaker pageMaker = new PageMaker();
-		pageMaker.setCri(cri);
-		pageMaker.setTotalCount(custBoardService.totalSearchCountCustBoard(cri));
-		
-		
-		model.addAttribute("no",no);
-		model.addAttribute("custBoardVO", vo);
-		model.addAttribute("cri", cri);
-		model.addAttribute("pageMaker", pageMaker);
-		
+	@RequestMapping(value = "tourlandBoardPassCheck/{where}", method = RequestMethod.GET)
+	public String tourlandBoardDetailCheck(@PathVariable("where")String where, int no, SearchCriteria cri, Model model) throws Exception {
+      if(where.contentEquals("custBoard")){
+			CustBoardVO vo = custBoardService.readByNoCustBoard(no);
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(custBoardService.totalSearchCountCustBoard(cri));
+			model.addAttribute("no",no);
+			model.addAttribute("custBoardVO", vo);
+			model.addAttribute("cri", cri);
+			model.addAttribute("pageMaker", pageMaker);
 
-		return "/user/board/tourlandBoardPassCheck";
+		  }
+	  if(where.contentEquals("planBoard")) {
+		 List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(planBoardService.totalSearchCountPlanBoard(cri) < 10 ? 10 : planBoardService.totalSearchCountPlanBoard(cri));
+			model.addAttribute("no",no);
+			model.addAttribute("list", list);
+			model.addAttribute("pageMaker", pageMaker);
+			model.addAttribute("cri", cri); 
+	      }
+	 
+	    model.addAttribute("where",where);
+	 return "/user/board/tourlandBoardPassCheck";
 	}
 	
 	@RequestMapping(value = "tourlandCustBoardDetail", method = RequestMethod.GET)
@@ -1034,7 +1044,7 @@ public class CustomerController {
 	
 	//상품문의사항 상세보기
 	@RequestMapping(value = "tourlandPlanBoardDetail", method = RequestMethod.GET)
-	public String tourlandPlanBoardDetail(PlanBoardVO vo, SearchCriteria cri, Model model) throws Exception {
+	public String tourlandPlanBoardDetail(int no,PlanBoardVO vo, SearchCriteria cri, Model model) throws Exception {
 		vo = planBoardService.readByVoPlanBoard(vo);
 		model.addAttribute("plan", vo);
 		model.addAttribute("cri", cri);
