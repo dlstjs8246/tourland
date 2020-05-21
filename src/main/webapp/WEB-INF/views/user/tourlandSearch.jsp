@@ -516,9 +516,9 @@ div.pkgInfoBox .pkgTitle {
 	 
     	$("#secondSearchIcon").click(function(){
     		var mainKeyword = "${searchkeyword}";
-    		alert(mainKeyword);
+    		//alert(mainKeyword);
             var secondKeyword = $("#secondSearchKeyword").val();
-            alert(secondKeyword);
+            //alert(secondKeyword);
             if(secondKeyword == ""){
             	alert("검색어를 입력해주세요");
             	return false;

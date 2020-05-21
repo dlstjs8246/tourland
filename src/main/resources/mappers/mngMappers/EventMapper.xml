@@ -52,6 +52,9 @@
 			<if test='searchType.equals("")'>
 					<if test='keyword!=null and !keyword.equals("")'>
 						where content like CONCAT('%',#{keyword},'%')
+						<if test='keyword2!=null and !keyword2.equals("")'>
+					        and content like CONCAT('%',#{keyword2},'%')
+				       </if>
 					</if>
 			</if>
 		 </if>
