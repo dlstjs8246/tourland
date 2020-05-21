@@ -13,9 +13,9 @@ import com.yi.tourland.domain.mng.TourVO;
 
 public interface ProductDao {
 	public List<ProductVO> productListPage(SearchCriteria cri) throws SQLException;
-	public List<ProductVO> productListPageByDomestic(Criteria cri) throws SQLException;
-	public List<ProductVO> productListPageByChina(Criteria cri) throws SQLException;
-	public List<ProductVO> productListPageByJapan(Criteria cri) throws SQLException;
+	public List<ProductVO> productListPageByDomestic(SearchCriteria cri) throws SQLException;
+	public List<ProductVO> productListPageByChina(SearchCriteria cri) throws SQLException;
+	public List<ProductVO> productListPageByJapan(SearchCriteria cri) throws SQLException;
 	public ProductVO productByNo(ProductVO vo) throws SQLException;
 	public void insertProduct(ProductVO vo) throws SQLException;
 	public void insertpAirStatus(ProductVO pvo, AirplaneVO avo) throws SQLException;
@@ -33,9 +33,9 @@ public interface ProductDao {
 	public void deletepRentStatus(ProductVO pvo) throws SQLException;
 	public void deleteProduct(ProductVO vo) throws SQLException;
 	public int totalCountBySearchProduct(SearchCriteria cri) throws SQLException;
-	public int totalCountBySearchProductDomestic() throws SQLException;
-	public int totalCountBySearchProductChina() throws SQLException;
-	public int totalCountBySearchProductJapan() throws SQLException;
+	public int totalCountBySearchProductDomestic(SearchCriteria cri) throws SQLException;
+	public int totalCountBySearchProductChina(SearchCriteria cri) throws SQLException;
+	public int totalCountBySearchProductJapan(SearchCriteria cri) throws SQLException;
 	public int totalCountProduct() throws SQLException;
 	// 상품 리스트 검색 박스 Ajax (중국) 
 	public List<ProductVO> tourlandProductChinaSearchList(String ddate, String rdate, String cnt, String tourDays) throws SQLException; 

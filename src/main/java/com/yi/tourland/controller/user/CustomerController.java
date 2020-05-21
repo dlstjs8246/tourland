@@ -479,11 +479,11 @@ public class CustomerController {
 		List<ProductVO> list = productService.productListPageByDomestic(cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
-		pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic());
+		pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic(cri));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
 		model.addAttribute("cri",cri);
-		model.addAttribute("count",productService.totalCountBySearchProductDomestic());
+		model.addAttribute("count",productService.totalCountBySearchProductDomestic(cri));
 		return "/user/product/tourlandProductKRList"; 
 	}
 	//메인 검색 박스 - 상품 리스트
@@ -494,11 +494,11 @@ public class CustomerController {
 		if(to.equals("제주")) {
 				List<ProductVO> list = productService.productListPageByDomestic(cri);
 				
-				pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic());
+				pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic(cri));
 				model.addAttribute("list",list);
 				model.addAttribute("pageMaker",pageMaker);
 				model.addAttribute("cri",cri);
-				model.addAttribute("count",productService.totalCountBySearchProductDomestic());
+				model.addAttribute("count",productService.totalCountBySearchProductDomestic(cri));
 				model.addAttribute("date",date);
 				model.addAttribute("tourDays",tourDays);
 				model.addAttribute("capa",capa);
@@ -506,11 +506,11 @@ public class CustomerController {
 				return "/user/product/tourlandProductKRList"; 
 		}else if(to.equals("일본")) {
 				List<ProductVO> list = productService.productListPageByJapan(cri);
-				pageMaker.setTotalCount(productService.totalCountBySearchProductJapan());
+				pageMaker.setTotalCount(productService.totalCountBySearchProductJapan(cri));
 				model.addAttribute("list",list);
 				model.addAttribute("pageMaker",pageMaker);
 				model.addAttribute("cri",cri);
-				model.addAttribute("count",productService.totalCountBySearchProductJapan());
+				model.addAttribute("count",productService.totalCountBySearchProductJapan(cri));
 				model.addAttribute("date",date);
 				model.addAttribute("tourDays",tourDays);
 				model.addAttribute("capa",capa);
@@ -519,11 +519,11 @@ public class CustomerController {
 		}else { //중국
 				List<ProductVO> list = productService.productListPageByChina(cri);
 				
-				pageMaker.setTotalCount(productService.totalCountBySearchProductChina());
+				pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
 				model.addAttribute("list",list);
 				model.addAttribute("pageMaker",pageMaker);
 				model.addAttribute("cri",cri);
-				model.addAttribute("count",productService.totalCountBySearchProductChina());
+				model.addAttribute("count",productService.totalCountBySearchProductChina(cri));
 				model.addAttribute("date",date);
 				model.addAttribute("tourDays",tourDays);
 				model.addAttribute("capa",capa);
@@ -576,13 +576,13 @@ public class CustomerController {
 			List<ProductVO> list = productService.productListPageByDomestic(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic());
+			pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic(cri));
 			//맵에 넣음 
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("list", list);
 			map.put("pageMaker",pageMaker);
 			map.put("cri",cri);
-			map.put("count",productService.totalCountBySearchProductDomestic());
+			map.put("count",productService.totalCountBySearchProductDomestic(cri));
 			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
 	}catch(Exception e) {
 		e.printStackTrace();
@@ -601,13 +601,13 @@ public class CustomerController {
 			List<ProductVO> list = productService.tourlandProductKRSearchLowPriceList(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic());
+			pageMaker.setTotalCount(productService.totalCountBySearchProductDomestic(cri));
 			//맵에 넣음 
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("list", list);
 			map.put("pageMaker",pageMaker);
 			map.put("cri",cri);
-			map.put("count",productService.totalCountBySearchProductDomestic());
+			map.put("count",productService.totalCountBySearchProductDomestic(cri));
 			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
 	}catch(Exception e) {
 		e.printStackTrace();
@@ -622,11 +622,11 @@ public class CustomerController {
 		List<ProductVO> list = productService.productListPageByJapan(cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
-		pageMaker.setTotalCount(productService.totalCountBySearchProductJapan());
+		pageMaker.setTotalCount(productService.totalCountBySearchProductJapan(cri));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
 		model.addAttribute("cri",cri);
-		model.addAttribute("count",productService.totalCountBySearchProductJapan());
+		model.addAttribute("count",productService.totalCountBySearchProductJapan(cri));
 		return "/user/product/tourlandProductJPList"; 
 	}
 	
@@ -673,13 +673,13 @@ public class CustomerController {
 			List<ProductVO> list = productService.productListPageByJapan(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(productService.totalCountBySearchProductJapan());
+			pageMaker.setTotalCount(productService.totalCountBySearchProductJapan(cri));
 			//맵에 넣음 
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("list", list);
 			map.put("pageMaker",pageMaker);
 			map.put("cri",cri);
-			map.put("count",productService.totalCountBySearchProductJapan());
+			map.put("count",productService.totalCountBySearchProductJapan(cri));
 			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
 	}catch(Exception e) {
 		e.printStackTrace();
@@ -698,13 +698,13 @@ public class CustomerController {
 			List<ProductVO> list = productService.tourlandProductJapanSearchLowPriceList(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(productService.totalCountBySearchProductJapan());
+			pageMaker.setTotalCount(productService.totalCountBySearchProductJapan(cri));
 			//맵에 넣음 
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("list", list);
 			map.put("pageMaker",pageMaker);
 			map.put("cri",cri);
-			map.put("count",productService.totalCountBySearchProductDomestic());
+			map.put("count",productService.totalCountBySearchProductDomestic(cri));
 			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
 	}catch(Exception e) {
 		e.printStackTrace();
@@ -719,11 +719,11 @@ public class CustomerController {
 			List<ProductVO> list = productService.productListPageByChina(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(productService.totalCountBySearchProductChina());
+			pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
 			model.addAttribute("list",list);
 			model.addAttribute("pageMaker",pageMaker);
 			model.addAttribute("cri",cri);
-			model.addAttribute("count",productService.totalCountBySearchProductChina());
+			model.addAttribute("count",productService.totalCountBySearchProductChina(cri));
 			return "/user/product/tourlandProductChinaList"; 
 	}
 	//상품 리스트 검색  ajax (중국 패키지) 
@@ -768,13 +768,13 @@ public class CustomerController {
 				List<ProductVO> list = productService.productListPageByChina(cri);
 				PageMaker pageMaker = new PageMaker();
 				pageMaker.setCri(cri);
-				pageMaker.setTotalCount(productService.totalCountBySearchProductChina());
+				pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
 				//맵에 넣음 
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("list", list);
 				map.put("pageMaker",pageMaker);
 				map.put("cri",cri);
-				map.put("count",productService.totalCountBySearchProductChina());
+				map.put("count",productService.totalCountBySearchProductChina(cri));
 				entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -793,13 +793,13 @@ public class CustomerController {
 				List<ProductVO> list = productService.tourlandProductChinaSearchLowPriceList(cri);
 				PageMaker pageMaker = new PageMaker();
 				pageMaker.setCri(cri);
-				pageMaker.setTotalCount(productService.totalCountBySearchProductChina());
+				pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
 				//맵에 넣음 
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("list", list);
 				map.put("pageMaker",pageMaker);
 				map.put("cri",cri);
-				map.put("count",productService.totalCountBySearchProductChina());
+				map.put("count",productService.totalCountBySearchProductChina(cri));
 				entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -1040,6 +1040,82 @@ public class CustomerController {
 	@RequestMapping(value="tourlandAdvertising", method=RequestMethod.GET)
 	public String tourlandAdvertising() { 
 		return "/user/footer/tourlandAdvertising"; 
+	}
+	
+	//검색
+	@RequestMapping(value="tourlandSearch", method=RequestMethod.GET)
+	public String tourlandSearch(SearchCriteria cri, Model model) throws Exception { 
+		System.out.println(cri.getSearchType());
+		System.out.println(cri.getKeyword());
+		cri.setPerPageNum(3); //보기쉬우라고 일단3
+		//중국리스트
+		List<ProductVO> chinalist = productService.productListPageByChina(cri);
+		for(ProductVO vo : chinalist) {
+			System.out.println(vo);
+		}
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
+		model.addAttribute("chinalist",chinalist);
+		int chinalistCount = productService.totalCountBySearchProductChina(cri);
+		model.addAttribute("chinalistCount",chinalistCount);
+		
+		model.addAttribute("chinapageMaker",pageMaker);
+		model.addAttribute("chinacri",cri);
+		model.addAttribute("chinacount",productService.totalCountBySearchProductChina(cri));
+		
+		//일본리스트
+		List<ProductVO> japanlist = productService.productListPageByJapan(cri);
+		PageMaker pageMaker2 = new PageMaker();
+		pageMaker2.setCri(cri);
+		pageMaker2.setTotalCount(productService.totalCountBySearchProductJapan(cri));
+		int japanlistCount = productService.totalCountBySearchProductJapan(cri);
+	    model.addAttribute("japanlistCount",japanlistCount);
+		model.addAttribute("japanlist",japanlist);
+		
+		model.addAttribute("japanpageMaker",pageMaker2);
+		model.addAttribute("japancri",cri);
+		model.addAttribute("japancount",productService.totalCountBySearchProductJapan(cri));
+		
+        //한국리스트
+		List<ProductVO> jejulist = productService.productListPageByDomestic(cri);
+		PageMaker pageMaker3 = new PageMaker();
+		pageMaker3.setCri(cri);
+		pageMaker3.setTotalCount(productService.totalCountBySearchProductDomestic(cri));
+		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
+	    model.addAttribute("jejulistCount",jejulistCount);
+		model.addAttribute("jejulist",jejulist);
+		model.addAttribute("jejupageMaker",pageMaker3);
+		model.addAttribute("jejucri",cri);
+		model.addAttribute("jejucount",productService.totalCountBySearchProductDomestic(cri));
+		
+		
+		
+		//FAQ리스트
+		List<FaqVO> faqlist = faqService.listPage(cri);
+		model.addAttribute("faqlist", faqlist);
+		int faqlistCount = faqlist.size();
+	    model.addAttribute("faqlistCount",faqlistCount);
+	
+	    //이벤트리스트
+		List<EventVO> eventlist = eventService.listSearchCriteriaEvent(cri);
+		model.addAttribute("eventList",eventlist);
+		int eventlistCount = eventlist.size();
+	    model.addAttribute("eventlistCount",eventlistCount);
+		
+		//총 숫자
+		int totalCount = chinalistCount+japanlistCount+faqlistCount+eventlistCount+jejulistCount;
+		model.addAttribute("totalSearchCount",totalCount);
+	    //여행 상품에서 검색 된 숫자
+		int totalProductCount = chinalistCount+japanlistCount+jejulistCount;
+		model.addAttribute("totalProductCount",totalProductCount);
+		
+		System.out.println("중국"+chinalistCount);
+		System.out.println("일본"+japanlistCount);
+		System.out.println("한국"+jejulistCount);
+		System.out.println("faq"+faqlistCount);
+		System.out.println("이벤트"+eventlistCount);
+		return "/user/tourlandSearch"; 
 	}
 
 }
