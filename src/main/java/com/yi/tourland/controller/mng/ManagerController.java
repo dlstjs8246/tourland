@@ -1634,7 +1634,6 @@ public class ManagerController {
 	}
 
 	// 디테일 페이지이자 폼에서 업데이트를 하는 경우
-	@RequestMapping(value = "bannerUpdate", method = RequestMethod.POST)
 	public String bannerUpdate(BannerVO vo, MultipartFile bannerPic, Model model) throws Exception {
 
 		if (bannerPic.getBytes().length != 0) { // 새로 첨부한 파일이 있다면
@@ -1818,17 +1817,39 @@ public class ManagerController {
 
 	// 쿠폰관리
 	@RequestMapping(value = "couponMngList", method = RequestMethod.GET)
-	public String couponMngList(SearchCriteria cri, Model model) throws Exception {
+	public String couponMngList(SearchCriteria cri, Model model, String addCouponToUser) throws Exception {
 		List<CouponVO> couponList = couponService.couponList(cri);
+		//포맷 
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		//오늘 날짜 생성
+		Date date = new Date();
+		//형식 변경
+		String today = dateFormat.format(date);
+		
+		List<CouponVO> available = new ArrayList<>(); //아직 만료되지 않은 쿠폰
+		List<CouponVO> expired= new ArrayList<>(); // 만료된 쿠폰
+		
+		for(int i=0; i<couponList.size(); i++) {
+			//오늘 날짜와 해당 고객의 쿠폰의 만료일을 하나씩 비교 후 만료되었을 때 각 리스트에 넣기 
+			long rs = date.getTime() - couponList.get(i).getEdate().getTime(); 
+			if(rs >= 0) {//만료된거
+				expired.add(couponList.get(i));
+			}else {//만료 안된 거 
+				available.add(couponList.get(i));
+			}
+		}  
+		model.addAttribute("expired", expired);
+		model.addAttribute("available", available);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(couponService.totalCountNotice(cri));
 		model.addAttribute("couponList", couponList);
 		model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("cri", cri);
+		model.addAttribute("addCouponToUser", addCouponToUser);
 		return "/manager/coupon/couponMngList";
 	}
-	//쿠폰 추가
+	//쿠폰 추가 GET
 		@RequestMapping(value="addCouponForm", method=RequestMethod.GET)
 		public String addCouponForm(Model model) throws Exception{
 			SearchCriteria cri = new SearchCriteria();
@@ -1837,20 +1858,67 @@ public class ManagerController {
 			model.addAttribute("totalCnt", totalCnt);
 			return "/manager/coupon/addCouponForm";
 		}
-	//쿠폰 추가
+	//쿠폰 추가 POST
 	@RequestMapping(value="addCouponForm", method=RequestMethod.POST)
 	public String addCouponResult(CouponVO coupon,Model model) throws Exception{
-
-		System.out.println(coupon);
 
 		couponService.addCoupon(coupon);
 		return "redirect:/couponMngList";
 	}
 	
+	//쿠폰 지급 GET
+	@RequestMapping(value="addCouponToUserForm", method=RequestMethod.GET)
+	public String addCouponToUserForm(SearchCriteria cri,Model model, String hasCoupon) throws Exception{
+			List<CouponVO> couponList = couponService.couponList(cri);
+			List<UserVO> userList = userService.listCriteriaUser(cri, 0);
+			
+		
+			//포맷 
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				//오늘 날짜 생성
+				Date date = new Date();
+				//형식 변경
+				String today = dateFormat.format(date);
+				
+				List<CouponVO> available = new ArrayList<>(); //아직 만료되지 않은 쿠폰
+				
+				for(int i=0; i<couponList.size(); i++) {
+					//오늘 날짜와 해당 고객의 쿠폰의 만료일을 하나씩 비교 후 만료안 된 것만 넣기
+					long rs = date.getTime() - couponList.get(i).getEdate().getTime(); 
+					if(rs < 0) {
+						available.add(couponList.get(i));
+					}
+				}  
+				model.addAttribute("available", available);
+				model.addAttribute("userList", userList);
+				model.addAttribute("hasCoupon", hasCoupon);
+				return "/manager/coupon/addCouponToUserForm";
+			}
+	//쿠폰 지급 POST
+	@RequestMapping(value="addCouponToUserForm", method=RequestMethod.POST)
+	public ModelAndView addCouponToUserResult(CouponVO c, UserVO u,Model model,SearchCriteria cri) throws Exception{
+		//선택한 고객과 쿠폰 가져옴
+		//해당 고객이 쿠폰을 가지고 있는지 확인
+		List<Integer> list = couponService.userHasACouponOrNot(c.getCno(), u.getUserno());
+		//가지고 있으면 반려
+		if(list.size()>0) {
+			
+			model.addAttribute("hasCoupon", "hasCoupon");
+			return new ModelAndView(new RedirectView("addCouponToUserForm", true));
+		}
+		//안 가지고 있으면 insert 후 리스트로 돌아가기
+		else {
+			couponService.addCouponToUser(u.getUserno(), c.getCno());
+			model.addAttribute("addCouponToUser", "addCouponToUser");
+			return new ModelAndView(new RedirectView("couponMngList", true));
+		}
+	}
 	//쿠폰 상세페이지
 		@RequestMapping(value="couponDetail", method=RequestMethod.GET)
-		public String couponDetail(int cno,SearchCriteria cri, Model model) throws Exception{
+		public String couponDetail(int cno,SearchCriteria cri, Model model, String expired) throws Exception{
 			CouponVO coupon = couponService.readCouponByNo(cno);
+			System.out.println(expired);
+			model.addAttribute("expired",expired);
 			model.addAttribute("coupon", coupon);
 			model.addAttribute("pdate", coupon.getPdate());
 			model.addAttribute("edate", coupon.getEdate());
