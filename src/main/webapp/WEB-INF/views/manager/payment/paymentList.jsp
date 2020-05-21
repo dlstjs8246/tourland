@@ -301,7 +301,6 @@ h4 {
 				location.href = "listPage?searchType=" + searchType
 						+ "&keyword=" + keyword;
 				//searchBoardController의 listPage GET 으로 받음 
-
 			})
 
 	$("#btnRegister").click(function() {

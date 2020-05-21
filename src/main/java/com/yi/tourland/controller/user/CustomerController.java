@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Resource;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,8 +24,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +48,6 @@ import com.yi.tourland.domain.mng.PlanBoardVO;
 import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.UserVO;
-import com.yi.tourland.persistance.mng.daoimpl.EmailServiceImpl;
 import com.yi.tourland.service.mng.BannerService;
 import com.yi.tourland.service.mng.CouponService;
 import com.yi.tourland.service.mng.CustBoardService;
@@ -128,7 +125,7 @@ public class CustomerController {
 	PlanBoardService planBoardService;
 	
 	@Autowired
-	EmailServiceImpl sendEmail;
+	private EmailVO emailVo;
 	
 
 		
@@ -318,76 +315,64 @@ public class CustomerController {
 		return "/user/tourlandFindIdPw"; 
 	}
 	
-	//입력데이터를 받아 아이디와 비밀번호 이메일로 전송하기
+	//입력데이터를 받아 아이디와 비밀번호 이메일로 전송할때 입력데이터에 만족하는 회원이 있는지 거르는 post문
 	@RequestMapping(value="tourlandFindIdPw", method=RequestMethod.POST) 
-	public String tourlandFindIdPwPost(EmailVO vo,UserVO userVo,String username,String userbirth, String usertel, String useremail,Model model,HttpSession session) throws Exception {		
+	public String tourlandFindIdPwPost(UserVO userVo,String username,String userbirth, String usertel, String useremail,Model model,HttpSession session) throws Exception {		
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String sDate = sdf.format(now);
+		
 		userVo.setUsername(username);
 		userVo.setUserbirth(userbirth);
 		userVo.setUsertel(usertel);
-		
 		//위의 정보들을 입력받아 DB에 같은 정보의 회원이 있는지 검색
 		UserVO dbUser = userService.readByNameBirthTel(username, userbirth, usertel);
+		//입력된 정보의 회원이 없을때
 		if(dbUser==null) {
-			//입력된 정보의 회원이 없을때
 			model.addAttribute("NotInfo", "입력된 정보를 다시 한번 확인해 주세요.");
-			
-			//입력을 잘못하는경우에도 입력값을 남기기 위해 이 코드 만듬
+			//입력을 잘못하는경우 입력값을 남겨두기 위해 이 코드 만듬  //useremail은 원래 있던 컬럼이 아님
 			model.addAttribute("emailStay", useremail);
 			model.addAttribute("inputStay", userVo);
 			return "/user/tourlandFindIdPw"; 
 		}
-		
-		if(dbUser!=null) {
-			//입력한 정보의 회원이 있는 경우 
-			model.addAttribute("sendMail", username);
-			session.setAttribute("send", "확인");
+	
+		//임시비밀번호 생성하기 
+		Random rnd = new Random();
+		StringBuffer buf = new StringBuffer();
+		for(int i=0; i<8; i++) {
+			if(rnd.nextBoolean()) { //true와 false를 랜덤하게 뽑음
+				buf.append((char)((int)(rnd.nextInt(26))+97));
+			}else { //true면 문자를 false면 숫자를 뽑는다
+				buf.append((rnd.nextInt(10)));
+			}
 		}
-		
-//		MimeMessagePreparator preparator = new MimeMessagePreparator() {
-//			@Override public void prepare(MimeMessage mimeMessage) throws Exception {
-//				final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-//				helper.setFrom("이게뭐야");
-//				helper.setTo("xodnjs1218@naver.com");
-//				helper.setSubject("메일제목");
-//				helper.setText("ㅇㅇㅇ");
-//			}
-//		};
-		
-		return "/user/tourlandLoginForm"; 
+		//생성된 임시비밀번호 넣어서 메일 보내기 첫번째부터 받는사람 메일주소, 받는사람의 이름 ,일시, db에있는 받는사람의 아이디, 임시비밀번호
+		try {
+			emailVo.sendMail(useremail, "[ "+username+" ] 님"+" 아이디와 비밀번호 안내 메일입니다.",
+							"변경일시 : " + sDate +"\n"+
+							"\n변경방법 : 아이디/패스워드 찾기를 통한 임시 비밀번호 발급" +"\n"+
+							"\n아이디 : " +" [ "+ dbUser.getUserid()+" ] "+"\n"+
+							"\n임시 비밀번호 : "+" [ "+ buf + " ] " +"\n"+
+							"\n 임시 비밀번호로 로그인 후 비밀번호 변경 해 주시길 바랍니다.");
+			
+			//임시비밀번호로 수정
+			dbUser.setUserpass(buf.toString());
+			userService.updateUser(dbUser);
+			model.addAttribute("success", "메일이 전송되었습니다.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "FAIL";			
+		}	
+		return "/user/tourlandFindIdPw";
 	}
-	
-	
-	
+
 	//마이페이지의 비밀번호 확인
 	@RequestMapping(value="EditPassword", method=RequestMethod.GET) 
 	public String tourlandEditPassword() throws Exception { 
 		return "/user/mypage/tourlandMyInfoEditPassword"; 
 	}
-	
-//	@RequestMapping(value="EditPassword", method=RequestMethod.POST) 
-//	public String EditPasswordCheck(String checkPass, UserVO userVO, EmployeeVO empVO, Model model) throws Exception { 
-//		
-//		UserVO dbUserId = userService.readByIdUser(userVO.getUserid());
-//
-//		EmployeeVO dbEmpId = employeeService.readByIdEmployee(empVO.getEmpid());
-//		
-//		System.out.println(dbUserId);
-//		System.out.println(dbUserId.getUserpass());
-//		System.out.println(checkPass);
-//		if(dbEmpId !=null) {
-//			if(dbEmpId.getEmppass().equals(checkPass)==false) {
-//				model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
-//			}
-//		}
-//		if(dbUserId!=null) {
-//			if(dbUserId.getUserpass().equals(checkPass)==false){
-//				model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
-//			}
-//		}
-//		return "redirect:/tourlandMyInfoEdit";
-//	}
-	
-	//비밀번호 확인 되었을때 나타나는곳 현서때문에 이렇게 함
+
+	//비밀번호 확인 되었을때 나타나는곳
 	@ResponseBody
 	@RequestMapping(value = "EditPasswordCheck/{totalId}/{checkPass}", method = RequestMethod.GET)
 	public ResponseEntity<String> EditPasswordCheck(@PathVariable("totalId") String totalId,@PathVariable("checkPass") String checkPass,Model model) {

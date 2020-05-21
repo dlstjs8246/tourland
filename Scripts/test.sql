@@ -374,7 +374,7 @@ useraddr='대구시 북구 태전동 254-30', userpassport=NULL, userpass='*94BD
 where userno=6 
 
 select * from user;
-
+select * from employee;
 select userid,userpass
 from user
 where username='황태원' and userbirth='1991-12-18' and usertel='010-4245-3825';

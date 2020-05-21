@@ -47,22 +47,12 @@
 	<context:component-scan
 		base-package="com.yi.tourland.service" />
 		
-<!--이메일보내기-->
-	<bean id="mailSender" class = "org.springframework.mail.javamail.JavaMailSenderImpl">
-      <property name="host" value="smtp.naver.com" />
-      <property name="port" value="587" />
-      <property name="username" value="xodnjs1218" />
-      <property name="password" value="rydbrdnjs12" />
-      <property name="javaMailProperties">
-         <props>
-               <prop key="mail.transport.protocol">smtp</prop>
-               <prop key="mail.smtp.auth">true</prop>
-               <prop key="mail.smtp.starttls.enable">true</prop>
-               <prop key="mail.debug">true</prop>
-               <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
-         </props>
-      </property>
-   </bean>	
 		
-
+<!--이메일보내기-->
+   	<bean id='EmailVO' class="com.yi.tourland.domain.mng.EmailVO">
+		<property name="host" value="smtp.naver.com" />
+		<property name="password" value="rydbrdnjs12" />
+		<property name="tail" value='@naver.com'/>
+		<property name="user" value='xodnjs1218'/>
+	</bean> 
 </beans>
