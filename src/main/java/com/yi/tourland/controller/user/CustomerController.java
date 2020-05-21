@@ -1079,14 +1079,13 @@ public class CustomerController {
 	//검색
 	@RequestMapping(value="tourlandSearch", method=RequestMethod.GET)
 	public String tourlandSearch(SearchCriteria cri, Model model) throws Exception { 
-		System.out.println(cri.getSearchType());
-		System.out.println(cri.getKeyword());
+        model.addAttribute("searchkeyword",cri.getKeyword());
+        if(cri.getKeyword2() != null) {
+        	model.addAttribute("searchkeyword2",cri.getKeyword2());	
+        }
 		cri.setPerPageNum(3); //보기쉬우라고 일단3
 		//중국리스트
 		List<ProductVO> chinalist = productService.productListPageByChina(cri);
-		for(ProductVO vo : chinalist) {
-			System.out.println(vo);
-		}
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
@@ -1143,12 +1142,7 @@ public class CustomerController {
 	    //여행 상품에서 검색 된 숫자
 		int totalProductCount = chinalistCount+japanlistCount+jejulistCount;
 		model.addAttribute("totalProductCount",totalProductCount);
-		
-		System.out.println("중국"+chinalistCount);
-		System.out.println("일본"+japanlistCount);
-		System.out.println("한국"+jejulistCount);
-		System.out.println("faq"+faqlistCount);
-		System.out.println("이벤트"+eventlistCount);
+	
 		return "/user/tourlandSearch"; 
 	}
 
