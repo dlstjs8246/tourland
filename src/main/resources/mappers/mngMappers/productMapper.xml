@@ -102,6 +102,10 @@
 		<if test='searchType.equals("")'>
 				<if test='keyword!=null and !keyword.equals("")'>
 					and pname like CONCAT('%',#{keyword},'%')
+					
+					<if test='keyword2!=null and !keyword2.equals("")'>
+					and pname like CONCAT('%',#{keyword2},'%')
+				    </if>
 				</if>
 		</if>
 		</if>

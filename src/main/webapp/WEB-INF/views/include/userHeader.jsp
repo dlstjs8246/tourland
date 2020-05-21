@@ -118,7 +118,12 @@
 							<h1><a href="${pageContext.request.contextPath }/customer/tourlandMain">투어 랜드</a></h1>    
 						</div>
 						<div id="search">
-							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword"><i class="fas fa-search" id="mainSearchIcon"></i>
+						    <c:if test="${searchkeyword !=null }">
+							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword" value="${searchkeyword }"><i class="fas fa-search" id="mainSearchIcon"></i>
+							</c:if>
+							<c:if test="${searchkeyword ==null }">
+							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword"><i class="fas fa-search" id="mainSearchIcon" style="margin-left:5px;"></i>
+							</c:if>
 							<!-- <button>찾기</button> -->
 						</div>
 					</div>
@@ -134,10 +139,7 @@
 			</header>
 			
 <script>
-    //mainSearchKeyword
-    //mainSearchIcon
-    //<a href="${pageContext.request.contextPath }/customer/tourlandSearch">
-    
+
     $(function(){
     	$("#mainSearchIcon").click(function(){
             var mainKeyword = $("#mainSearchKeyword").val();
