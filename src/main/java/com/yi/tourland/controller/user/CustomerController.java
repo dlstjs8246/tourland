@@ -852,11 +852,11 @@ public class CustomerController {
 	}
 	//상품 리뷰    
 	@RequestMapping(value="tourlandProductReview", method=RequestMethod.GET)
-	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model) throws SQLException {
-		
-		  vo = productService.productByNo(vo); model.addAttribute("cri",cri);
+	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model,int price) throws SQLException {
+		  vo = productService.productByNo(vo); 
+		  model.addAttribute("cri",cri);
 		  model.addAttribute("vo",vo);
-		 
+		  model.addAttribute("price",price);
 		return "/user/product/tourlandProductReview"; 
 	}
 	

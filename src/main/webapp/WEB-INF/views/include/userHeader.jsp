@@ -91,27 +91,25 @@
 <header>
 			<nav id="nav1">
 				<ul>
-				<c:if test="${User == null && Manager==null}">
+				<c:if test="${Auth==null}">
 					<li><a href="${pageContext.request.contextPath }/customer/tourlandBoardNotice">고객센터</a></li>
 					<li><a href="${pageContext.request.contextPath }/customer/tourlandRegister">회원가입</a></li>
 					<li><a href="${pageContext.request.contextPath }/loginForm" class="balance">로그인</a></li>
 				</c:if>
-				<c:if test="${Manager!=null }">
-						<li><a href="${pageContext.request.contextPath}/logout" class="balance">로그아웃</a></li>
-						<li><a href="${pageContext.request.contextPath}/customer/tourlandBoardNotice">고객센터</a></li>
-						<li><a href="${pageContext.request.contextPath }/customer/EditPassword">마이페이지</a></li>
+				<c:if test="${Auth!=null}">
+					<li><a href="${pageContext.request.contextPath}/logout" class="balance">로그아웃</a></li>
+					<li><a href="${pageContext.request.contextPath}/customer/tourlandBoardNotice">고객센터</a></li>
+					<li><a href="${pageContext.request.contextPath }/customer/EditPassword">마이페이지</a></li>
+					<c:if test="${login=='user'}">
+						<p id="userAuth">[ ${User} ]님! 반갑습니다.</p>
+					</c:if>
+					<c:if test="${login=='manager' && Manager.right==1}">
 						<li id="manager" style="margin-left: -15px;"><a href="${pageContext.request.contextPath }/manager/empMngList/0">관리자</a></li>
 						<p id="managerAuth">[ ${Manager.name} ]님! 반갑습니다.</p>
-				</c:if>
-				<c:if test="${User!=null }">
-						<li><a href="${pageContext.request.contextPath}/logout" class="balance">로그아웃</a></li>
-						<li><a href="${pageContext.request.contextPath}/customer/tourlandBoardNotice">고객센터</a></li>
-						<li><a href="${pageContext.request.contextPath }/customer/EditPassword">마이페이지</a></li>
-						<p id="userAuth">[ ${User} ]님! 반갑습니다.</p>
+					</c:if>
 				</c:if>
 				</ul>
 			</nav>
-			
 					<div id="main">
 						<div id="reward">
 							<a href="${pageContext.request.contextPath }/customer/tourlandEventList/ingEvent"><img src="${pageContext.request.contextPath }/resources/images/reward.png"></a>

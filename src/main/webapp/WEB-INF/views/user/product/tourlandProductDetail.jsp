@@ -44,16 +44,67 @@
 <body>
 	<%@ include file="../../include/userHeader.jsp"%>
 	<script>
-		var price = ${price};
-		var selCapacity = 0;
-		var airCapacity = 0;
-		var hotelCapacity = 0; 
-		var tourCapacity = 0;
-		var rentcarCapacity = 0;
-		var airTotalPrice  = 0;
-		var hotelTotalPrice = 0;
-		var tourTotalPrice = 0;
-		var rentTotalPrice = 0;
+		var price = 0; 
+		var bookCapacity = 0;
+		function calDateDiff(checkin,checkout) {
+			checkinArr = checkin.split(" ");
+			checkoutArr = checkout.split(" ");
+			checkin = checkinArr[1]+" "+checkinArr[2]+", "+checkinArr[5]+" "+checkinArr[3]; 
+			checkout = checkoutArr[1]+" "+checkoutArr[2]+", "+checkoutArr[5]+" "+checkoutArr[3]; 
+			var checkinDate = new Date(Date.parse(checkin));
+			var checkoutDate = new Date(Date.parse(checkout));  
+			var date = new Date();
+			date.setDate(checkoutDate.getDate() - checkinDate.getDate());
+			return date.getDate();
+		}
+		function calPrice() {
+			price = 0;
+			bookCapacity = Number($("#capacity option:selected").val().substring(0,$("#capacity option:selected").val().indexOf("명")));
+			$(".selAir").each(function(i,obj){
+				switch($(obj).find("option:selected").val()) {
+				case "F":
+					var airprice = ${vo.air[0].price} * 2;
+					price += airprice;
+					break;
+				case "B":
+					var airprice = ${vo.air[2].price} * 2;
+					price += airprice;
+					break;
+				case "E":
+					var airprice = ${vo.air[4].price} * 2;
+					price += airprice;
+					break;
+				}
+			})
+			$(".selHotel").each(function(i,obj){
+				switch($(obj).find("option:selected").val()) {
+				case "S":
+					var hotelPrice = ${vo.hotel[0].price};
+					var dateDiff = Number(calDateDiff("${vo.hotel[0].checkin}","${vo.hotel[0].checkout}"));
+					price += (hotelPrice * dateDiff);
+					break;
+				case "D":
+					var hotelPrice = ${vo.hotel[1].price};
+					var dateDiff = Number(calDateDiff("${vo.hotel[1].checkin}","${vo.hotel[1].checkout}"));
+					price += (hotelPrice * dateDiff);
+					break;
+				case "N":
+					var hotelPrice = ${vo.hotel[2].price};
+					var dateDiff = Number(calDateDiff("${vo.hotel[2].checkin}","${vo.hotel[2].checkout}"));
+					price += (hotelPrice * dateDiff);
+					break;
+				}
+			})
+			$(".selTour:checked").each(function(i,obj){
+				var tourprice = Number($(this).attr("data-price"));
+				price += tourprice; 
+			})
+			if($("#selRentcar option:selected").val()=='S') {
+				price += Math.ceil(${vo.rentcar[0].price}/45); 
+			}
+			var totalPrice = price * bookCapacity; 
+			$("#price").text(totalPrice.toLocaleString());
+		}
 		function replaceAll(str, searchStr, replaceStr) {
 		   return str.split(searchStr).join(replaceStr);
 		}
@@ -62,27 +113,31 @@
 				$(this).find("img").attr("src",$("#proDetail img").eq(i).attr("src"));
 			})
 			$("#review").click(function() {
-				location.href = "tourlandProductReview?pno=${vo.pno}";
+				location.href = "tourlandProductReview?pno=${vo.pno}&price=${price}";
 			})
 			for(var i=1;i<=45;i++) {
 				var option = $("<option>").html(i+"명");
 				$("#capacity").append(option);
 			}
 			$("#capacity").change(function(){
-				price = ${price};
-				selCapacity = Number($(this).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
-				price *= selCapacity;
-				$("#price").html("<span>"+price.toLocaleString()+"</span>"); 
+				$(".selAir").val("");
+				$(".selAir").eq(0).val("E");
+				$(".selAir").change();
+				$(".selHotel").val("");
+				$(".selHotel").eq(0).val("N");
+				$(".selHotel").change();
+				$(".selTour").prop("checked",true);
+				$("#selRentcar").eq(0).val("DS"); 
+				calPrice();
 			})
 			$(".selAir").change(function(){
-				selCapacity = $("#capacity option:selected").val().substring(0,$("#capacity option:selected").val().length-1);
-				$(this).parent().next().remove();
 				if($(".selAir").eq(0).find("option:selected").val()=="" && ($(".selAir").index($(this))==1 || $(".selAir").index($(this))==2)) {
 					alert("항공옵션1을 먼저 채워주세요"); 
 					$(this).find("option").eq(0).prop("selected",true);
 					return false;
 				}
-				var selOption = $(this).find("option:selected").val();
+				var selOption = $(this).find("option:selected").val()
+				$(this).parent().next().remove();
 				var airSelect = $("<select class='airSelect'>").html(" ");
 				var p = $("<p>").html("탑승인원 ");
 				switch(selOption) {
@@ -92,9 +147,7 @@
 						airSelect.append(option);	
 					}
 					p.append(airSelect);
-					price += ${(vo.air[0].price + vo.air[1].price) - (vo.air[4].price + vo.air[5].price)};
 					$(this).parent().after(p);
-					$("#price").text(price.toLocaleString());
 					break;
 				case "B":
 					for(var i=1;i<=${vo.air[3].capacity};i++) { 
@@ -102,9 +155,7 @@
 						airSelect.append(option);	
 					}
 					p.append(airSelect);
-					price += ${(vo.air[2].price + vo.air[3].price) - (vo.air[4].price + vo.air[5].price)};
 					$(this).parent().after(p);
-					$("#price").text(price.toLocaleString());
 					break;
 				case "E":
 					for(var i=1;i<=${vo.air[5].capacity};i++) {
@@ -115,22 +166,21 @@
 					$(this).parent().after(p); 
 					break;
 				}
+				calPrice();
 			})
 			$(document).on("change",".airSelect",function(){
-				airCapacity = 0;
+				var airCapacity = 0;
 				$(".airSelect").each(function(i,obj){
 					airCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
 				})
-				if(selCapacity<airCapacity) {
+				if(bookCapacity<airCapacity) {
 					alert("현재 예약인원보다 항공기 탑승인원이 더 많을 수 없습니다");
 					$(this).find("option").eq(0).prop("selected",true);  
 					return false;
 				}
-				var selOption = $(this).parent().find("select").eq(0).val(); 
-				alert(selOption);
+				calPrice();
 			})
 			$(".selHotel").change(function(){
-				selCapacity = $("#capacity option:selected").val().substring(0,$("#capacity option:selected").val().length-1);
 				$(this).parent().next().remove();
 				if($(".selHotel").eq(0).find("option:selected").val()=="" && ($(".selHotel").index($(this))==1 || $(".selHotel").index($(this))==2)) {
 					alert("호텔옵션1을 먼저 채워주세요"); 
@@ -166,24 +216,62 @@
 					$(this).parent().after(p); 
 					break;
 				}
+				calPrice();
 			})
 			$(document).on("change",".hotelSelect",function(){
-				hotelCapacity = 0;
+				var hotelCapacity = 0;
 				$(".hotelSelect").each(function(i,obj){
 					hotelCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
 				})
-				if(selCapacity<hotelCapacity) {
+				if(bookCapacity<hotelCapacity) {
 					alert("현재 예약인원보다 호텔 투숙 인원이 더 많을 수 없습니다");
 					$(this).find("option").eq(0).prop("selected",true);  
 				}
+				calPrice();
 			})
-			
+			$(".selTour").change(function(){
+				calPrice();
+			})
+			$("#selRentcar").change(function(){
+				calPrice();
+			})
 			$(".selAir").eq(0).val("E");
 			$(".selAir").eq(0).change();
 			$(".selHotel").eq(0).val("N");
 			$(".selHotel").eq(0).change();
+			$(".selTour").prop("checked",true);
 			$("#selRentcar").eq(0).val("DS");
-			$(".tourChk").prop("checked",true);
+			calPrice();
+			$("#doReserv").click(function(){
+				if(${Auth==null}) {
+					alert("로그인부터 먼저해주세요");
+					location.href = "${pageContext.request.contextPath}/loginForm";
+					return false;
+				}
+				
+			})
+			$("#doWish").click(function(){
+				var pno = $("#pno").text().substring($("#pno").text().indexOf("P"),$("#pno").text().length);
+				var price = replaceAll($("#price").text(),",","");
+				var ano;
+				var hno;
+				var tno;
+				var rno;
+				if(${Auth==null}) {
+					alert("로그인부터 먼저해주세요");
+					location.href = "${pageContext.request.contextPath}/loginForm";
+					return false;
+				}
+				$.ajax({
+					url = "tourlandProductDetail/cart",
+					method = "get",
+					data = 
+					dataType = "json",
+					success : function(res) {
+						alert(res);
+					}
+				})
+			})
 		})
 	</script>
 		<section>
@@ -261,9 +349,9 @@
 									항공기옵션1
 									<select class="selAir">
 										<option value="">선택</option>
-										<option value="F">First-Class</option>
-										<option value="B">Business</option>
-										<option value="E">Economy</option>   
+										<option value="F" data-dano="${vo.air[0].no}" data-rano="${vo.air[1].no}">First-Class</option>
+										<option value="B" data-dano="${vo.air[2].no}" data-rano="${vo.air[3].no}">Business</option>
+										<option value="E" data-dano="${vo.air[4].no}" data-rano="${vo.air[5].no}">Economy</option>   
 									</select>
 								</p>
 							</li>
@@ -272,9 +360,9 @@
 									항공기옵션2
 									<select class="selAir">
 										<option value="">선택</option>
-										<option value="F">First-Class</option>
-										<option value="B">Business</option>
-										<option value="E">Economy</option>   
+										<option value="F" data-dano="${vo.air[0].no}" data-rano="${vo.air[1].no}">First-Class</option>
+										<option value="B" data-dano="${vo.air[2].no}" data-rano="${vo.air[3].no}">Business</option>
+										<option value="E" data-dano="${vo.air[4].no}" data-rano="${vo.air[5].no}">Economy</option>   
 									</select>
 								</p>
 							</li>
@@ -283,9 +371,9 @@
 									항공기옵션3 
 									<select class="selAir">
 										<option value="">선택</option>
-										<option value="F">First-Class</option>
-										<option value="B">Business</option>
-										<option value="E">Economy</option>   
+										<option value="F" data-dano="${vo.air[0].no}" data-rano="${vo.air[1].no}">First-Class</option>
+										<option value="B" data-dano="${vo.air[2].no}" data-rano="${vo.air[3].no}">Business</option>
+										<option value="E" data-dano="${vo.air[4].no}" data-rano="${vo.air[5].no}">Economy</option>   
 									</select>
 								</p>
 							</li>
@@ -294,9 +382,9 @@
 									호텔옵션1 
 									<select class="selHotel">
 										<option value="">선택</option>
-										<option value="S">스위트룸</option>
-										<option value="D">디럭스룸</option>
-										<option value="N">일반룸</option>
+										<option value="S" data-hno="${vo.hotel[0].no}">스위트룸</option>
+										<option value="D" data-hno="${vo.hotel[1].no}">디럭스룸</option>
+										<option value="N" data-hno="${vo.hotel[2].no}">일반룸</option>
 										<option value="DS">선택안함</option>
 									</select>
 								</p>
@@ -306,9 +394,9 @@
 									호텔옵션2 
 									<select class="selHotel">
 										<option value="">선택</option>
-										<option value="S">스위트룸</option>
-										<option value="D">디럭스룸</option>
-										<option value="N">일반룸</option>
+										<option value="S" data-hno="${vo.hotel[0].no}">스위트룸</option>
+										<option value="D" data-hno="${vo.hotel[1].no}">디럭스룸</option>
+										<option value="N" data-hno="${vo.hotel[2].no}">일반룸</option>
 										<option value="DS">선택안함</option>
 									</select>
 								</p>
@@ -318,18 +406,18 @@
 									호텔옵션3
 									<select class="selHotel">
 										<option value="">선택</option>
-										<option value="S">스위트룸</option>
-										<option value="D">디럭스룸</option>
-										<option value="N">일반룸</option>
+										<option value="S" data-hno="${vo.hotel[0].no}">스위트룸</option>
+										<option value="D" data-hno="${vo.hotel[1].no}">디럭스룸</option>
+										<option value="N" data-hno="${vo.hotel[2].no}">일반룸</option>
 										<option value="DS">선택안함</option>
 									</select>
 								</p>
 							</li>
 							<li class="selOption">
-								<p id="selTour">
+								<p>
 								투어옵션<br>
 									<c:forEach var="tour" items="${vo.tour}">
-										<input type="checkbox" name="tourChk" value="${tour.no}" class="tourChk"> <span>${tour.tname}</span><br>
+										<input type="checkbox" name="tourChk" value="${tour.no}" class="selTour" data-price="${tour.tprice}"> <span>${tour.tname}</span><br>
 									</c:forEach>
 								</p>
 							</li>
@@ -338,7 +426,7 @@
 									렌터카옵션
 									<select id="selRentcar">
 										<option value="">선택</option>
-										<option value="S">선택함</option>
+										<option value="S" value="${vo.rentcar[0].no}">선택함</option>
 										<option value="DS">선택안함</option>
 									</select>
 								</p>
@@ -353,8 +441,8 @@
 				</div>
 				<div id="proDetail">        
 						<div id="proDetailBtns">   
-							<a href="#" id="detail">여행 세부 내용 보기</a>
-							<a href="#" id="review">리뷰</a>
+							<a id="detail">여행 세부 내용 보기</a>
+							<a id="review">리뷰</a>
 						</div>
 					
 				<h2>여행 세부 내용</h2>
