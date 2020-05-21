@@ -60,4 +60,21 @@ public class CouponDAOImpl implements CouponDAO {
 		 */
 		return sqlSession.selectList(namespace + "userCouponList", vo);
 	}
+	//해당 고객이 특정 쿠폰을 가지고 있는지
+	@Override
+	public List<Integer> userHasACouponOrNot(int userno, int cno) throws Exception {
+		Map<String, Integer> map = new HashMap<>();
+		map.put("userno", userno);
+		map.put("cno", cno);
+		return sqlSession.selectList(namespace + "userHasACouponOrNot", map);
+	}
+	//해당 고객에 특정 쿠폰을 줌 
+	@Override
+	public void addCouponToUser(int userno, int cno) throws Exception {
+		Map<String, Integer> map = new HashMap<>();
+		map.put("userno", userno);
+		map.put("cno", cno);
+		sqlSession.insert(namespace + "addCouponToUser", map);
+		
+	}
 }

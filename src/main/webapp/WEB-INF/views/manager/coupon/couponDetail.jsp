@@ -86,6 +86,11 @@ $(document).ready(function(){
 					<h3 class="box-title">쿠폰</h3>
 				</div>
 				<div class="box-body">
+				<c:if test="${expired != null}">
+				<script>
+					alert("해당 쿠폰은 만료된 쿠폰입니다.");
+				</script>
+				</c:if>
 					<div class="form-group">
 						<label>번호</label>
 						<input type="text" name="no" class="form-control" value="${coupon.cno}" readonly="readonly">

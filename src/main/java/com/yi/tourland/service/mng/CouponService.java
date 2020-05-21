@@ -48,4 +48,12 @@ public class CouponService {
 	public List<CouponVO> userCouponList(UserVO vo) throws Exception {
 		return dao.userCouponList(vo);
 	}
+	//해당 유저가 특정 쿠폰을 가지고 있는지 확인
+	public List<Integer> userHasACouponOrNot(int userno, int cno) throws Exception {
+		return dao.userHasACouponOrNot(userno, cno);
+	}
+	//해당 유저에 특정 쿠폰을 줌
+	public void addCouponToUser(int userno, int cno) throws Exception {
+		dao.addCouponToUser(userno, cno);
+	}
 }

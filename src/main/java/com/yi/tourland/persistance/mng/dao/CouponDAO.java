@@ -23,4 +23,8 @@ public interface CouponDAO {
 	public void editCoupon(CouponVO coupon) throws  Exception;
 	//해당 고객의 쿠폰
 	public List<CouponVO> userCouponList(UserVO vo) throws Exception;
+	//해당 고객이 특정 쿠폰을 가지고 있는지
+	public List<Integer> userHasACouponOrNot(int userno, int cno) throws Exception;
+	//해당 고객에 특정 쿠폰을 줌
+	public void addCouponToUser(int userno, int cno) throws Exception; 
 }
