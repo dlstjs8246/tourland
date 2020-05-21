@@ -23,6 +23,9 @@
 				</if>
 			</if>
 		</if>
+		<if test='searchType==null'>
+		    where title like CONCAT('%',#{keyword},'%')
+		</if>
 	</sql>
 	<select id="list" resultType="FaqVO">
 		select * from faq order by no desc

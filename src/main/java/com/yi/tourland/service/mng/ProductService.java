@@ -24,13 +24,13 @@ public class ProductService {
 	public List<ProductVO> listPage(SearchCriteria cri) throws SQLException {
 		return dao.productListPage(cri);
 	}
-	public List<ProductVO> productListPageByDomestic(Criteria cri) throws SQLException {
+	public List<ProductVO> productListPageByDomestic(SearchCriteria cri) throws SQLException {
 		return dao.productListPageByDomestic(cri);
 	}
-	public List<ProductVO> productListPageByChina(Criteria cri) throws SQLException {
+	public List<ProductVO> productListPageByChina(SearchCriteria cri) throws SQLException {
 		return dao.productListPageByChina(cri);
 	}
-	public List<ProductVO> productListPageByJapan(Criteria cri) throws SQLException {
+	public List<ProductVO> productListPageByJapan(SearchCriteria cri) throws SQLException {
 		return dao.productListPageByJapan(cri);
 	}
 	public ProductVO productByNo(ProductVO vo) throws SQLException {
@@ -83,14 +83,14 @@ public class ProductService {
 	public int totalCountProduct() throws SQLException {
 		return dao.totalCountProduct();
 	}
-	public int totalCountBySearchProductDomestic() throws SQLException {
-		return dao.totalCountBySearchProductDomestic();
+	public int totalCountBySearchProductDomestic(SearchCriteria cri) throws SQLException {
+		return dao.totalCountBySearchProductDomestic(cri);
 	}
-	public int totalCountBySearchProductChina() throws SQLException {
-		return dao.totalCountBySearchProductChina();
+	public int totalCountBySearchProductChina(SearchCriteria cri) throws SQLException {
+		return dao.totalCountBySearchProductChina(cri);
 	}
-	public int totalCountBySearchProductJapan() throws SQLException {
-		return dao.totalCountBySearchProductJapan();
+	public int totalCountBySearchProductJapan(SearchCriteria cri) throws SQLException {
+		return dao.totalCountBySearchProductJapan(cri);
 	}
 	//고객 페이지 - 중국 패키지 검색 박스 Ajax 
 	public List<ProductVO> tourlandProductChinaSearchList(String ddate, String rdate, String cnt, String tourDays) throws SQLException{

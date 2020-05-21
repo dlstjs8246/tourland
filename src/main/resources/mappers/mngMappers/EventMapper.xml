@@ -48,6 +48,13 @@
 	      <if test="searchType=='eventContent'.toString()">
 	       where content like CONCAT('%','${keyword}','%')
 	      </if>
+		  <if test='searchType != null'>
+			<if test='searchType.equals("")'>
+					<if test='keyword!=null and !keyword.equals("")'>
+						where content like CONCAT('%',#{keyword},'%')
+					</if>
+			</if>
+		 </if>
  </sql>
 
 <!-- 검색으로 나타나는 리스트 부분 -->

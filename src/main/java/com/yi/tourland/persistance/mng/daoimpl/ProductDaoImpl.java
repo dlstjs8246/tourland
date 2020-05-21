@@ -27,16 +27,16 @@ public class ProductDaoImpl implements ProductDao {
 		return sqlSession.selectList(namespace + "productListPage",cri);
 	}
 	@Override
-	public List<ProductVO> productListPageByDomestic(Criteria cri) throws SQLException {
+	public List<ProductVO> productListPageByDomestic(SearchCriteria cri) throws SQLException {
 		return sqlSession.selectList(namespace + "productListPageByDomestic",cri);
 	}
 	@Override
-	public List<ProductVO> productListPageByChina(Criteria cri) throws SQLException {
+	public List<ProductVO> productListPageByChina(SearchCriteria cri) throws SQLException {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList(namespace + "productListPageByChina",cri);
 	}
 	@Override
-	public List<ProductVO> productListPageByJapan(Criteria cri) throws SQLException {
+	public List<ProductVO> productListPageByJapan(SearchCriteria cri) throws SQLException {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList(namespace+"productListPageByJapan",cri);
 	}
@@ -162,12 +162,12 @@ public class ProductDaoImpl implements ProductDao {
 		return sqlSession.selectOne(namespace + "totalCountProduct");
 	}
 	@Override
-	public int totalCountBySearchProductDomestic() throws SQLException {
-		return sqlSession.selectOne(namespace + "totalCountBySearchProductDomestic");
+	public int totalCountBySearchProductDomestic(SearchCriteria cri) throws SQLException {
+		return sqlSession.selectOne(namespace + "totalCountBySearchProductDomestic",cri);
 	}
 	@Override
-	public int totalCountBySearchProductChina() throws SQLException {
-		return sqlSession.selectOne(namespace + "totalCountBySearchProductChina");
+	public int totalCountBySearchProductChina(SearchCriteria cri) throws SQLException {
+		return sqlSession.selectOne(namespace + "totalCountBySearchProductChina",cri);
 	}
 	//상품 리스트 검색 박스 Ajax (중국)
 	@Override
@@ -180,8 +180,8 @@ public class ProductDaoImpl implements ProductDao {
 		return sqlSession.selectList(namespace + "tourlandProductChinaSearchList", map);
 	}
 	@Override
-	public int totalCountBySearchProductJapan() throws SQLException {
-		return sqlSession.selectOne(namespace + "totalCountBySearchProductJapan");
+	public int totalCountBySearchProductJapan(SearchCriteria cri) throws SQLException {
+		return sqlSession.selectOne(namespace + "totalCountBySearchProductJapan",cri);
 	}
 	//상품 리스트 검색 박스 Ajax (일본)
 	@Override
