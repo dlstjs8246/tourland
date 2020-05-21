@@ -473,25 +473,28 @@ public class CustomerController {
 				
 				//쿠폰이 있을 때
 				if(list.size()!=0) {
-					List<CouponVO> available = new ArrayList<>();
-					List<CouponVO> expired= new ArrayList<>();
+					List<CouponVO> available = new ArrayList<>(); //아직 만료되지 않은 쿠폰
+					List<CouponVO> expired= new ArrayList<>(); // 만료된 쿠폰
 					
+					//포맷 
 					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+					//오늘 날짜 생성
 					Date date = new Date();
+					//형식 변경
 					String today = dateFormat.format(date);
 					
 					int result;
 					for(int i=0; i<list.size(); i++) {
+						//오늘 날짜와 해당 고객의 쿠폰의 만료일을 하나씩 비교 후 알맞은 리스트에 넣기 (만료되면 만료된 쿠폰리스트, 안됐으면 만료안된 리스트에)
 						result = today.compareTo(dateFormat.format(list.get(i).getEdate()));
-						if(result == 1 || result == 0) {//today > edate
+						
+						if(result == 1 || result == 2 || result == 0) {//today > edate or today == edate
 							expired.add(list.get(i));
 							
-						}else {
+						}else { //today < edate
 							available.add(list.get(i));
 						}
 					}
-					
-					/* model.addAttribute("list", list); */
 					model.addAttribute("available", available);
 					model.addAttribute("expired", expired);
 					model.addAttribute("noListChk", 0);
@@ -501,10 +504,7 @@ public class CustomerController {
 			}else {//관리자 일 경우 
 				model.addAttribute("noListChk", 2);
 			}
-			
-			
 		}
-	
 		return "/user/mypage/tourlandMyCoupon"; 
 	}    
 	//상품 리스트   (제주 패키지)
