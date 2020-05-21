@@ -211,7 +211,7 @@ section div#editProfile #btns input {
 							<span class="error">전화번호 양식 예)010-4245-3825</span>
 						</p>
 						<p>
-							<label><span class="red">* </span>여권번호</label> <input type="text" name="userpassport" value="${Auth.userpassport }" required="required">
+							<label><span class="red">* </span>여권번호</label> <input type="text" name="userpassport" value="${Auth.userpassport }">
 							<span class="error">여권번호 양식 예)M12345678</span>
 						</p>
 						<p id="btns">

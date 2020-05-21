@@ -334,7 +334,7 @@
 								<!-- Menu Footer-->
 								<li class="user-footer">
 									<div class="pull-left">
-										<a href="${pageContext.request.contextPath }/EditPassword" class="btn btn-default btn-flat">프로필</a>
+										<a href="${pageContext.request.contextPath }/customer/EditPassword" class="btn btn-default btn-flat">프로필</a>
 									</div>
 									<div class="pull-right">
 										<a href="${pageContext.request.contextPath}/logout"
