@@ -154,7 +154,7 @@
             	alert("검색어를 입력해주세요");
             	return false;
             }
-    		location.href="${pageContext.request.contextPath }/customer/tourlandSearch?searchType=&keyword="+mainKeyword+"&keyword2=";
+    		location.href="${pageContext.request.contextPath }/customer/tourlandSearch/default?searchType=&keyword="+mainKeyword+"&keyword2=";
     	})
     	
     	

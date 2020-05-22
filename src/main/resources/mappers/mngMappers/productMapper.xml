@@ -99,12 +99,12 @@
 			</if>
 		</if>
 		<if test='searchType != null'>
-		<if test='searchType.equals("")'>
+		    <if test='searchType.equals("")'>
 				<if test='keyword!=null and !keyword.equals("")'>
 					and pname like CONCAT('%',#{keyword},'%')
 					
 					<if test='keyword2!=null and !keyword2.equals("")'>
-					and pname like CONCAT('%',#{keyword2},'%')
+					    and pname like CONCAT('%',#{keyword2},'%')
 				    </if>
 				</if>
 		</if>
