@@ -113,12 +113,21 @@
 
 		<header class="main-header">
 			<!-- Logo -->
-			<a href="${pageContext.request.contextPath }/manager/empMngList/0"
-				class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span
-				class="logo-mini"><b>A</b>LT</span> <!-- logo for regular state and mobile devices -->
+			<c:if test="${Manager.right==1 }">
+				<a href="${pageContext.request.contextPath }/manager/empMngList/0"
+					class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span
+					class="logo-mini"><b>A</b>LT</span> <!-- logo for regular state and mobile devices -->
 				<span class="logo-lg" id="logoTourLand"><b>TourLand</b></span>
 			</a>
-			<!-- Header Navbar: style can be found in header.less -->
+			</c:if>
+			<c:if test="${Manager.right==0 }">
+				<a href="${pageContext.request.contextPath }/manager/userMngList/0"
+					class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span
+					class="logo-mini"><b>A</b>LT</span> <!-- logo for regular state and mobile devices -->
+				<span class="logo-lg" id="logoTourLand"><b>TourLand</b></span>
+			</a>
+			</c:if>
+
 			<nav class="navbar navbar-static-top" role="navigation">
 				<!-- Sidebar toggle button-->
 				<a href="#" class="sidebar-toggle" data-toggle="offcanvas"
@@ -334,7 +343,7 @@
 								<!-- Menu Footer-->
 								<li class="user-footer">
 									<div class="pull-left">
-										<a href="${pageContext.request.contextPath }/customer/EditPassword" class="btn btn-default btn-flat">프로필</a>
+										<a href="${pageContext.request.contextPath }/manager/employeeDetail/0?empno=${Auth.empno}" class="btn btn-default btn-flat">프로필</a>
 									</div>
 									<div class="pull-right">
 										<a href="${pageContext.request.contextPath}/logout"

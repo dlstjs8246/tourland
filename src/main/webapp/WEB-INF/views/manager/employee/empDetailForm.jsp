@@ -142,7 +142,7 @@
 				<div class="box-header">
 					<h3 class="box-title">사원 정보 조회</h3> 
 				</div>
-				<form role="form" action="${pageContext.request.contextPath}/manager/employeeUpdate/${empretired }" method="post" id="detaiLForm">
+				<form role="form" action="${pageContext.request.contextPath}/manager/employeeUpdate/${empretired }?empno=${Auth.empno}&page=${Page}&searchType=${Search}&keyword=${Keyword}" method="post" id="detaiLForm">
 					<div class="box-body">
 					    <!-- <input type="hidden" value="" id="forSubmit"> -->
 					    <input type="hidden" value="${empretired }" name="empretired">
@@ -186,12 +186,20 @@
 							<input type="text" name="emppass" placeholder="기존 비밀번호 입력 필요" >
 							<span class="errorMsg">비밀번호가 일치하지 않습니다.</span> <!-- 관리자일 경우 프리패스로 만들 것  -->
 						</div>
-						<div class="box-footer">
-						    <button type="button" class="btn btn-primary" style="background:red;" id="btnDel">${empretired =='0'?'퇴사사원처리':'삭제' }</button> <!-- 관리자일때만 활성화 -->
-							<button type="submit" class="btn btn-primary" style="${empretired== 0?'visibility:visible;':'visibility:hidden;'}">수정</button>
-							<br>
-							<button type="button" class="btn btn-primary" style="margin-top:10px;" id="btnReturnToList">리스트로 돌아가기</button>
-						</div>
+						<c:if test="${Auth.empauth==1}">
+							<div class="box-footer">
+						    	<button type="button" class="btn btn-primary" style="background:red;" id="btnDel">${empretired =='0'?'퇴사사원처리':'삭제' }</button> <!-- 관리자일때만 활성화 -->
+								<button type="submit" class="btn btn-primary" style="${empretired== 0?'visibility:visible;':'visibility:hidden;'}">수정</button>
+								<br>
+								<button type="button" class="btn btn-primary" style="margin-top:10px;" id="btnReturnToList">리스트로 돌아가기</button>
+							</div>
+						</c:if>
+						<c:if test="${Auth.empauth==0}">
+							<div class="box-footer">
+								<button type="submit" class="btn btn-primary" style="${empretired== 0?'visibility:visible;':'visibility:hidden;'}">수정</button>
+							</div>
+						</c:if>
+					
 					</div>
 				</form>
 			</div>

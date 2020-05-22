@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -502,12 +503,15 @@ public class ManagerController {
 	// 사원 디테일 페이지에서 수정 버튼 눌렀을 때 수정 처리
 	@RequestMapping(value = "employeeUpdate/{empretired}", method = RequestMethod.POST)
 	public String employeeUpdate(EmployeeVO vo, SearchCriteria cri, Model model,
-			@PathVariable("empretired") int empretired) throws Exception {
+			@PathVariable("empretired") int empretired, HttpSession session) throws Exception {
 		employeeService.updateEmployee(vo);
 		// System.out.println(vo);
 		model.addAttribute("empVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
+		session.setAttribute("Page", cri.getPage());
+		session.setAttribute("Search", cri.getSearchType());
+		session.setAttribute("Keyword", cri.getKeyword());
 		return "redirect:/manager/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
 				+ "&searchType=" + cri.getSearchType() + "&keyword=" + cri.getKeyword();
 	}
