@@ -20,19 +20,31 @@
 	<select id="totalCountCoupon" resultType="int">
 		select count(*) from coupon <include refid="search"></include>
 	</select>
+	<!-- 쿠폰 추가 -->
 	<insert id="addCoupon">
 		insert into coupon values (#{cno}, #{cname}, #{pdate}, #{edate}, #{ccontent}, #{mrate})
 	</insert>
+	<!-- 번호로 쿠폰 불러오기 -->
 	<select id="readCouponByNo" resultType="CouponVO">
 		select * from coupon where cno = #{cno}
 	</select>
+	<!-- 쿠폰 삭제 -->
 	<delete id="removeCoupon">
 		delete from coupon where cno = #{cno}
 	</delete>
+	<!-- 쿠폰 수정 -->
 	<update id="editCoupon">
 		update coupon set cname = #{cname}, pdate=#{pdate}, edate=#{edate}, ccontent=#{ccontent}, mrate=#{mrate} where cno=#{cno}
 	</update>
+	<!-- 해당 고객이 쿠폰이 있는지 -->
 	<select id="userCouponList" resultType="CouponVO">
 		select * from usercoupon uc join user u on uc.userno = u.userno join coupon c on uc.cno = c.cno where u.userno = #{userno} order by edate asc
 	</select>
+	<!-- 해당 고객이 특정 쿠폰을 가지고 있는지  -->
+	<select id="userHasACouponOrNot" resultType="int">
+		select * from usercoupon where userno = #{userno} and cno =#{cno};
+	</select>
+	<insert id="addCouponToUser">
+		insert into usercoupon values(#{userno}, #{cno});
+	</insert>
 </mapper>

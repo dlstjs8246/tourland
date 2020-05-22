@@ -53,11 +53,11 @@
 	<script>
 		$(function(){
 			$("#smallImgBox li").each(function(i,obj){
-				$(this).find("img").attr("src",$("#proDetail img").eq(i).attr("src"));
+				$(this).find("img").attr("src",$("#content img").eq(i).attr("src"));
 			})
 			$("#detail").click(function() {
-			location.href = "tourlandProductDetail?pno=90";
-		})
+				location.href = "tourlandProductDetail?pno=90&price=${price}"; 
+			})
 		})
 	</script>
 		<section>
@@ -65,7 +65,7 @@
 					<h1>${vo.pname}</h1>
 					<div id="imgBox">
 						<div id="bigImgBox">
-							<img src="displayFile/product?filename=${vo.pic}">
+							<img src="displayFile/product?filename=${vo.pic}&price=${price}">
 						</div>
 						<div id="smallImgBox">
 							<ul>
@@ -86,12 +86,7 @@
 							</c:forEach>
 							<li id="infoDate">출발일 : <span id="ddate">${ddate}</span></li>
 							<li id="infoDays">여행 기간 : <span id="tourDays">${(fn:substring(vo.pname,fn:indexOf(vo.pname,']')-2,fn:indexOf(vo.pname,']')-1)-1)}박${fn:substring(vo.pname,fn:indexOf(vo.pname,']')-2,fn:indexOf(vo.pname,']')-1)}일</span></li>
-							<c:forEach var="t" items="${vo.tour}" begin="0" end="0">
-								<c:set var="capacity" value="${t.capacity}"/>
-							</c:forEach>
-							<c:set var="N" value="${vo.pprice/capacity}"/>
-							<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
-							<li id="infoPrice">가격 : <span id="price">${price}</span>원</li>
+							<li id="infoPrice">가격 : <span id="price"><fmt:formatNumber value="${price}" pattern="###,###"/></span>원</li>
 						</ul>
 						<div id="btnsBox">
 						<button id="doReserv">예약하기</button>
@@ -144,6 +139,9 @@
 							</li>
 						</ul>
 					</div>
+				</div>
+				<div style="display : none;" id="content">
+					${vo.pcontent}
 				</div>
 			</section>
 	<%@ include file="../../include/userFooter.jsp"%>

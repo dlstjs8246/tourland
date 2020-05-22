@@ -74,9 +74,11 @@
 	        select  count(userno) from user
 		    <include refid="search"/>  
 	    </select>
-	<!--이메일 보내기-->
+	    
+	    
+	<!--이메일 보낼때 입력받은 값의 회원이 있는지 검사-->
 	<select id="readByNameBirthTel" resultType="UserVO">
-		select userid,userpass
+		select *
 		from user
 		where username=#{username} and userbirth=#{userbirth} and usertel=#{usertel};
 	</select>

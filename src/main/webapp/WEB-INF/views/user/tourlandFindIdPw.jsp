@@ -92,17 +92,13 @@ label {
 	<%@ include file="../include/userHeader.jsp"%>
 	<script>
 	$(function(){
-		var send ="${send}";
-		var sendMail ="${sendMail}";
-		alert(send);
+		
 		$("form").submit(function(e){
 			$(".errorMsg").css("display", "none");
 			var name = $("input[name='username']").val();
 			var birth = $("input[name='userbirth']").val(); 
 			var tel = $("input[name='usertel']").val();
 			var email = $("input[name='useremail']").val();
-			
-			
 			
 			//이름 정규표현식
 			var nameReg = /^[가-힣]{2,5}$/;
@@ -130,18 +126,9 @@ label {
 			if(emailReg.test(email)==false){
 				$("input[name='useremail']").next().next().css("display", "inline");
 				  return false;
-			}	
-			
-			if(send=="확인"){
-				alert("메일이 발송되었습니다. 로그인화면으로 이동합니다.");
 			}
-			
 		})
 	})
-	
-	
-	
-	
 </script>
 	<section>
 		<div id="editProfile">
@@ -149,6 +136,7 @@ label {
 			<span class="info">투어랜드는 고객님의 개인정보가 외부로 노출되지 않도록 항상 노력하고 있습니다.</span><br>
 			<span class="info">이름과 생년월일, 전화번호, 이메일을 입력해주세요.</span>
 			<form action="tourlandFindIdPw" method="post" autocomplete="off">
+			
 				<c:choose>
 					<c:when test="${inputStay!=null }">
 						<p>
@@ -195,11 +183,15 @@ label {
 						</p>
 					</c:otherwise>
 				</c:choose>
-				
 				<c:if test="${NotInfo!=null }">
 					<p id="notInfo">${NotInfo }</p>
 				</c:if>
-				
+				<c:if test="${success!=null }">
+					<script>
+						alert("${success}");
+						location.href="${pageContext.request.contextPath}/loginForm";
+					</script>
+				</c:if>
 				<p id="inputs">
 					<input type="submit" id="submit" value="ID,Password 찾기" style="cursor: pointer"> 
 				</p>

@@ -68,9 +68,10 @@ public class LoginController {
 			map.put("right", dbEmpIdPw.getEmpauth());
 			session.setAttribute("Manager",map);
 			session.setAttribute("Auth", dbEmpIdPw);//정보 다 가지고 있는거
+			session.setAttribute("login", "manager");
 			session.setAttribute("pass", pass);
 			session.setAttribute("mypage","mypageemp");
-			return "redirect:/";
+			return "redirect:/customer/tourlandMain";
 			
 		//회원아이디가 있는 경우
 		}else if(dbUserId!=null) {
@@ -92,10 +93,11 @@ public class LoginController {
 			//전부 다 맞는 경우(회원)
 			
 			session.setAttribute("User",dbUserId.getUsername());
+			session.setAttribute("login", "user");
 			session.setAttribute("Auth", dbUserIdPw); //정보 다 가지고 있는거
 			session.setAttribute("pass", pass);
 			session.setAttribute("mypage","mypageuser");
-			return "redirect:/";
+			return "redirect:/customer/tourlandMain";
 			
 		//아이디가 없는 경우	(직원,회원)
 		}else{
@@ -110,6 +112,6 @@ public class LoginController {
 	@RequestMapping(value="logout",method = RequestMethod.GET)
 	public String logoutGet(HttpSession session){
 		session.invalidate();
-		return "redirect:/";
+		return "redirect:/customer/tourlandMain";
 	}
 }
