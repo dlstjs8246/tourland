@@ -508,7 +508,7 @@ public class ManagerController {
 		model.addAttribute("empVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
-		return "redirect:/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
+		return "redirect:/manager/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
 				+ "&searchType=" + cri.getSearchType() + "&keyword=" + cri.getKeyword();
 	}
 

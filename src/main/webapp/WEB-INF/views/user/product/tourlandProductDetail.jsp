@@ -262,7 +262,7 @@
 					location.href = "${pageContext.request.contextPath}/loginForm";
 					return false;
 				}
-				$.ajax({
+				/* $.ajax({
 					url = "tourlandProductDetail/cart",
 					method = "get",
 					data = 
@@ -270,7 +270,7 @@
 					success : function(res) {
 						alert(res);
 					}
-				})
+				}) */
 			})
 		})
 	</script>

@@ -29,13 +29,13 @@
 					<button id="btnSearch">Search</button>
 				</div>
 				<div class="box-body">
-					<button id="btnRegister">추가 - 테스트용</button>
+				<!-- 	<button id="btnRegister">추가 - 테스트용</button> -->
 				</div>
 				<div class="box-body">
 					<table class="table table-bordered">
 						<tr>
 							<th>번호</th>
-							<th>제목</th>
+							<th>제목</th>   
 							<th>작성자</th>
 							<th>작성 일자</th>
 
