@@ -491,12 +491,14 @@ public class ManagerController {
 	// 사원 리스트 클릭했을 때 자세한 정보 보기로 넘어가기
 	@RequestMapping(value = "employeeDetail/{empretired}", method = RequestMethod.GET)
 	public String employeeDetail(EmployeeVO vo, SearchCriteria cri, Model model,
-			@PathVariable("empretired") int empretired) throws Exception {
+			@PathVariable("empretired") int empretired, HttpSession session) throws Exception {
 		vo = employeeService.readByNoEmployee(vo.getEmpno());
 		model.addAttribute("empVO", vo);
 		// System.out.println(vo); //퇴사사원 null로 찍혀서 mapper수정
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
+		session.setAttribute("Retired", empretired);
+		System.out.println("================="+empretired);
 		return "/manager/employee/empDetailForm";
 	}
 
@@ -509,9 +511,14 @@ public class ManagerController {
 		model.addAttribute("empVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
-		session.setAttribute("Page", cri.getPage());
-		session.setAttribute("Search", cri.getSearchType());
-		session.setAttribute("Keyword", cri.getKeyword());
+//		session.setAttribute("Retired", empretired);
+//		System.out.println("================="+empretired);
+//		session.setAttribute("Page", cri.getPage());
+//		System.out.println("================="+cri.getPage());
+//		session.setAttribute("Search", cri.getSearchType());
+//		System.out.println("================="+cri.getSearchType());
+//		session.setAttribute("Keyword", cri.getKeyword());
+//		System.out.println("================="+cri.getKeyword());
 		return "redirect:/manager/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
 				+ "&searchType=" + cri.getSearchType() + "&keyword=" + cri.getKeyword();
 	}

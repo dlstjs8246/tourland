@@ -343,7 +343,7 @@
 								<!-- Menu Footer-->
 								<li class="user-footer">
 									<div class="pull-left">
-										<a href="${pageContext.request.contextPath }/manager/employeeDetail/0?empno=${Auth.empno}" class="btn btn-default btn-flat">프로필</a>
+										<a href="${pageContext.request.contextPath }/manager/employeeDetail/${empretired}?empno=${Auth.empno}" class="btn btn-default btn-flat">프로필</a>
 									</div>
 									<div class="pull-right">
 										<a href="${pageContext.request.contextPath}/logout"

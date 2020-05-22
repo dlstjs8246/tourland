@@ -145,7 +145,7 @@
 				<form role="form" action="${pageContext.request.contextPath}/manager/employeeUpdate/${empretired }?empno=${Auth.empno}&page=${Page}&searchType=${Search}&keyword=${Keyword}" method="post" id="detaiLForm">
 					<div class="box-body">
 					    <!-- <input type="hidden" value="" id="forSubmit"> -->
-					    <input type="hidden" value="${empretired }" name="empretired">
+					    <%-- <input type="hidden" value="${empretired }" name="empretired"> --%>
 						<div class="form-group">
 							<label>사원 번호</label>
 							<input type="text" name="empno" value="${empVO.empno }" readonly="readonly" style="background:lavender;" >
