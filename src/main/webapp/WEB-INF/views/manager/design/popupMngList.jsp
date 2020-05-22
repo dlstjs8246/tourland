@@ -78,8 +78,8 @@
 				<div class="box-body">
 					<select name="searchType" id="searchType" style="width:200px; height: 25px;">
 						<option value="n" ${cri.searchType ==null?'selected':''}>-----</option>
-						<option value="bannerTitle" ${cri.searchType =='popupTitle'?'selected':''}>팝업 타이틀</option>
-						<option value="bannerContent" ${cri.searchType =='popupContent'?'selected':''}>팝업 설명</option>
+						<option value="popupTitle" ${cri.searchType =='popupTitle'?'selected':''}>팝업 타이틀</option>
+						<option value="popupContent" ${cri.searchType =='popupContent'?'selected':''}>팝업 설명</option>
 
 					</select>
 					<input type="text" name="keyword" id="keywordInput">
@@ -194,7 +194,7 @@
 	$("#btnSearch").click(function(){
 		var searchType = $("#searchType").val();
 		var keyword = $("#keywordInput").val();
-		location.href = "${pageContext.request.contextPath}/manager/popMngList?searchType="+searchType+"&keyword="+keyword;
+		location.href = "${pageContext.request.contextPath}/manager/popupMngList?searchType="+searchType+"&keyword="+keyword;
 		//searchBoardController의 listPage GET 으로 받음 
 		
 	})
