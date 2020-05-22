@@ -2100,8 +2100,8 @@ public class ManagerController {
          try {
 			printWriter = resp.getWriter();
 			resp.setContentType("text/html");
-			String serverPath ="http://localhost:8080/tourland/displayFile/practice?filename=";
-			String serverPath2 = "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
+			String serverPath =req.getContextPath()+"/displayFile/practice?filename=";
+			String serverPath2 =req.getContextPath()+"/resources/images/practice";
 			String savedName = UploadFileUtils.uploadFile(serverPath2, file.getOriginalFilename().replaceAll(" ", "_"),
 			file.getBytes());
 			String bigSizePic = savedName.substring(0, 12) + savedName.substring(14);
