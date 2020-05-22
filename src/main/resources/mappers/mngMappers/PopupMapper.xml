@@ -48,10 +48,10 @@
 <!-- 검색 기능 -->
  <sql id="search">
         <if test="searchType=='popupTitle'.toString()">
-	       where title like CONCAT('%','${keyword}','%')
+	       where title like CONCAT('%',#{keyword},'%')
 	      </if>
 	      <if test="searchType=='popupContent'.toString()">
-	       where content like CONCAT('%','${keyword}','%')
+	       where content like CONCAT('%',#{keyword},'%')
 	      </if>
  </sql>
 

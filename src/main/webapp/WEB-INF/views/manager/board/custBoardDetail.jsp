@@ -40,12 +40,12 @@
 							<label>내용</label>
 							<textarea rows="15" cols="30" placeholder="내용을 입력하세요" name="content" class="form-control" required="required">${custBoardVO.content}</textarea>
 						</div>
-						<div class="form-group">
+					<!-- 	<div class="form-group">
 							<label>열람 비밀번호</label>
 							<input type="text" name="passwd" class="form-control">
-						</div>
+						</div> -->
 						<div class="box-footer">
-							<button type="submit" class="btn btn-primary">수정-테스트</button>
+							<!-- <button type="submit" class="btn btn-primary">수정-테스트</button> -->
 							 <button type="button" class="btn btn-primary" style="background:red;" id="btnDel">삭제</button><br>
 							 <button type="button" class="btn btn-primary" id="btnReturnToList" style="margin-top:10px;">목록으로</button>
 						</div>

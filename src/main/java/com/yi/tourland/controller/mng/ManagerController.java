@@ -512,7 +512,7 @@ public class ManagerController {
 		session.setAttribute("Page", cri.getPage());
 		session.setAttribute("Search", cri.getSearchType());
 		session.setAttribute("Keyword", cri.getKeyword());
-		return "redirect:/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
+		return "redirect:/manager/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
 				+ "&searchType=" + cri.getSearchType() + "&keyword=" + cri.getKeyword();
 	}
 

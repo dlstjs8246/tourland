@@ -84,7 +84,7 @@
 		})
 		
 		$("#btnCheck").click(function(){
-			var empid = $("input[name='empid']").val();
+			var empid = $("input[name='userid']").val();
 			 //아이디 중복 ajax로 처리하기
 			 $.ajax({
 				url:"empIdCheck/"+empid,
@@ -155,7 +155,7 @@
 						<div class="form-group">
 							<label>고객 아이디</label> 
 							<input type="text" name="userid" required="required"  placeholder=" 영문,숫자 포함 5-12자리" value="${userVO.userid }">
-							<button id="btnCheck" type="button">중복확인</button>
+						<!-- 	<button id="btnCheck" type="button">중복확인</button> -->
 							<span class="errorMsg">영문, 숫자 포함 5-12자리를 넣어주세요</span>
 							<span class="errorMsg">중복되는 아이디 입니다. 다른 아이디를 입력해주세요.</span>
 						</div>
