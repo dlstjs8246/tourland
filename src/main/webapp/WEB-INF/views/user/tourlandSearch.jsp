@@ -268,110 +268,9 @@ div.pkgInfoBox .pkgTitle {
 						
 					</div>
 					</c:forEach> 
-					<%-- <!-- 중국 -->
-					<c:forEach var="product" items="${chinalist}">
-					<div class="pkgInfoBox">
-						<div class="pkgImg">
-							<img src="${pageContext.request.contextPath }/customer/displayFile/product?filename=${product.pic}">
-						</div>
-						<p class="pkgTitle">${product.pname}</p>
-						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
-						<c:set var="airPrice" value="0"/>
-						<c:set var="hotelPrice" value="0"/>
-						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.air)-2}" end="${fn:length(product.air)-1}">
-							<c:set var="airPrice" value="${airPrice+f.price}"/>
-						</c:forEach>
-						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
-							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
-							<fmt:formatDate value="${h.checkout}" pattern="yyyyMMdd" var="checkout"/>
-							<fmt:parseDate value="${checkin}" pattern="yyyyMMdd" var="checkinDate"/>
-							<fmt:parseDate value="${checkout}" pattern="yyyyMMdd" var="checkoutDate"/>
-							<fmt:parseNumber value="${checkinDate.time / (1000*60*60*24)}" integerOnly="true" var="checkinTime"/>
-							<fmt:parseNumber value="${checkoutDate.time / (1000*60*60*24)}" integerOnly="true" var="checkoutTime"/>
-							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
-							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
-						</c:forEach>
-						<c:set var="N" value="${airPrice + hotelPrice}"/>
-						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
-						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
-						<p class="pkgPrice">${price}원 부터~</p>
-						<p class="pkgDate">~ ${expire}까지</p>
-						<p class="pkgReserv">
-							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
-						</p>
-						
-					</div>
-					</c:forEach>
-					<!-- 일본 -->
-					   <c:forEach var="product" items="${japanlist}">
-					<div class="pkgInfoBox">
-						<div class="pkgImg">
-							<img src="displayFile/product?filename=${product.pic}">
-						</div>
-						<p class="pkgTitle">${product.pname}</p>
-						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
-						<c:set var="airPrice" value="0"/>
-						<c:set var="hotelPrice" value="0"/>
-						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.air)-2}" end="${fn:length(product.air)-1}">
-							<c:set var="airPrice" value="${airPrice+f.price}"/>
-						</c:forEach>
-						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
-							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
-							<fmt:formatDate value="${h.checkout}" pattern="yyyyMMdd" var="checkout"/>
-							<fmt:parseDate value="${checkin}" pattern="yyyyMMdd" var="checkinDate"/>
-							<fmt:parseDate value="${checkout}" pattern="yyyyMMdd" var="checkoutDate"/>
-							<fmt:parseNumber value="${checkinDate.time / (1000*60*60*24)}" integerOnly="true" var="checkinTime"/>
-							<fmt:parseNumber value="${checkoutDate.time / (1000*60*60*24)}" integerOnly="true" var="checkoutTime"/>
-							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
-							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
-						</c:forEach>
-						<c:set var="N" value="${airPrice + hotelPrice}"/>
-						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
-						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
-						<p class="pkgPrice">${price}원 부터~</p>
-						<p class="pkgDate">~ ${expire}까지</p>
-						<p class="pkgReserv">
-							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
-						</p>
-					</div>
-					</c:forEach> 
 					
-					<!-- 제주 -->
-					<c:forEach var="product" items="${jejulist}">
-					<div class="pkgInfoBox">
-						<div class="pkgImg">
-							<img src="displayFile/product?filename=${product.pic}">
-						</div>
-						<p class="pkgTitle">${product.pname}</p>
-						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
-						<c:set var="airPrice" value="0"/>
-						<c:set var="hotelPrice" value="0"/>
-						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.air)-2}" end="${fn:length(product.air)-1}">
-							<c:set var="airPrice" value="${airPrice+f.price}"/>
-						</c:forEach>
-						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
-							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
-							<fmt:formatDate value="${h.checkout}" pattern="yyyyMMdd" var="checkout"/>
-							<fmt:parseDate value="${checkin}" pattern="yyyyMMdd" var="checkinDate"/>
-							<fmt:parseDate value="${checkout}" pattern="yyyyMMdd" var="checkoutDate"/>
-							<fmt:parseNumber value="${checkinDate.time / (1000*60*60*24)}" integerOnly="true" var="checkinTime"/>
-							<fmt:parseNumber value="${checkoutDate.time / (1000*60*60*24)}" integerOnly="true" var="checkoutTime"/>
-							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
-							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
-						</c:forEach>
-						<c:set var="N" value="${airPrice + hotelPrice}"/>
-						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
-						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
-						<p class="pkgPrice">${price}원 부터~</p>
-						<p class="pkgDate">~ ${expire}까지</p>
-						<p class="pkgReserv">
-							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
-						</p>
-					</div>
-					</c:forEach> --%>
-					
-				  <c:if test="${listCount >3 }">
-				  <a href="#">더 보기</a>
+				  <c:if test="${listCount ==3 }"> <!-- 3개만 일단 불러오도록 했기 때문에  -->
+				  <a href="#" style="text-decoration: none;" class="toProductList">더 보기</a>
 				  </c:if>
 				  <c:if test="${listCount ==0 }">
 				     <p style="margin-left:20px; margin-top:200px;">여행 상품에 해당 검색어가 포함된 게시물이 없습니다.</p>
@@ -481,14 +380,29 @@ div.pkgInfoBox .pkgTitle {
 		    
 		</section>
 <script>
-function getFormatDate(date){
-    var year = date.getFullYear()+"-";              //yyyy
-    var month = (date.getMonth()+1)+"-";          //M
-    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
-    var day = date.getDate();                   //d
-    day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
-    return  year + '' + month + '' + day;
-}
+     //지역 구분을 위한 변수 선언
+     var wherewhere = "";
+     var searchType = "";
+     var keyword = "${searchkeyword}";
+     var keyword2= $("#secondSearchKeyword").val();
+     var pathwhere = location.href;
+ 
+     if(pathwhere.indexOf("/tourland/customer/tourlandSearch/default") != -1){
+    	 $(".whereLi").eq(0).css("background-color","mistyrose");
+    	 wherewhere ="china";
+     }else if(pathwhere.indexOf("/tourland/customer/tourlandSearch/china") != -1){
+    	 $(".whereLi").eq(0).css("background-color","mistyrose");
+    	 wherewhere ="china";
+     } 
+     else if(pathwhere.indexOf("/tourland/customer/tourlandSearch/japan") != -1){
+    	 $(".whereLi").eq(1).css("background-color","mistyrose");
+    	 wherewhere ="japan";
+     }
+     else if(pathwhere.indexOf("/tourland/customer/tourlandSearch/jeju") != -1){
+    	 $(".whereLi").eq(2).css("background-color","mistyrose");
+    	 wherewhere ="jeju";
+     }
+
       //공지사항
 		$(document).on("click",".faqList",function(){
 			$(".FAQContent").css("display","none");
@@ -530,9 +444,7 @@ function getFormatDate(date){
     		$(".whereLi").css("background-color","white");
     		$(this).css("background","mistyrose");
   
-    		var searchType = "";
-    		var keyword = "${searchkeyword}";
-    		var keyword2= $("#secondSearchKeyword").val();
+    		
     		var whereString = $(this).text();
     		var extractedString = whereString.substring(0,2);
     		//alert(extractedString);
@@ -549,6 +461,16 @@ function getFormatDate(date){
     		}
     		
     	})
+    	
+      $(document).on("click",".toProductList",function(){
+    	  alert(wherewhere);
+    	  var keyword = "${searchkeyword}";
+    	  var keyword2= $("#secondSearchKeyword").val();
+    	  if(wherewhere == "china"){
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/china?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchchina";
+    	  }
+      })
+    	
 
 	  
 </script>

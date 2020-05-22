@@ -112,7 +112,7 @@
 						</c:if>
 					</table>   
 					
-					<div id="expiredCoupon"> 
+					<%-- <div id="expiredCoupon"> 
 						<h3><span id="red" class="circle"></span>만료된 쿠폰</h3>
 						<p class="warning">* 이미 만료된 쿠폰 입니다.</p>
 						<table class="reserv" id="expired">
@@ -133,7 +133,7 @@
 							</tr>
 						</c:forEach>
 						</table>
-					</div>
+					</div> --%>
 				</div>      
 		
 		</section>

@@ -735,6 +735,8 @@ public class CustomerController {
 	//상품 리스트   (중국 패키지)
 		@RequestMapping(value="tourlandProductChinaList", method=RequestMethod.GET)
 		public String tourlandProductChinaList(SearchCriteria cri,Model model) throws SQLException {
+			
+			System.out.println("크리는"+cri);
 			List<ProductVO> list = productService.productListPageByChina(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
@@ -1069,7 +1071,17 @@ public class CustomerController {
         	model.addAttribute("searchkeyword2",cri.getKeyword2());	
         }
 		cri.setPerPageNum(3); //보기쉬우라고 일단3
+		System.out.println("키3"+cri.getKeyword3());
+		String keyword3 = cri.getKeyword3();
 		
+		if(keyword3 !=null) {
+		if(keyword3.contentEquals("forsearchchina")) {
+			cri.setPerPageNum(10);
+			System.out.println("이까지 왔다능 ");
+			System.out.println("키워드 "+cri.getKeyword());
+			return "redirect:/customer/tourlandProductChinaList?searchType=&keyword="+cri.getKeyword()+"&keyword2="+cri.getKeyword2();
+		  }
+		}
 		int chinalistCount = productService.totalCountBySearchProductChina(cri);
 		model.addAttribute("chinalistCount",chinalistCount);
 		int japanlistCount = productService.totalCountBySearchProductJapan(cri);
@@ -1090,6 +1102,7 @@ public class CustomerController {
 		 model.addAttribute("chinacri",cri);
 		 model.addAttribute("chinacount",productService.totalCountBySearchProductChina(cri));
 		 model.addAttribute("listCount",chinalist.size());
+		 System.out.println("왜안나와"+chinalist.size());
 		}else if(where.equals("japan")) {
 			//System.out.println("일본");
 		//일본리스트
@@ -1099,7 +1112,6 @@ public class CustomerController {
 		pageMaker2.setTotalCount(productService.totalCountBySearchProductJapan(cri));
 		
 		model.addAttribute("list",japanlist);
-		System.out.println("에에엥");
 		model.addAttribute("japanpageMaker",pageMaker2);
 		model.addAttribute("japancri",cri);
 		model.addAttribute("listCount",japanlist.size());
