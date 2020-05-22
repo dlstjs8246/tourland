@@ -1062,53 +1062,62 @@ public class CustomerController {
 	}
 	
 	//검색
-	@RequestMapping(value="tourlandSearch", method=RequestMethod.GET)
-	public String tourlandSearch(SearchCriteria cri, Model model) throws Exception { 
+	@RequestMapping(value="tourlandSearch/{where}", method=RequestMethod.GET)
+	public String tourlandSearch(@PathVariable("where")String where,SearchCriteria cri, Model model) throws Exception { 
         model.addAttribute("searchkeyword",cri.getKeyword());
         if(cri.getKeyword2() != null) {
         	model.addAttribute("searchkeyword2",cri.getKeyword2());	
         }
 		cri.setPerPageNum(3); //보기쉬우라고 일단3
+		
+		int chinalistCount = productService.totalCountBySearchProductChina(cri);
+		model.addAttribute("chinalistCount",chinalistCount);
+		int japanlistCount = productService.totalCountBySearchProductJapan(cri);
+		model.addAttribute("japancount",japanlistCount);
+		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
+		model.addAttribute("jejucount",jejulistCount);
 		//중국리스트
+		if(where.equals("china") || where.equals("default")  ) {
+			//System.out.println("중국");
 		List<ProductVO> chinalist = productService.productListPageByChina(cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
-		model.addAttribute("chinalist",chinalist);
-		int chinalistCount = productService.totalCountBySearchProductChina(cri);
-		model.addAttribute("chinalistCount",chinalistCount);
+		model.addAttribute("list",chinalist);
 		
-		model.addAttribute("chinapageMaker",pageMaker);
-		model.addAttribute("chinacri",cri);
-		model.addAttribute("chinacount",productService.totalCountBySearchProductChina(cri));
 		
+		 model.addAttribute("chinapageMaker",pageMaker);
+		 model.addAttribute("chinacri",cri);
+		 model.addAttribute("chinacount",productService.totalCountBySearchProductChina(cri));
+		 model.addAttribute("listCount",chinalist.size());
+		}else if(where.equals("japan")) {
+			//System.out.println("일본");
 		//일본리스트
 		List<ProductVO> japanlist = productService.productListPageByJapan(cri);
 		PageMaker pageMaker2 = new PageMaker();
 		pageMaker2.setCri(cri);
 		pageMaker2.setTotalCount(productService.totalCountBySearchProductJapan(cri));
-		int japanlistCount = productService.totalCountBySearchProductJapan(cri);
-	    model.addAttribute("japanlistCount",japanlistCount);
-		model.addAttribute("japanlist",japanlist);
 		
+		model.addAttribute("list",japanlist);
+		System.out.println("에에엥");
 		model.addAttribute("japanpageMaker",pageMaker2);
 		model.addAttribute("japancri",cri);
-		model.addAttribute("japancount",productService.totalCountBySearchProductJapan(cri));
+		model.addAttribute("listCount",japanlist.size());
 		
+		}else if(where.equals("jeju")) {
+			//System.out.println("제주");
         //한국리스트
 		List<ProductVO> jejulist = productService.productListPageByDomestic(cri);
 		PageMaker pageMaker3 = new PageMaker();
 		pageMaker3.setCri(cri);
 		pageMaker3.setTotalCount(productService.totalCountBySearchProductDomestic(cri));
-		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
-	    model.addAttribute("jejulistCount",jejulistCount);
-		model.addAttribute("jejulist",jejulist);
+		
+		model.addAttribute("list",jejulist);
 		model.addAttribute("jejupageMaker",pageMaker3);
 		model.addAttribute("jejucri",cri);
-		model.addAttribute("jejucount",productService.totalCountBySearchProductDomestic(cri));
-		
-		
-		
+		model.addAttribute("listCount",jejulist.size());
+		}
+
 		//FAQ리스트
 		List<FaqVO> faqlist = faqService.listPage(cri);
 		model.addAttribute("faqlist", faqlist);

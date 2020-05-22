@@ -146,10 +146,10 @@ div.pkgInfoBox .pkgTitle {
      float: left;
      display: block;
   }
-  #searchUlDiv ul li:hover{
+/*   #searchUlDiv ul li:hover{
     background: tan;
     font-weight: bold;
-  }
+  } */
    #searchInnerDiv{
      width:100%;
      height:1000px;
@@ -193,6 +193,10 @@ div.pkgInfoBox .pkgTitle {
    width:50px;
    height: 50px;
  }
+ 
+ .whereLi{
+    cursor:pointer; 
+ }
 </style>
 <body>   
 	<%@ include file="../include/userHeader.jsp"%>
@@ -216,38 +220,25 @@ div.pkgInfoBox .pkgTitle {
 				     <li>이벤트(${eventlistCount }건)</li>
 				   </ul>
 				</div>
-		<!-- 		<div id="searchDiv">
-					<select name="searchType" id="searchType">
-						<option value="">전체</option>
-						<option value="D">국내패키지상품</option>
-						<option value="I">해외패키지상품</option>
-						<option value="R">상품 예약 및 결제</option>
-						<option value="U">회원혜택안내</option>
-					</select>
-					<select name="searchType2" id="searchType2" style="width:150px; height:30px;" >
-						<option value="N">-----------</option>
-					</select>
-					<input type="text" name="keyword" id="keywordInput" placeholder="검색어를 입력해주세요">
-					<button id="btnSearch">검색</button>
-				</div> -->
-				 <div id="searchInnerDiv">
+
+			<div id="searchInnerDiv">
 				 <div style="height: 550px;" >
 				    <h3>여행상품</h3> 
-					    <ul id="searchWhere">
-						    <li>중국(${chinalistCount }건)</li>
-						    <li>일본(${japanlistCount }건)</li>
-						    <li>제주(${jejulistCount }건)</li>
+					    <ul id="searchWhere" style="margin-left:10px;">
+						    <li class="whereLi">중국(${chinalistCount }건)</li>
+						    <li class="whereLi">일본(${japancount }건)</li>
+						    <li class="whereLi">제주(${jejucount }건)</li>
 					    </ul>
 					    
 					    <br><br>
-				  <div id="pkgListWrap">
+		      <div id="pkgListWrap">
 
 				<div id="pkgListBoxWrap">
 					<input type="hidden" value="${product.pno}" id="pno">
-					<%-- <c:forEach var="product" items="${list}">
+				  <c:forEach var="product" items="${list}">
 					<div class="pkgInfoBox">
 						<div class="pkgImg">
-							<img src="displayFile/product?filename=${product.pic}">
+							<img src="${pageContext.request.contextPath }/customer/displayFile/product?filename=${product.pic}">
 						</div>
 						<p class="pkgTitle">${product.pname}</p>
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
@@ -276,12 +267,12 @@ div.pkgInfoBox .pkgTitle {
 						</p>
 						
 					</div>
-					</c:forEach> --%>
-					<!-- 중국 -->
+					</c:forEach> 
+					<%-- <!-- 중국 -->
 					<c:forEach var="product" items="${chinalist}">
 					<div class="pkgInfoBox">
 						<div class="pkgImg">
-							<img src="displayFile/product?filename=${product.pic}">
+							<img src="${pageContext.request.contextPath }/customer/displayFile/product?filename=${product.pic}">
 						</div>
 						<p class="pkgTitle">${product.pname}</p>
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
@@ -311,7 +302,7 @@ div.pkgInfoBox .pkgTitle {
 						
 					</div>
 					</c:forEach>
-					<%-- <!-- 일본 -->
+					<!-- 일본 -->
 					   <c:forEach var="product" items="${japanlist}">
 					<div class="pkgInfoBox">
 						<div class="pkgImg">
@@ -379,10 +370,10 @@ div.pkgInfoBox .pkgTitle {
 					</div>
 					</c:forEach> --%>
 					
-				  <c:if test="${chinalistCount >3 }">
+				  <c:if test="${listCount >3 }">
 				  <a href="#">더 보기</a>
 				  </c:if>
-				  <c:if test="${chinalistCount ==0 }">
+				  <c:if test="${listCount ==0 }">
 				     <p style="margin-left:20px; margin-top:200px;">여행 상품에 해당 검색어가 포함된 게시물이 없습니다.</p>
 				  </c:if>
 				</div>
@@ -490,7 +481,14 @@ div.pkgInfoBox .pkgTitle {
 		    
 		</section>
 <script>
-
+function getFormatDate(date){
+    var year = date.getFullYear()+"-";              //yyyy
+    var month = (date.getMonth()+1)+"-";          //M
+    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
+    var day = date.getDate();                   //d
+    day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
+    return  year + '' + month + '' + day;
+}
       //공지사항
 		$(document).on("click",".faqList",function(){
 			$(".FAQContent").css("display","none");
@@ -523,12 +521,35 @@ div.pkgInfoBox .pkgTitle {
             	alert("검색어를 입력해주세요");
             	return false;
             }
-    		location.href="${pageContext.request.contextPath }/customer/tourlandSearch?searchType=&keyword="+mainKeyword+"&keyword2="+secondKeyword;
+    		location.href="${pageContext.request.contextPath }/customer/tourlandSearch/default?searchType=&keyword="+mainKeyword+"&keyword2="+secondKeyword;
     	})
     	
-    	
-   
-	  
+    	//중국, 일본, 제주 클릭 시  정보 변경
+    	$(".whereLi").click(function(){
+    		//pkgListBoxWrap
+    		$(".whereLi").css("background-color","white");
+    		$(this).css("background","mistyrose");
+  
+    		var searchType = "";
+    		var keyword = "${searchkeyword}";
+    		var keyword2= $("#secondSearchKeyword").val();
+    		var whereString = $(this).text();
+    		var extractedString = whereString.substring(0,2);
+    		//alert(extractedString);
+    		
+    		if(whereString.indexOf("일본") != -1){
+    			location.href="${pageContext.request.contextPath }/customer/tourlandSearch/japan?searchType=&keyword="+keyword+"&keyword2="+keyword2;
+ 
+    		}else if(whereString.indexOf("제주") != -1){
+    			location.href="${pageContext.request.contextPath }/customer/tourlandSearch/jeju?searchType=&keyword="+keyword+"&keyword2="+keyword2;
+ 
+    		}else if(whereString.indexOf("중국") != -1){
+    			location.href="${pageContext.request.contextPath }/customer/tourlandSearch/china?searchType=&keyword="+keyword+"&keyword2="+keyword2;
+ 
+    		}
+    		
+    	})
+
 	  
 </script>
 		
