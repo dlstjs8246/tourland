@@ -68,6 +68,7 @@ public class LoginController {
 			map.put("right", dbEmpIdPw.getEmpauth());
 			session.setAttribute("Manager",map);
 			session.setAttribute("Auth", dbEmpIdPw);//정보 다 가지고 있는거
+			session.setAttribute("login", "manager");
 			session.setAttribute("pass", pass);
 			session.setAttribute("mypage","mypageemp");
 			return "redirect:/customer/tourlandMain";
@@ -92,6 +93,7 @@ public class LoginController {
 			//전부 다 맞는 경우(회원)
 			
 			session.setAttribute("User",dbUserId.getUsername());
+			session.setAttribute("login", "user");
 			session.setAttribute("Auth", dbUserIdPw); //정보 다 가지고 있는거
 			session.setAttribute("pass", pass);
 			session.setAttribute("mypage","mypageuser");

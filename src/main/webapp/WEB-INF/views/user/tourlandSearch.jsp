@@ -200,7 +200,14 @@ div.pkgInfoBox .pkgTitle {
 				<div id="myreserv" style="width:1200px;margin-left:25%;">
 				<h1>투어랜드 검색 결과</h1>
 				<div id="searchResultCounting">고객님의 키워드로 ${totalSearchCount }건이 검색되었습니다.</div>
-				<div id="serachResultAgain">결과내 재검색  <input type="text" style="width:300px; height: 30px; margin-left:15px;"></div>
+				<div id="serachResultAgain">결과내 재검색 
+				<c:if test="${searchkeyword2 !=null }">
+				 <input type="text" style="width:250px; height: 30px; margin-left:15px;" id="secondSearchKeyword" value="${searchkeyword2 }">
+				</c:if> 
+				<c:if test="${searchkeyword2 ==null }">
+				 <input type="text" style="width:250px; height: 30px; margin-left:15px;" id="secondSearchKeyword">
+				</c:if> 
+				 <i class="fas fa-search" id="secondSearchIcon" style="margin-left:5px;"></i></div>
 				<div id="searchUlDiv">
 				   <ul>
 				     <li>전체검색결과(${totalSearchCount }건)</li>
@@ -237,9 +244,41 @@ div.pkgInfoBox .pkgTitle {
 
 				<div id="pkgListBoxWrap">
 					<input type="hidden" value="${product.pno}" id="pno">
-					
+					<%-- <c:forEach var="product" items="${list}">
+					<div class="pkgInfoBox">
+						<div class="pkgImg">
+							<img src="displayFile/product?filename=${product.pic}">
+						</div>
+						<p class="pkgTitle">${product.pname}</p>
+						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어,렌터카 : 없음) -->
+						<c:set var="airPrice" value="0"/>
+						<c:set var="hotelPrice" value="0"/>
+						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.air)-2}" end="${fn:length(product.air)-1}">
+							<c:set var="airPrice" value="${airPrice+f.price}"/>
+						</c:forEach>
+						<c:forEach var="h" items="${product.hotel}" begin="${fn:length(product.hotel)-1}" end="${fn:length(product.hotel)-1}">
+							<fmt:formatDate value="${h.checkin}" pattern="yyyyMMdd" var="checkin"/>
+							<fmt:formatDate value="${h.checkout}" pattern="yyyyMMdd" var="checkout"/>
+							<fmt:parseDate value="${checkin}" pattern="yyyyMMdd" var="checkinDate"/>
+							<fmt:parseDate value="${checkout}" pattern="yyyyMMdd" var="checkoutDate"/>
+							<fmt:parseNumber value="${checkinDate.time / (1000*60*60*24)}" integerOnly="true" var="checkinTime"/>
+							<fmt:parseNumber value="${checkoutDate.time / (1000*60*60*24)}" integerOnly="true" var="checkoutTime"/>
+							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
+							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
+						</c:forEach>
+						<c:set var="N" value="${airPrice + hotelPrice}"/>
+						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
+						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
+						<p class="pkgPrice">${price}원 부터~</p>
+						<p class="pkgDate">~ ${expire}까지</p>
+						<p class="pkgReserv">
+							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
+						</p>
+						
+					</div>
+					</c:forEach> --%>
 					<!-- 중국 -->
-					<%-- <c:forEach var="product" items="${chinalist}">
+					<c:forEach var="product" items="${chinalist}">
 					<div class="pkgInfoBox">
 						<div class="pkgImg">
 							<img src="displayFile/product?filename=${product.pic}">
@@ -272,7 +311,7 @@ div.pkgInfoBox .pkgTitle {
 						
 					</div>
 					</c:forEach>
-					<!-- 일본 -->
+					<%-- <!-- 일본 -->
 					   <c:forEach var="product" items="${japanlist}">
 					<div class="pkgInfoBox">
 						<div class="pkgImg">
@@ -304,7 +343,7 @@ div.pkgInfoBox .pkgTitle {
 							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
 						</p>
 					</div>
-					</c:forEach> --%>
+					</c:forEach> 
 					
 					<!-- 제주 -->
 					<c:forEach var="product" items="${jejulist}">
@@ -338,16 +377,16 @@ div.pkgInfoBox .pkgTitle {
 							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
 						</p>
 					</div>
-					</c:forEach>
+					</c:forEach> --%>
 					
-				  <c:if test="${totalProductCount !=0 }">
+				  <c:if test="${chinalistCount >3 }">
 				  <a href="#">더 보기</a>
 				  </c:if>
-				  <c:if test="${totalProductCount ==0 }">
+				  <c:if test="${chinalistCount ==0 }">
 				     <p style="margin-left:20px; margin-top:200px;">여행 상품에 해당 검색어가 포함된 게시물이 없습니다.</p>
 				  </c:if>
 				</div>
-<%-- 				<ul class="pagination"> 컨트롤러에서 이름 바꿨음
+			<!--  <ul class="pagination"> 컨트롤러에서 이름 바꿨음
 					<c:if test="${pageMaker.prev == true}">
 						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${pageMaker.startPage-1}">&laquo;</a></li>
 					</c:if>
@@ -357,11 +396,11 @@ div.pkgInfoBox .pkgTitle {
 					<c:if test="${pageMaker.next == true}">
 						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${pageMaker.endPage+1}">&raquo;</a></li>
 					</c:if>
-				</ul> --%>
-			</div>
-				    
+				</ul> -->	
+			</div> 
+				      
  
-				 </div>
+				 </div>  
 				 <div style="margin-top:10px; width:100%; height: 300px;">
 				   <h3>FAQ</h3> 
 				   <table id="reserv" style="margin:40px 10px 10px 40px; width:100%;">
@@ -380,10 +419,10 @@ div.pkgInfoBox .pkgTitle {
 						    
 						</tr>
 						
-						</c:forEach>   
+						</c:forEach>  
 						 
 					</table>
-				  <c:if test="${faqlistCount !=0 }">
+				  <c:if test="${faqlistCount > 3 }">
 				     <a href="#" style="margin-left:50px;">더 보기</a>
 				  </c:if>
 				  <c:if test="${faqlistCount ==0 }">
@@ -451,6 +490,8 @@ div.pkgInfoBox .pkgTitle {
 		    
 		</section>
 <script>
+
+      //공지사항
 		$(document).on("click",".faqList",function(){
 			$(".FAQContent").css("display","none");
 			var no = $(this).attr("data-no");
@@ -470,6 +511,23 @@ div.pkgInfoBox .pkgTitle {
 		  var no = $(this).attr("data-click");
 		  location.href="${pageContext.request.contextPath}/customer/eventDetailPage?no="+no;
 	  })
+	  
+	//두번째 검색
+	 
+    	$("#secondSearchIcon").click(function(){
+    		var mainKeyword = "${searchkeyword}";
+    		//alert(mainKeyword);
+            var secondKeyword = $("#secondSearchKeyword").val();
+            //alert(secondKeyword);
+            if(secondKeyword == ""){
+            	alert("검색어를 입력해주세요");
+            	return false;
+            }
+    		location.href="${pageContext.request.contextPath }/customer/tourlandSearch?searchType=&keyword="+mainKeyword+"&keyword2="+secondKeyword;
+    	})
+    	
+    	
+   
 	  
 	  
 </script>

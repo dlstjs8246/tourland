@@ -291,7 +291,7 @@ $(function(){
 						<!-- 1인 기준 default 가격 계산(항공 : economy, 호텔 : normal, 투어 : 1번째, 렌터가 : 없음) -->
 						<c:set var="airPrice" value="0"/>
 						<c:set var="hotelPrice" value="0"/>
-						<c:set var="tourPrice" value="${product.tour[0].tprice}"/>
+						<c:set var="tourPrice" value="0"/>
 						<c:forEach var="f" items="${product.air}" begin="${fn:length(product.air)-2}" end="${fn:length(product.air)-1}">
 							<c:set var="airPrice" value="${airPrice+f.price}"/>
 						</c:forEach>
@@ -304,6 +304,9 @@ $(function(){
 							<fmt:parseNumber value="${checkoutDate.time / (1000*60*60*24)}" integerOnly="true" var="checkoutTime"/>
 							<c:set var="dateDiff" value="${checkoutTime-checkinTime}"/>
 							<c:set var="hotelPrice" value="${h.price * dateDiff}"/>
+						</c:forEach>
+						<c:forEach var="t" items="${product.tour}">
+							<c:set var="tourPrice" value="${tourPrice+t.tprice}"/>
 						</c:forEach>
 						<c:set var="N" value="${airPrice + hotelPrice + tourPrice}"/>
 						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
