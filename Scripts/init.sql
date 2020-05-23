@@ -627,6 +627,6 @@ ALTER TABLE tour.usercoupon
 		)
 		REFERENCES tour.coupon ( -- 쿠폰
 			cno -- 쿠폰번호
-		);
+		) on delete cascade;
 create user if not exists 'tour'@'localhost';
 grant all privileges on tour.* to 'tour'@'localhost' identified by 'tour';
