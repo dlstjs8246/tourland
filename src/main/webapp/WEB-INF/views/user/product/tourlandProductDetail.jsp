@@ -278,7 +278,7 @@
 				var tno = [];
 				var tcapacity = bookCapacity;
 				var rno = [];
-				var rcacapcity = bookCapacity;
+				var rcacaacity = bookCapacity;
 				$(".selAir option:selected").each(function(i,obj){
 					if($(this).val()!="") {
 						var dno = $(this).attr("data-dano");
@@ -307,11 +307,12 @@
 				alert(tno);
 				alert(tcapacity);
 				if($("#selRentcar option:selected").val()=="S") {
-					rno[0] = $(this).val();
+					rno[0] = $(this).attr("data-rentno");
 				}
+				alert("렌트카");
 				alert(rno);
 				alert(rcapacity);
-				.ajax({
+				$.ajax({
 					url : "ProductDetail/reserv",
 					method : "get",
 					data : {
@@ -334,26 +335,126 @@
 				})
 			})
 			$("#doWish").click(function(){
+				alert("장바구니");
+				/* //상품 번호
 				var pno = $("#pno").text().substring($("#pno").text().indexOf("P"),$("#pno").text().length);
+				//가격
 				var price = replaceAll($("#price").text(),",","");
+				//항공편 번호
 				var ano;
+				//호텔번호
 				var hno;
+				//투어 번호 
 				var tno;
+				//렌트카 번호
 				var rno;
-				if(${Auth==null}) {
-					alert("로그인부터 먼저해주세요");
-					location.href = "${pageContext.request.contextPath}/loginForm";
-					return false;
-				}
-				/* $.ajax({
-					url = "tourlandProductDetail/cart",
-					method = "get",
-					data = 
-					dataType = "json",
-					success : function(res) {
-						alert(res);
+				 */
+
+			if(${Auth==null}) {
+				alert("로그인부터 먼저해주세요");
+				location.href = "${pageContext.request.contextPath}/loginForm";
+				return false;
+			}
+				//유저 번호
+				var uno = ${Auth.userno};
+				//상품 번호
+				var pno = ${vo.pno};
+				//가격
+				var price = replaceAll($("#price").text(),",","");
+				//항공 출발편 번호
+				var ano = [];
+				//항공 도착편 번호
+				var rano = [];
+				//항공 선택 인원 (좌석 별)
+				var acapacity = [];
+				//호텔 번호
+				var hno = [];
+				//호텔 룸
+				var hroomtype = [];
+				//호텔 인원 (룸 별)
+				var hcapacity = [];
+				//투어 번호
+				var tno = [];
+				//투어 인원 == 예약 인원
+				var tcapacity = bookCapacity;
+				//렌트카 번호
+				var rno = [];
+				//렌트카 인원 == 예약 인원
+				var rcapacity = bookCapacity;
+				
+				$(".selAir option:selected").each(function(i,obj){
+					if($(this).val()!="") {
+						var rno = $(this).attr("data-rano");
+						ano[i] = rno;
 					}
-				}) */
+				})
+				$(".selAir option:selected").each(function(i,obj){
+					if($(this).val()!="") {
+						var dno = $(this).attr("data-dano");
+						rano[i] = dno;
+					}
+				})
+				$(".airSelect option:selected").each(function(i,obj){
+					acapacity[i] = $(this).attr("data-capacity"); 
+				})
+				//alert(ano);
+				//alert(acapacity);
+				$(".selHotel option:selected").each(function(i,obj){
+					if($(this).val()!="" || $(this).val=="DS") {
+						var no = $(this).attr("data-hno");
+						hno[i] = no;
+					}
+				})
+				$(".hotelSelect option:selected").each(function(i,obj){
+					hcapacity[i] = $(this).attr("data-capacity"); 
+				})
+			//	alert(hno);
+				//alert(hcapacity);
+				$(".selTour:checked").each(function(i,obj){
+					tno[i] = $(this).val();
+				})
+				//alert(tno);
+				//alert(tcapacity);
+				if($("#selRentcar option:selected").val()=="S") {
+					rno[0] = $("#selRentcar option:selected").attr("data-rentno");
+				}
+				//alert(rno);
+				//alert("인원");
+				//alert(rcapacity);
+				
+				//alert("항공기 옵션 길이");
+				//alert(acapacity.length);
+			//	alert("호텔 옵션 길이");
+			//	alert(hcapacity.length);
+				if(rcapacity != acapacity.length || rcapacity != hcapacity.length){ //예약 인원과 옵션 선택 인원이 맞지 않을 때 return
+					alert("예약 인원에 맞게 옵션을 선택해주세요.");
+					return;  
+				}else{/* traditional :true -> ajax에서 배열을 컨트롤러로 보낼때 컨트롤러에서 배열 형태로 받을 수 있게 설정하는 것 */
+					$.ajax({
+						url : "tourlandProductDetail/cart",
+						method : "get",
+     					traditional : true, 
+						data : {
+							uno:uno,
+							pno:pno,
+							price:price,
+							ano:ano,
+							rano:rano,
+							acapacity:acapacity,
+							hno:hno,
+							hcapacity:hcapacity,
+							tno:tno,
+							tcapacity:tcapacity,
+							rno:rno,
+							rcapacity:rcapacity
+						},
+						dataType : "json",
+						success : function(res) {
+							console.log(res);
+						}
+					}) 
+				}
+				 
 			})
 		})
 	</script>
@@ -509,9 +610,9 @@
 									렌터카옵션
 									<select id="selRentcar">
 										<option value="">선택</option>
-										<option value="S" value="${vo.rentcar[0].no}">선택함</option>
+										<option value="S" data-rentno="${vo.rentcar[0].no}">선택함</option>
 										<option value="DS">선택안함</option>
-									</select>
+									</select>   
 								</p>
 							</li>
 							<li id="infoPrice" style="clear : both;">가격 : <span id="price"><fmt:formatNumber value="${price}" pattern="###,###"/></span>원</li>

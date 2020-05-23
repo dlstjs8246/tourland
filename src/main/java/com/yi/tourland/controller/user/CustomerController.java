@@ -36,6 +36,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.yi.tourland.domain.PageMaker;
 import com.yi.tourland.domain.SearchCriteria;
+import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.BannerVO;
 import com.yi.tourland.domain.mng.CouponVO;
 import com.yi.tourland.domain.mng.CustBoardVO;
@@ -43,10 +44,13 @@ import com.yi.tourland.domain.mng.EmailVO;
 import com.yi.tourland.domain.mng.EmployeeVO;
 import com.yi.tourland.domain.mng.EventVO;
 import com.yi.tourland.domain.mng.FaqVO;
+import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.NoticeVO;
 import com.yi.tourland.domain.mng.PlanBoardVO;
 import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
+import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
 import com.yi.tourland.service.mng.CouponService;
@@ -837,6 +841,108 @@ public class CustomerController {
 		model.addAttribute("price",price);
 		return "/user/product/tourlandProductDetail"; 
 	}
+	
+	//상품 장바구니에 담기 ajax
+	@RequestMapping(value="tourlandProductDetail/cart", method=RequestMethod.GET)
+	public String tourlandProductDoWith(SearchCriteria cri, Model model, int uno, int pno, int price, String[] ano,String[] rano, String[] acapacity, String[] hno, String[] hcapacity, String[] tno, String[] tcapacity, String[] rno, String[] rcapacity) throws Exception {
+		System.out.println("유저번호 : " + uno );
+		//유저
+		UserVO user = userService.readByNoUser(uno);
+
+		System.out.println("상품번호 : " + pno);
+		//상품 
+		ProductVO p = new ProductVO();
+		p.setPno(pno);
+		ProductVO product = productService.productByNo(p);
+		
+		//가격
+		System.out.println("가격 : " + price);
+		
+		//항공 출발편
+		for(int i=0; i<ano.length; i++) {
+			System.out.println("항공 출발편 번호 : " + ano[i]);
+			//새로운 객체 생성
+			AirplaneVO air = new AirplaneVO();
+			//객체에 불러온 항공편 번호 세팅
+			air.setNo(Integer.parseInt(ano[i]));
+			//해당 항공편 번호로 검색해서 DB에서 해당 번호 항공편 불러옴
+			AirplaneVO newAir = flightService.airplaneByNo(air);
+			System.out.println("출발편 : "+newAir);
+			//새로운 객체2를 만듦
+			//객체2에 DB에서 검색해온 항공편 정보 세팅 (단, capacity는 1, pdiv:1)
+			//Airplane 테이블에 객체2 insert
+			
+		}
+		for(int i=0; i<rano.length; i++) {
+			System.out.println("항공 도착편 번호 : " + rano[i]);
+			//새로운 객체 생성
+			AirplaneVO air = new AirplaneVO();
+			//객체에 불러온 항공편 번호 세팅
+			air.setNo(Integer.parseInt(rano[i]));
+			//해당 항공편 번호로 검색해서 DB에서 해당 번호 항공편 불러옴
+			AirplaneVO newAir = flightService.airplaneByNo(air);
+			System.out.println("도착편 : "+newAir);
+			//새로운 객체2를 만듦
+			//객체2에 DB에서 검색해온 항공편 정보 세팅 (단, capacity는 1, pdiv:1)
+			//Airplane 테이블에 객체2 insert
+		}
+		for(int i=0; i<acapacity.length; i++) {
+			System.out.println("항공편 인원 :" + acapacity[i]);
+		}
+		for(int i=0; i<hno.length; i++) {
+			System.out.println("호텔 번호 :"+hno[i]);
+			//새로운 객체 생성
+			HotelVO hotel = new HotelVO();
+			//객체에 불러온 호텔 번호 세팅
+			hotel.setNo(Integer.parseInt(hno[i]));
+			//해당 호텔 번호로 검색해서 DB에서 해당 번호 호텔 불러옴
+			HotelVO newHotel = hotelService.readHotel(hotel);
+			System.out.println("호텔 : "+newHotel);
+			//새로운 객체2를 만듦
+			//객체2에 DB에서 검색해온 호텔 정보 세팅 (단, capacity는 1, pdiv:1)
+			//호텔 테이블에 객체2 insert
+		}
+		for(int i=0; i<hcapacity.length; i++) {
+			System.out.println("호텔 인원 : "+hcapacity[i]);
+		}
+		for(int i=0; i<tno.length; i++) {
+			System.out.println("투어 번호 : "+tno[i]);
+			//새로운 객체 생성
+			TourVO tour = new TourVO();
+			//객체에 불러온 투어 번호 세팅
+			tour.setNo(Integer.parseInt(tno[i]));
+			//해당 투어 번호로 검색해서 DB에서 해당 번호 투어 불러옴
+			TourVO newTour = tourService.selectTourByNo(tour);
+			System.out.println("투어 : "+newTour);
+			//새로운 객체2를 만듦
+			//객체2에 DB에서 검색해온 투어 정보 세팅 (단, capacity는 1, pdiv:1)
+			//투어 테이블에 객체2 insert
+		}
+		for(int i=0; i<tcapacity.length; i++) {
+			System.out.println("투어 인원 : "+tcapacity[i]);
+		}  
+		for(int i=0; i<rno.length; i++) {
+			System.out.println("렌트카 번호 : "+rno[i]);
+			//새로운 객체 생성
+			RentcarVO rent = new RentcarVO();
+			//객체에 불러온 렌트카 번호 세팅
+			rent.setNo(Integer.parseInt(rno[i]));
+			//해당 렌트카 번호로 검색해서 DB에서 해당 번호 투어 불러옴
+			RentcarVO newRent = rentcarService.readByNo(rent.getNo());
+			System.out.println("렌트카  : "+newRent);
+			//새로운 객체2를 만듦
+			//객체2에 DB에서 검색해온 투어 정보 세팅 (단, capacity는 1, pdiv:1)
+			//투어 테이블에 객체2 insert
+		}
+		for(int i=0; i<rcapacity.length; i++) {
+			System.out.println("렌트카 인원 : "+rcapacity[i]);
+		}
+		
+		
+		return "redirect:/customer/toulandProductDetail";
+	}
+	
+	
 	//상품 리뷰    
 	@RequestMapping(value="tourlandProductReview", method=RequestMethod.GET)
 	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model,int price) throws SQLException {
