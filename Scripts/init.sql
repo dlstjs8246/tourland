@@ -336,6 +336,9 @@ ALTER TABLE tour.coupon
 			cno -- 쿠폰번호
 		);
 
+
+
+	
 -- 장바구니
 CREATE TABLE tour.cart (
 	cno    INT     NULL COMMENT '번호', -- 번호

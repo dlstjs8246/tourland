@@ -20,7 +20,7 @@
 			location.href = "editCoupon?cno="+cno;
 		})
 		$("#del").click(function(){
-			if(!confirm("삭제하시겠습니까?")) {
+			if(!confirm("쿠폰을 삭제하면 해당 쿠폰이 고객에게 지급되었더라도 완전히 삭제 됩니다. 삭제하시겠습니까?")) {
 				return false;
 			}
 			var cno = "${coupon.cno}";
