@@ -383,7 +383,7 @@ div.pkgInfoBox .pkgTitle {
      //지역 구분을 위한 변수 선언
      var wherewhere = "";
      var searchType = "";
-     var keyword = "${searchkeyword}";
+     var keyword = $("#mainSearchKeyword").val();
      var keyword2= $("#secondSearchKeyword").val();
      var pathwhere = location.href;
  
@@ -427,15 +427,13 @@ div.pkgInfoBox .pkgTitle {
 	//두번째 검색
 	 
     	$("#secondSearchIcon").click(function(){
-    		var mainKeyword = "${searchkeyword}";
-    		//alert(mainKeyword);
-            var secondKeyword = $("#secondSearchKeyword").val();
-            //alert(secondKeyword);
-            if(secondKeyword == ""){
+    		var keyword = $("#mainSearchKeyword").val();
+    	     var keyword2= $("#secondSearchKeyword").val();
+            if(keyword2 == ""){
             	alert("검색어를 입력해주세요");
             	return false;
             }
-    		location.href="${pageContext.request.contextPath }/customer/tourlandSearch/default?searchType=&keyword="+mainKeyword+"&keyword2="+secondKeyword;
+    		location.href="${pageContext.request.contextPath }/customer/tourlandSearch/default?searchType=&keyword="+keyword+"&keyword2="+keyword2;
     	})
     	
     	//중국, 일본, 제주 클릭 시  정보 변경
@@ -461,13 +459,17 @@ div.pkgInfoBox .pkgTitle {
     		}
     		
     	})
-    	
+    	//각각의 더 보기를 클릭했을 때 상품 페이지로 넘어가는 부분 
       $(document).on("click",".toProductList",function(){
-    	  alert(wherewhere);
-    	  var keyword = "${searchkeyword}";
-    	  var keyword2= $("#secondSearchKeyword").val();
+    	 // alert(wherewhere);
+    	 var keyword = $("#mainSearchKeyword").val();
+ 	     var keyword2= $("#secondSearchKeyword").val();
     	  if(wherewhere == "china"){
     	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/china?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchchina";
+    	  }else if(wherewhere == "japan"){
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/japan?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjapan";
+    	  }else if(wherewhere == "jeju"){
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/jeju?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjeju";
     	  }
       })
     	
