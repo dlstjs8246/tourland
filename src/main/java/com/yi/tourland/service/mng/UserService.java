@@ -67,12 +67,15 @@ public class UserService {
 	}
 	
 	//태원
+	//결제관리에 쓰일 리스트
 	public List<UserVO> listSearchCriteriaPaymentUser(SearchCriteria cri) throws Exception {
 		return dao.listSearchCriteriaPaymentUser(cri);
 	}
 	public int totalSearchCountPaymentUser(SearchCriteria cri) throws Exception {
 		return dao.totalSearchCountPaymentUser(cri);
 	}
+	
+	//메일보내기
 	public UserVO readByNameBirthTel(String username,String userbirth,String usertel) throws Exception {
 		return dao.readByNameBirthTel(username,userbirth,usertel);
 	}

@@ -699,7 +699,7 @@ button.popupBtnClose2 {
 										+ capa + "&date=" + date;
 							}
 
-						})
+						})					
 	})
 </script>
  <c:if test="${currentProductPrice != null}">

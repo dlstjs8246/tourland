@@ -343,7 +343,7 @@
 								<!-- Menu Footer-->
 								<li class="user-footer">
 									<div class="pull-left">
-										<a href="${pageContext.request.contextPath }/manager/employeeDetail/${empretired}?empno=${Auth.empno}" class="btn btn-default btn-flat">프로필</a>
+										<a href="${pageContext.request.contextPath }/manager/employeeDetail/${Auth.empretired }?empno=${Auth.empno}" class="btn btn-default btn-flat">프로필</a>
 									</div>
 									<div class="pull-right">
 										<a href="${pageContext.request.contextPath}/logout"
@@ -395,20 +395,13 @@
 								class="fa fa-dashboard"></i> <span>직원 관리</span>
 							<!--  <i class="fa fa-angle-left pull-right"></i> -->
 							</a>
-						</c:if> <%-- <ul class="treeview-menu">
-                <li><a href="${pageContext.request.contextPath }/resources/index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                <li><a href="${pageContext.request.contextPath }/resources/index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-              </ul> --%></li>
-					<li class="treeview"><a
-						href="${pageContext.request.contextPath }/manager/userMngList/0"> <i
+						</c:if>
+					</li>
+					<li class="treeview"><a href="${pageContext.request.contextPath }/manager/userMngList/0"> <i
 							class="fa fa-files-o"></i> <span>고객 관리</span> <!--  <span class="label label-primary pull-right">4</span>    -->
 							<!-- new인 갯수 뜨는거 -->
-					</a> <!-- <ul class="treeview-menu">
-                <li><a href="../layout/top-nav.html"><i class="fa fa-circle-o"></i> Top Navigation</a></li>
-                <li><a href="../layout/boxed.html"><i class="fa fa-circle-o"></i> Boxed</a></li>
-                <li><a href="../layout/fixed.html"><i class="fa fa-circle-o"></i> Fixed</a></li>
-                <li><a href="../layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Collapsed Sidebar</a></li>
-              </ul> --></li>
+						</a>
+					</li>
 					
             <li>
               <a href="${pageContext.request.contextPath }/manager/reservationMgnList">
