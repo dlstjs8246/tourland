@@ -105,12 +105,12 @@
 					<c:if test="${login=='user'}">
 						<p id="userAuth">[ ${User} ]님! 반갑습니다.</p>
 					</c:if>
-					<c:if test="${login=='manager'}">
-						<li id="manager" style="margin-left: -15px;"><a href="${pageContext.request.contextPath }/manager/empMngList/0">관리자</a></li>
+					<c:if test="${login=='manager' && Manager.right==1}">
+						<li id="manager" style="margin-left: -15px;"><a href="${pageContext.request.contextPath}/manager/empMngList/0">관리자</a></li>
 						<p id="managerAuth">[ ${Manager.name} ]님! 반갑습니다.</p>
 					</c:if>
 					<c:if test="${login=='manager' && Manager.right==0}">
-						<li id="manager" style="margin-left: -15px;"><a href="${pageContext.request.contextPath }/manager/userMngList/0">관리자</a></li>
+						<li id="manager" style="margin-left: -15px;"><a href="${pageContext.request.contextPath}/manager/userMngList/0">관리자</a></li>
 						<p id="managerAuth">[ ${Manager.name} ]님! 반갑습니다.</p>
 					</c:if>
 				</c:if>

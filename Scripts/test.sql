@@ -12,6 +12,8 @@ delete from employee where empid = 'apple';
 insert into employee values (6,'장우주','1987-01-01','010-4444-4321','대구 광역시 달서구',0,'employee4',password('employee'),1);
 desc user;
 select * from `user` u ;
+select * from usercoupon u ;
+select user.username, coupon.cno, coupon.cname from user left join usercoupon uc on user.userno = uc.userno left join coupon on uc.cno = coupon.cno;
 delete from `user` where userno = 7;
 insert into user values (6,'도라지','1989-12-18','010-4333-3825','대구시 북구 태전동 254-30',null,'customer5',password('customer'),1);
 select * from rentcar r order by no desc ;
@@ -236,6 +238,31 @@ select * from employee;
 select userid,userpass
 from user
 where username='황태원' and userbirth='1991-12-18' and usertel='010-4245-3825';
+
+select *
+from reservation;
+
+insert into reservation values(1, 2, '2020-05-20',2);
+
+
+
+select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
+	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity,a2.seat,a2.price,a2.pdiv, 
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity,h2.price,h2.roomtype,h2.roomcapacity,h2.ldiv,h2.bookedup,h2.pdiv,
+	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity,t2.tprice,t2.ldiv,t2.pdiv,
+	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price,r2.capacity,r2.insurance,r2.ldiv,r2.pdiv 
+		from product p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
+					   join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
+					   join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+					   join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pno = 2;
+	
+select * from usercoupon uc join user u on uc.userno = u.userno join coupon c on uc.cno = c.cno where u.userno = 2 order by edate asc;
+	
+
+
+select u.username, u.userno, 
+where r.rstatus =2;
 
 -- 하나 --------------------------------------------------------------------------------------------
 select * from reservation;

@@ -161,6 +161,8 @@ div.pkgInfoBox .pkgTitle {
 </style>
 <%@include file="tourlandProductList_script.jsp"%>
 <script>
+
+//alert("${keyword3}");
 $(function(){
 	/* 페이지 좌측 검색 박스 검색 버튼 클릭  */
 	$("#pkgSearchBtn").click(function(){
@@ -316,17 +318,32 @@ $(function(){
 					</div>
 					</c:forEach>
 				</div>
-				<ul class="pagination">
-					<c:if test="${pageMaker.prev == true}">
-						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${pageMaker.startPage-1}">&laquo;</a></li>
-					</c:if>
-					<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="idx">
-						<li class="${cri.page==idx?'active':''}"><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${idx}" class="pageNumA">${idx}</a></li>
-					</c:forEach>
-					<c:if test="${pageMaker.next == true}">
-						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${pageMaker.endPage+1}">&raquo;</a></li>
-					</c:if>
-				</ul>
+				<c:if test="${keyword3 == null }">
+					<ul class="pagination">
+						<c:if test="${pageMaker.prev == true}">
+							<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${pageMaker.startPage-1}">&laquo;</a></li>
+						</c:if>
+						<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="idx">
+							<li class="${cri.page==idx?'active':''}"><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${idx}" class="pageNumA">${idx}</a></li>
+						</c:forEach>
+						<c:if test="${pageMaker.next == true}">
+							<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?page=${pageMaker.endPage+1}">&raquo;</a></li>
+					    </c:if>
+					</ul>
+				</c:if>
+				<c:if test="${keyword3 !=null}">
+					<ul class="pagination">
+						<c:if test="${pageMaker.prev == true}">
+							<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?searchType=&page=${pageMaker.startPage-1}">&laquo;</a></li>
+						</c:if>
+						<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="idx">
+							<li class="${cri.page==idx?'active':''}"><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?searchType=&page=${idx}" class="pageNumA">${idx}</a></li>
+						</c:forEach>
+						<c:if test="${pageMaker.next == true}">
+							<li><a href="${pageContext.request.contextPath}/customer/tourlandProductChinaList?searchType=&page=${pageMaker.endPage+1}">&raquo;</a></li>
+					    </c:if>
+					</ul>
+				</c:if>
 			</div>
 		</div>
 	</section>

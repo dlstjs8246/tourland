@@ -89,17 +89,19 @@ public class UserDAOImpl implements UserDAO{
 	public UserVO readByIdUser(String userid) throws Exception {
 		return sqlSession.selectOne(namespace+"readByIdUser",userid);
 	}
-
+	
+	
+	//결제관리에 쓰일 리스트
 	@Override
 	public List<UserVO> listSearchCriteriaPaymentUser(SearchCriteria cri) throws Exception {
 		return sqlSession.selectList(namespace+"listSearchCriteriaPaymentUser",cri);
 	}
-
 	@Override
 	public int totalSearchCountPaymentUser(SearchCriteria cri) throws Exception {
 		return sqlSession.selectOne(namespace+"totalSearchCountPaymentUser",cri);
 	}
-
+	
+	//메일보내기
 	@Override
 	public UserVO readByNameBirthTel(String username, String userbirth, String usertel) throws Exception {
 		Map<String, String> map = new HashMap<String, String>();

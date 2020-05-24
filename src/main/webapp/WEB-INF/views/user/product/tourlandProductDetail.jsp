@@ -391,8 +391,6 @@
 				$(".airSelect option:selected").each(function(i,obj){
 					acapacity[i] = $(this).attr("data-capacity"); 
 				})
-				//alert(ano);
-				//alert(acapacity);
 				$(".selHotel option:selected").each(function(i,obj){
 					if($(this).val()!="" || $(this).val=="DS") {
 						var no = $(this).attr("data-hno");
@@ -402,24 +400,12 @@
 				$(".hotelSelect option:selected").each(function(i,obj){
 					hcapacity[i] = $(this).attr("data-capacity"); 
 				})
-			//	alert(hno);
-				//alert(hcapacity);
 				$(".selTour:checked").each(function(i,obj){
 					tno[i] = $(this).val();
 				})
-				//alert(tno);
-				//alert(tcapacity);
 				if($("#selRentcar option:selected").val()=="S") {
 					rno[0] = $("#selRentcar option:selected").attr("data-rentno");
 				}
-				//alert(rno);
-				//alert("인원");
-				//alert(rcapacity);
-				
-				//alert("항공기 옵션 길이");
-				//alert(acapacity.length);
-			//	alert("호텔 옵션 길이");
-			//	alert(hcapacity.length);
 				if(rcapacity != acapacity.length || rcapacity != hcapacity.length){ //예약 인원과 옵션 선택 인원이 맞지 않을 때 return
 					alert("예약 인원에 맞게 옵션을 선택해주세요.");
 					return;  

@@ -33,8 +33,8 @@
 	select * from tour where no = #{no}
 </select>
 <insert id="insertTour" parameterType="TourVO">
-	insert into tour values 
-	(#{no},#{tname},#{tlocation},#{startDate},#{endDate},#{taddr},#{etime},#{capacity},#{tprice},#{ldiv},#{pdiv}) 
+	insert into tour values
+	(#{no},#{tname},#{tlocation},#{startDate},#{endDate},#{taddr},#{etime},#{capacity},#{tprice},#{ldiv},#{pdiv})
 </insert>
 <update id="updateTour" parameterType="TourVO">
 	update tour 

@@ -1,6 +1,7 @@
 package com.yi.tourland.service.mng;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -226,5 +227,31 @@ public class ProductService {
 		dao.insertpUserStatus(uvo, upvo);
 		ReservationVO vo = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo, "1");
 		reservDao.insertReservation(vo);
+	}
+	@Transactional
+	public void insertProductInUserCart(ProductVO product, UserVO uvo, SearchCriteria cri) throws Exception {
+		System.out.println("들어옴");
+		//선택한 상품 옵션들 insert
+		for (int i=0; i<product.getAir().size(); i++) {
+			product.getAir().get(i).setNo(adao.totalAllCountAirplane() + i +1);
+			System.out.println("번호 " + product.getAir().get(i).getNo());
+			adao.addAirplane(product.getAir().get(i));
+		}
+		for (int i=0; i<product.getHotel().size(); i++) {
+			product.getHotel().get(i).setNo(hdao.totalCountHotel() + i + 1);
+			hdao.insertHotel(product.getHotel().get(i));
+		}
+		for (int i=0; i<product.getTour().size(); i++) {
+			product.getTour().get(i).setNo(tdao.totalCount() + i + 1);
+			tdao.insertTour(product.getTour().get(i));
+		}
+		for (int i=0; i<product.getRentcar().size(); i++) {
+			product.getRentcar().get(i).setNo(rdao.totalCountRentcar() + i + 1);
+			rdao.insertRentcar(product.getRentcar().get(i));
+		}
+		insertProduct(product);
+		dao.insertpUserStatus(uvo, product);
+		ReservationVO cart = new ReservationVO(reservDao.listReservation(cri).size(), uvo ,Integer.toString(0));
+		reservDao.insertReservation(cart);
 	}
 }

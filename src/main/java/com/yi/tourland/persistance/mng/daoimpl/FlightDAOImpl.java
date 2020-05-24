@@ -40,6 +40,10 @@ public class FlightDAOImpl implements FlightDAO {
 	public int totalCountAirplane(SearchCriteria cri) throws Exception {
 		return sqlSession.selectOne(namespace + "totalCountAirplane", cri);
 	}
+	@Override
+	public int totalAllCountAirplane() throws Exception{
+		return sqlSession.selectOne(namespace + "totalAllCountAirplane");
+	}
 	//번호로 검색
 	@Override
 	public AirplaneVO airplaneByNo(AirplaneVO vo) throws SQLException {

@@ -497,8 +497,6 @@ public class ManagerController {
 		// System.out.println(vo); //퇴사사원 null로 찍혀서 mapper수정
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
-		session.setAttribute("Retired", empretired);
-		System.out.println("================="+empretired);
 		return "/manager/employee/empDetailForm";
 	}
 
@@ -507,20 +505,11 @@ public class ManagerController {
 	public String employeeUpdate(EmployeeVO vo, SearchCriteria cri, Model model,
 			@PathVariable("empretired") int empretired, HttpSession session) throws Exception {
 		employeeService.updateEmployee(vo);
-		// System.out.println(vo);
+		model.addAttribute("success", "수정이 완료되었습니다.");
 		model.addAttribute("empVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
-//		session.setAttribute("Retired", empretired);
-//		System.out.println("================="+empretired);
-//		session.setAttribute("Page", cri.getPage());
-//		System.out.println("================="+cri.getPage());
-//		session.setAttribute("Search", cri.getSearchType());
-//		System.out.println("================="+cri.getSearchType());
-//		session.setAttribute("Keyword", cri.getKeyword());
-//		System.out.println("================="+cri.getKeyword());
-		return "redirect:/manager/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
-				+ "&searchType=" + cri.getSearchType() + "&keyword=" + cri.getKeyword();
+		return "/manager/employee/empDetailForm";
 	}
 
 	// 사원 논리 삭제(퇴사처리) 및 완전 삭제(정보삭제)
@@ -548,13 +537,13 @@ public class ManagerController {
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(userService.totalSearchCountUser(cri, usersecess));
-
 		model.addAttribute("cri", cri);
 		model.addAttribute("list", userList);
 		model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("usersecess", usersecess);
-
+		
 		// 같은 페이지를 공유하기에 버튼이름 변경을 위한 model값 선언
+		
 		if (usersecess == 1) { // 탈퇴회원일 경우
 			model.addAttribute("btnName", "회원 리스트");
 		} else {
@@ -594,7 +583,10 @@ public class ManagerController {
 	@RequestMapping(value = "userDetailForm/{usersecess}", method = RequestMethod.GET)
 	public String userDetailForm(int no, SearchCriteria cri, Model model, @PathVariable("usersecess") int usersecess) throws Exception {
 		UserVO vo = userService.readByNoUser(no);
-		System.out.println(vo);
+		//System.out.println(vo);
+		List<CouponVO> userCouponList = couponService.userCouponList(vo);
+		//System.out.println(userCouponList);
+		model.addAttribute("couponList",userCouponList);
 		model.addAttribute("userVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("usersecess", usersecess);
@@ -2105,6 +2097,13 @@ public class ManagerController {
 		
 		@RequestMapping(value = "paymentList", method = RequestMethod.GET)
 		public String paymentList(SearchCriteria cri, Model model) throws Exception {
+			List<UserVO> list = userService.listSearchCriteriaPaymentUser(cri);
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri));
+			model.addAttribute("list", list);
+			model.addAttribute("cri", cri);
+			model.addAttribute("pageMaker", pageMaker);
 			return "/manager/payment/paymentList";
 		}
 		

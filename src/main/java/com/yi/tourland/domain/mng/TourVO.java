@@ -108,8 +108,8 @@ public class TourVO {
 	@Override
 	public String toString() {
 		return String.format(
-				"TourVO [no=%s, tname=%s, tlocation=%s, startDate=%s, endDate=%s, taddr=%s, etime=%s, capacity=%s, tprice=%s, ldiv=%s]",
-				no, tname, tlocation, startDate, endDate, taddr, etime, capacity, tprice, ldiv);
+				"TourVO [no=%s, tname=%s, tlocation=%s, startDate=%s, endDate=%s, taddr=%s, etime=%s, capacity=%s, tprice=%s, ldiv=%s, pdiv=%s]",
+				no, tname, tlocation, startDate, endDate, taddr, etime, capacity, tprice, ldiv, pdiv);
 	}
 	
 }
