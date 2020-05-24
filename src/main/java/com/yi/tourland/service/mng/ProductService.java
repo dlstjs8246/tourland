@@ -211,4 +211,8 @@ public class ProductService {
 		insertProduct(upvo);
 		dao.insertpUserStatus(uvo, upvo);
 	}
+	// userpstatus
+		public void tourlandProductUserPStatus(UserVO user, ProductVO product) throws SQLException {
+			 dao.tourlandProductUserPStatus(user, product);
+		};
 }
