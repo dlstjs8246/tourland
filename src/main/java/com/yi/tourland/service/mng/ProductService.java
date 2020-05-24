@@ -12,12 +12,14 @@ import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.persistance.mng.dao.FlightDAO;
 import com.yi.tourland.persistance.mng.dao.HotelDAO;
 import com.yi.tourland.persistance.mng.dao.ProductDao;
 import com.yi.tourland.persistance.mng.dao.RentcarDAO;
+import com.yi.tourland.persistance.mng.dao.ReservationDao;
 import com.yi.tourland.persistance.mng.dao.TourDao;
 
 @Service
@@ -32,6 +34,10 @@ public class ProductService {
 	private RentcarDAO rdao;
 	@Autowired
 	private ProductDao dao;	
+	@Autowired
+	private ReservationDao reservDao;
+	
+	
 	public List<ProductVO> listPage(SearchCriteria cri) throws SQLException {
 		return dao.productListPage(cri);
 	}
