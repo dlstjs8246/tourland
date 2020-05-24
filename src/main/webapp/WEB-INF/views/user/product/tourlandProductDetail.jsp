@@ -440,7 +440,7 @@
 							tcapacity:tcapacity,
 							rno:rno,
 							rcapacity:rcapacity
-						},
+						}, 
 						dataType : "json",
 						success : function(res) {
 							console.log(res);
