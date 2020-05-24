@@ -189,6 +189,7 @@ select * from userpstatus;
 select * from cart;
 select * from hotel;
 select * from reservation;
+desc tour;
 -- 태원 --------------------------------------------------------------------------------------------
 SELECT *
 FROM hotel; 

@@ -322,8 +322,9 @@
 					},
 					dataType : "json",
 					success : function(res) {
+						console.log(res); 
 						if(confirm("예약이 완료되었습니다. 예약 확인으로 넘어갈까요?")) {
-							
+							location.href = "tourlandMyReserv?"+uno;
 						}
 					}
 				})
@@ -443,7 +444,7 @@
 						}, 
 						dataType : "json",
 						success : function(res) {
-							console.log(res);
+							console.log(res); 
 						}
 					}) 
 				} 

@@ -34,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.PageMaker;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
@@ -50,8 +51,10 @@ import com.yi.tourland.domain.mng.PlanBoardVO;
 import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
+import com.yi.tourland.persistance.mng.dao.ReservationDao;
 import com.yi.tourland.service.mng.BannerService;
 import com.yi.tourland.service.mng.CouponService;
 import com.yi.tourland.service.mng.CustBoardService;
@@ -131,7 +134,8 @@ public class CustomerController {
 	@Autowired
 	private EmailVO emailVo;
 	
-
+	@Autowired
+	private ReservationDao reservationDao;
 		
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 		@ResponseBody
@@ -435,7 +439,13 @@ public class CustomerController {
 	
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
-	public String tourlandMyReserv() { 
+	public String tourlandMyReserv(SearchCriteria cri,UserVO vo,Model model) throws SQLException {
+		List<ReservationVO> list = reservationDao.ReadReservationByUserNo(vo, cri);
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(reservationDao.totalSearchReservationCount(cri));
+		model.addAttribute("list",list);
+		model.addAttribute("pageMaker",pageMaker);
 		return "/user/mypage/tourlandMyReserv"; 
 	}
 	//상품 리뷰    
@@ -915,11 +925,11 @@ public class CustomerController {
 		userProduct.setPno(productService.totalCountProduct()+1);
 		try {
 			productService.insertUserProduct(product, userProduct, user, cri);
-			entity = new ResponseEntity<String>(HttpStatus.OK);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
 		}
 		return entity;
 	}

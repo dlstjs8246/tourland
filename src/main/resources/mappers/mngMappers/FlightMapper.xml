@@ -115,6 +115,9 @@
 		select count(*) from airplane where pdiv = 0
 		<include refid="search"/>
 	</select>
+	<select id="totalCountAirplaneByReserv" resultType="int">
+		select count(*) from airplane
+	</select>
 	<select id="totalCountAirplaneByDepature" resultType="int">
 		select count(*) from airplane where dlocation = 'ICN' and pdiv = 0
 		<include refid="searchDiv"/>

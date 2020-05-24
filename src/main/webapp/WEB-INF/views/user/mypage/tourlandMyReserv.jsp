@@ -58,28 +58,6 @@
 							<th>결제 관리</th>
 							<th>리뷰 관리</th>
 						</tr>
-						<tr>
-							<td>RE15487200</td>
-							<td>2020/04/27</td>
-							<td><img src="images/osaka.jpg"></td>
-							<td>진짜 오사카를 만나다, 오사카 3박 4일</td>
-							<td>2020/05/03</td>
-							<td>2020/05/20</td>
-							<td class="red">예약 미확정</td>
-							<td class="blue"><button>결제하기</button></td>  
-							<td class="grey"><button class="goReview">리뷰 쓰기</button></td>  
-						</tr>
-						<tr>
-							<td>RE15487200</td>
-							<td>2020/04/27</td>     
-							<td><img src="images/osaka.jpg"></td>
-							<td>진짜 오사카를 만나다, 오사카 3박 4일</td>    
-							<td>2020/05/03</td>
-							<td>2020/05/20</td>      
-							<td class="red">예약 미확정</td>
-							<td class="blue"><button>결제하기</button></td>
-							<td class="grey"><button class="goReview">리뷰 쓰기</button></td>  
-						</tr>
 					</table>
 				</div>
 		

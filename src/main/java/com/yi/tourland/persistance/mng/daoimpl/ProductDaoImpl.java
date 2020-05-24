@@ -226,6 +226,6 @@ public class ProductDaoImpl implements ProductDao {
 		Map<String,Object> map = new HashMap<>();
 		map.put("u", uvo);
 		map.put("p", pvo);
-		sqlSession.insert(namespace + "insertUserPackages",map);
+		sqlSession.insert(namespace + "insertpUserStatus",map);
 	}
 }

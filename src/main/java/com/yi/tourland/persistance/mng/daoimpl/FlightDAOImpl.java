@@ -65,6 +65,10 @@ public class FlightDAOImpl implements FlightDAO {
 	public int totalCountAirplaneByRending(AirplaneVO vo) throws Exception {
 		return sqlSession.selectOne(namespace + "totalCountAirplaneByRending", vo);
 	}
+	@Override
+	public int totalCountAirplaneByReserv() throws SQLException {
+		return sqlSession.selectOne(namespace + "totalCountAirplaneByReserv");
+	}
 	//항공 추가
 	@Override
 	public void addAirplane(AirplaneVO vo) throws Exception {

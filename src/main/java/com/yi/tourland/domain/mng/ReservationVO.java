@@ -41,9 +41,6 @@ public class ReservationVO {
 	public void setRdate(Date rdate) {
 		this.rdate = rdate;
 	}
-	public String getConfirm() {
-		return rstatus;
-	}
 	
 	public String getRstatus() {
 		return rstatus;
