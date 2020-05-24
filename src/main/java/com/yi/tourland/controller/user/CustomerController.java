@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -881,11 +882,10 @@ public class CustomerController {
 			air.add(flightService.airplaneByNo(new AirplaneVO(i)));
 			air.add(flightService.airplaneByNo(new AirplaneVO(i+1)));
 		}
-		for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
-		for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
-		for(int i : rno) rentcar.add(rentcarService.readByNo(i));
+		if(hno!=null) for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
+		if(tno!=null) for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
+		if(rno!=null) for(int i : rno) rentcar.add(rentcarService.readByNo(i));
 		for(int i=0;i<acapacity.length;i++) {
-			air.get(i+i).setNo(flightService.totalCountAirplane(cri)+(i+i+1));
 			air.get(i+i).setCapacity(acapacity[i]);
 			air.get(i+i).setPdiv(1);
 			air.get(i+i+1).setNo(flightService.totalCountAirplane(cri)+(i+i+1)+1);
@@ -893,16 +893,14 @@ public class CustomerController {
 			air.get(i+i+1).setPdiv(1);
 		}
 		for(int i=0;i<hcapacity.length;i++) {
-			hotel.get(i).setNo(hotelService.totalCountHotel()+(i+1));
+			hotel.get(i).setTotalcapacity(hcapacity[i]);
 			hotel.get(i).setPdiv(true);
 		}
 		for(int i=0;i<tour.size();i++) {
-			tour.get(i).setNo(tourService.totalCount()+(i+1));
 			tour.get(i).setCapacity(tcapacity);
 			tour.get(i).setPdiv(true);
 		}
 		for(int i=0;i<rentcar.size();i++) {
-			rentcar.get(i).setNo(rentcarService.totalCountRentcar()+(i+1));
 			rentcar.get(i).setCapacity(rcapacity);
 			rentcar.get(i).setPdiv(1);
 		}
@@ -917,7 +915,7 @@ public class CustomerController {
 		userProduct.setRentcar(rentcar);
 		userProduct.setPno(productService.totalCountProduct()+1);
 		try {
-			productService.insertUserProduct(product, userProduct, user);
+			productService.insertUserProduct(product, userProduct, user, cri);
 			entity = new ResponseEntity<String>(HttpStatus.OK);
 		}
 		catch(Exception e) {
@@ -928,103 +926,173 @@ public class CustomerController {
 	}
 	
 	//상품 장바구니에 담기 ajax
+	@ResponseBody
 	@RequestMapping(value="tourlandProductDetail/cart", method=RequestMethod.GET)
-	public String tourlandProductDoWith(SearchCriteria cri, Model model, int uno, int pno, int price, String[] ano,String[] rano, String[] acapacity, String[] hno, String[] hcapacity, String[] tno, String[] tcapacity, String[] rno, String[] rcapacity) throws Exception {
-		System.out.println("유저번호 : " + uno );
-		//유저
-		UserVO user = userService.readByNoUser(uno);
-
-		System.out.println("상품번호 : " + pno);
-		//상품 
-		ProductVO p = new ProductVO();
-		p.setPno(pno);
-		ProductVO product = productService.productByNo(p);
+	public ResponseEntity<String> tourlandProductDoWith(SearchCriteria cri, Model model, int uno, int pno, int price, String[] ano,String[] rano, String[] acapacity, String[] hno, String[] hcapacity, String[] tno, String[] tcapacity, String[] rno, String[] rcapacity) throws Exception {
+		//기본 로직
 		
-		//가격
-		System.out.println("가격 : " + price);
+		//1.항공,호텔,투어,렌트카 테이블 insert 
+		//(1)고객이 선택한 항공편, 호텔, 투어, 렌터카 번호 배열 가져옴
+		//(2)해당 번호의 객체 찾기
+		//(3)새로운 객체 만듦 > 새로운 객체에 DB에서 번호로 찾아온 객체 정보 세팅 (번호:total넘버+1..,인원:고객이 옵션에서 선택한 인원, pdiv:1) 
+		//(4)테이블에 새로운 객체 insert
+		//1~4번 (항공편, 호텔, 투어, 렌터카 테이블) 반복
+		
+		//2.상품 테이블 insert
+		//(1)가져온 상품 번호로 상품 객체 DB에서 찾아옴
+		//(2)새 상품 객체 만듦 > 새 상품 객체에 DB에서 찾아온 객체 정보 세팅 (가격 : 페이지에서 가져온 가격, pdiv : 1) 
+		//(3)상품 테이블에 새로운 객체 insert
+		
+		//3.연결 테이블
+		//3-1. 연결테이블1 (userpstatus)
+		//(1)user번호, 방금 새로 insert 한 상품 객체 번호 insert
+		//3-2. 연결테이블 2~5 (항공, 호텔, 투어, 렌트 연결 테이블)
+		//(1) 각 테이블에 새로 insert 한 고객용 객체의 번호, 새로 insert 한 고객용 상품 번호 insert
+		ResponseEntity<String> entity = null;
+		List<AirplaneVO> airList = new ArrayList<>();
+		List<HotelVO> hotelList = new ArrayList<>();
+		List<TourVO> tourList = new ArrayList<>();
+		List<RentcarVO> rentList = new ArrayList<>();
+		
 		
 		//항공 출발편
 		for(int i=0; i<ano.length; i++) {
 			System.out.println("항공 출발편 번호 : " + ano[i]);
-			//새로운 객체 생성
-			AirplaneVO air = new AirplaneVO();
-			//객체에 불러온 항공편 번호 세팅
-			air.setNo(Integer.parseInt(ano[i]));
-			//해당 항공편 번호로 검색해서 DB에서 해당 번호 항공편 불러옴
-			AirplaneVO newAir = flightService.airplaneByNo(air);
-			System.out.println("출발편 : "+newAir);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 항공편 정보 세팅 (단, capacity는 1, pdiv:1)
-			//Airplane 테이블에 객체2 insert
 			
-		}
-		for(int i=0; i<rano.length; i++) {
-			System.out.println("항공 도착편 번호 : " + rano[i]);
-			//새로운 객체 생성
-			AirplaneVO air = new AirplaneVO();
-			//객체에 불러온 항공편 번호 세팅
-			air.setNo(Integer.parseInt(rano[i]));
-			//해당 항공편 번호로 검색해서 DB에서 해당 번호 항공편 불러옴
-			AirplaneVO newAir = flightService.airplaneByNo(air);
-			System.out.println("도착편 : "+newAir);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 항공편 정보 세팅 (단, capacity는 1, pdiv:1)
-			//Airplane 테이블에 객체2 insert
+			AirplaneVO dair = new AirplaneVO();//출발편
+			AirplaneVO rair = new AirplaneVO();//도착편
+			
+			dair.setNo(Integer.parseInt(ano[i]));
+			rair.setNo(Integer.parseInt(rano[i]));
+			
+			AirplaneVO dbdAir = flightService.airplaneByNo(new AirplaneVO(dair.getNo()));
+			AirplaneVO dbrAir = flightService.airplaneByNo(new AirplaneVO(rair.getNo()));
+			System.out.println("출발편 : "+dbdAir);
+			System.out.println("도착편 : "+dbrAir);
+			airList.add(dbdAir);
+			airList.add(dbrAir);
 		}
 		for(int i=0; i<acapacity.length; i++) {
-			System.out.println("항공편 인원 :" + acapacity[i]);
+			
+			airList.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i+1));
+			airList.get(i+i).setCapacity(Integer.parseInt(acapacity[i]));
+			airList.get(i+i).setPdiv(1);
+			//도착편
+			airList.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			airList.get(i+i+1).setCapacity(Integer.parseInt(acapacity[i]));
+			airList.get(i+i+1).setPdiv(1);
+			
+		}
+		for(AirplaneVO air : airList) {
+			System.out.println("변경된 항공편 : ");
+			System.out.println(air);
+			
 		}
 		for(int i=0; i<hno.length; i++) {
 			System.out.println("호텔 번호 :"+hno[i]);
-			//새로운 객체 생성
-			HotelVO hotel = new HotelVO();
-			//객체에 불러온 호텔 번호 세팅
+			
+			HotelVO hotel = new HotelVO();//객체에 불러온 호텔 번호 세팅
 			hotel.setNo(Integer.parseInt(hno[i]));
-			//해당 호텔 번호로 검색해서 DB에서 해당 번호 호텔 불러옴
-			HotelVO newHotel = hotelService.readHotel(hotel);
+			HotelVO newHotel = hotelService.readHotel(new HotelVO(hotel.getNo()));
 			System.out.println("호텔 : "+newHotel);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 호텔 정보 세팅 (단, capacity는 1, pdiv:1)
-			//호텔 테이블에 객체2 insert
+			hotelList.add(newHotel);
+			
 		}
 		for(int i=0; i<hcapacity.length; i++) {
 			System.out.println("호텔 인원 : "+hcapacity[i]);
+			
+			hotelList.get(i).setNo(hotelService.totalCountHotel()+i+1);
+			hotelList.get(i).setCapacity(Integer.parseInt(hcapacity[i]));
+			hotelList.get(i).setPdiv(true);
+			
 		}
+		
 		for(int i=0; i<tno.length; i++) {
 			System.out.println("투어 번호 : "+tno[i]);
-			//새로운 객체 생성
+		
 			TourVO tour = new TourVO();
-			//객체에 불러온 투어 번호 세팅
 			tour.setNo(Integer.parseInt(tno[i]));
-			//해당 투어 번호로 검색해서 DB에서 해당 번호 투어 불러옴
-			TourVO newTour = tourService.selectTourByNo(tour);
+			TourVO newTour = tourService.selectTourByNo(new TourVO(tour.getNo()));
 			System.out.println("투어 : "+newTour);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 투어 정보 세팅 (단, capacity는 1, pdiv:1)
-			//투어 테이블에 객체2 insert
+			tourList.add(newTour);
 		}
 		for(int i=0; i<tcapacity.length; i++) {
 			System.out.println("투어 인원 : "+tcapacity[i]);
+			
+			
 		}  
+		for(int i = 0; i<tourList.size(); i++) {
+			System.out.println("변경 전 투어 : " + tourList.get(i));
+		
+			tourList.get(i).setNo(tourService.totalCount()+i+1);
+			tourList.get(i).setCapacity(Integer.parseInt(tcapacity[0]));
+			tourList.get(i).setPdiv(true);
+			System.out.println("변경된 투어 : " + tourList.get(i));
+		}
 		for(int i=0; i<rno.length; i++) {
 			System.out.println("렌트카 번호 : "+rno[i]);
-			//새로운 객체 생성
+
 			RentcarVO rent = new RentcarVO();
-			//객체에 불러온 렌트카 번호 세팅
 			rent.setNo(Integer.parseInt(rno[i]));
-			//해당 렌트카 번호로 검색해서 DB에서 해당 번호 투어 불러옴
 			RentcarVO newRent = rentcarService.readByNo(rent.getNo());
 			System.out.println("렌트카  : "+newRent);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 투어 정보 세팅 (단, capacity는 1, pdiv:1)
-			//투어 테이블에 객체2 insert
+			rentList.add(newRent);
+		
+			
 		}
 		for(int i=0; i<rcapacity.length; i++) {
 			System.out.println("렌트카 인원 : "+rcapacity[i]);
+			
+		
+			System.out.println("변경 전 렌트카 : " + rentList.get(i));
+			rentList.get(i).setNo(rentcarService.totalCountRentcar() + i + 1);
+			rentList.get(i).setCapacity(Integer.parseInt(rcapacity[i]));
+			rentList.get(i).setPdiv(1);
+			System.out.println("변경 후 렌트카 : " + rentList.get(i));
 		}
 		
+		// 가격
+		System.out.println("가격 : " + price);
+		//상품 
+		System.out.println("상품번호 : " + pno);
+		ProductVO p = new ProductVO();
+		p.setPno(pno);
+		ProductVO product = productService.productByNo(p);
+		product.setPno(productService.totalCountProduct()+1);
+		product.setPprice(price);
+		product.setAir(airList);
+		product.setHotel(hotelList);
+		product.setTour(tourList);
+		product.setRentcar(rentList);
+		product.setPdiv(true);
 		
-		return "redirect:/customer/toulandProductDetail";
+		//INSERT
+		//유저
+		UserVO user = userService.readByNoUser(uno);
+		System.out.println("유저번호 : " + uno );
+		//상품
+		System.out.println(product);
+		for(AirplaneVO i : product.getAir()) {
+			System.out.println(i);
+		}
+		for(HotelVO i : product.getHotel()) {
+			System.out.println(i);
+		}
+		for(TourVO i : product.getTour()) {
+			System.out.println(i);
+		}
+		for(RentcarVO i : product.getRentcar()) {
+			System.out.println(i);
+		}
+		try {
+			productService.insertProductInUserCart(product, user, cri);
+			entity = new ResponseEntity<String>(HttpStatus.OK);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+		return entity;
 	}
 	
 	

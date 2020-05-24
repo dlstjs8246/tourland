@@ -3,6 +3,7 @@ package com.yi.tourland.domain.mng;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,6 +18,7 @@ public class UserVO {
 	private String userid;
 	private String userpass;
 	private int usersecess;
+	private List<ProductVO> userProduct;
 
 	public int getUserno() {
 		return userno;
@@ -88,6 +90,14 @@ public class UserVO {
 
 	public void setUsersecess(int usersecess) {
 		this.usersecess = usersecess;
+	}
+	
+	public List<ProductVO> getUserProduct() {
+		return userProduct;
+	}
+
+	public void setUserProduct(List<ProductVO> userProduct) {
+		this.userProduct = userProduct;
 	}
 
 	@Override

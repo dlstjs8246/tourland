@@ -5,7 +5,7 @@
 <!-- 새로운 렌트카 추가  -->
   <insert id="insertRentcar" parameterType="RentcarVO"> 
      insert into rentcar(no, cdiv, cno, rentddate, returndate, rentaddr, returnaddr, price, capacity, insurance, ldiv, pdiv) values
-     (#{no}, #{cdiv}, #{cno}, #{rentddate}, #{returndate}, #{rentaddr}, #{returnaddr}, #{price}, #{capacity}, #{insurance}, #{ldiv}, 0)
+     (#{no}, #{cdiv}, #{cno}, #{rentddate}, #{returndate}, #{rentaddr}, #{returnaddr}, #{price}, #{capacity}, #{insurance}, #{ldiv}, #{pdiv})
   </insert>
 <!-- 차 번호로 검색 -->
 	<select id="readByNo" resultType="RentcarVO">
@@ -20,9 +20,18 @@
 
 <!-- 렌트카 정보 업데이트 -->
     <update id="updateRentcar" parameterType="RentcarVO">
-       update rentcar  set 
-       cdiv =#{cdiv}, cno=#{cno}, rentddate=#{rentddate},  returndate=#{returndate}, rentaddr=#{rentaddr}, returnaddr=#{returnaddr},  
-       price=#{price}, capacity=#{capacity}, insurance=#{insurance}
+       update rentcar 
+       <set>
+       <if test= "cdiv !=null"> cdiv =#{cdiv}, </if>
+       <if test= "cno !=null">  cno=#{cno}, </if>
+       <if test= "rentddate !=null"> rentddate=#{rentddate},  </if>
+       <if test= "returndate !=null">  returndate=#{returndate}, </if>
+       <if test= "rentaddr !=null"> rentaddr=#{rentaddr}, </if>
+       <if test= "returnaddr !=null"> returnaddr=#{returnaddr}, </if> 
+       <if test= "price !=null"> price=#{price}, </if>
+       <if test= "capacity !=null">  capacity=#{capacity}, </if>
+       <if test= "insurance !=null">  insurance=#{insurance},</if>
+       </set> 
        where no=#{no}
     </update> 
 
@@ -47,6 +56,7 @@
 <!-- 검색 기능 날짜 검색은 추후에 200503 -->
  <sql id="search">
       <where>
+      		pdiv = #{pdiv}
 	      <if test="searchType=='rentcarType'.toString()">
 	       and cdiv like CONCAT('%',#{keyword},'%')
 	      </if>
@@ -82,5 +92,4 @@
 	        select  count(no) from rentcar
 		    <include refid="search"/>  
 	    </select>
-
 </mapper>

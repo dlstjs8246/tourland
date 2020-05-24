@@ -306,10 +306,10 @@ ALTER TABLE tour.rentcar
 
 -- 예약
 CREATE TABLE tour.reservation (
-	no      INT        NOT NULL COMMENT '예약번호', -- 예약번호
-	userno  INT        NULL     COMMENT '유저번호', -- 유저번호
-	rdate   TIMESTAMP  NULL     DEFAULT now() COMMENT '예약날짜', -- 예약날짜
-	comfirm TINYINT(1) NULL     COMMENT '확정여부' -- 확정여부
+	no      INT       NOT NULL COMMENT '예약번호', -- 예약번호
+	userno  INT       NULL     COMMENT '유저번호', -- 유저번호
+	rdate   TIMESTAMP NULL     DEFAULT now() COMMENT '예약날짜', -- 예약날짜
+	rstatus char(1)   NULL     COMMENT '예약상태' -- 예약상태
 )
 COMMENT '예약';
 
@@ -436,6 +436,23 @@ ALTER TABLE tour.usercoupon
 		PRIMARY KEY (
 			userno, -- 유저번호
 			cno     -- 쿠폰번호
+		);
+
+-- 상품평
+CREATE TABLE tour.review (
+	no        INT       NOT NULL COMMENT '번호', -- 번호
+	pno       INT       NULL     COMMENT '상품번호', -- 상품번호
+	userno    INT       NULL     COMMENT '유저번호', -- 유저번호
+	regdate   TIMESTAMP NULL     DEFAULT now() COMMENT '등록일', -- 등록일
+	starpoint char(1)   NULL     COMMENT '별점' -- 별점
+)
+COMMENT '상품평';
+
+-- 상품평
+ALTER TABLE tour.review
+	ADD CONSTRAINT PK_review -- 상품평 기본키
+		PRIMARY KEY (
+			no -- 번호
 		);
 
 -- 예약
@@ -586,6 +603,26 @@ ALTER TABLE tour.usercoupon
 		)
 		REFERENCES tour.coupon ( -- 쿠폰
 			cno -- 쿠폰번호
+		);
+
+-- 상품평
+ALTER TABLE tour.review
+	ADD CONSTRAINT FK_product_TO_review -- 상품 -> 상품평
+		FOREIGN KEY (
+			pno -- 상품번호
+		)
+		REFERENCES tour.product ( -- 상품
+			pno -- 상품번호
+		);
+
+-- 상품평
+ALTER TABLE tour.review
+	ADD CONSTRAINT FK_user_TO_review -- 회원 -> 상품평
+		FOREIGN KEY (
+			userno -- 유저번호
+		)
+		REFERENCES tour.user ( -- 회원
+			userno -- 유저번호
 		);
 create user if not exists 'tour'@'localhost';
 grant all privileges on tour.* to 'tour'@'localhost' identified by 'tour';

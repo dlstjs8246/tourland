@@ -988,6 +988,7 @@ public class ManagerController {
 
 	@RequestMapping(value = "tourRegister", method = RequestMethod.POST)
 	public String tourRegisterPost(TourVO vo, Model model) throws SQLException {
+		vo.setPdiv(false);
 		tourService.insertTour(vo);
 		return "redirect:/tourMngList";
 	}
@@ -1010,6 +1011,7 @@ public class ManagerController {
 
 	@RequestMapping(value = "tourModify", method = RequestMethod.POST)
 	public String tourModifyPost(TourVO vo, SearchCriteria cri) throws SQLException {
+		vo.setPdiv(false);
 		tourService.updateTour(vo);
 		return "redirect:/tourDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
 				+ "&searchType2=" + cri.getSearchType2() + "&keyword=" + cri.getKeyword();
@@ -1069,7 +1071,8 @@ public class ManagerController {
 	
 	@RequestMapping(value = "rentcarRegister", method = RequestMethod.POST)
 	public String rentcarRegisterPost(RentcarVO vo, Model model) throws Exception {
-		  rentcarService.insertRentcar(vo);
+		vo.setPdiv(0);  
+		rentcarService.insertRentcar(vo);
 		return "redirect:/rentcarMngList";
 	}
 	
@@ -2003,8 +2006,10 @@ public class ManagerController {
 
 	@RequestMapping(value = "hotelRegister", method = RequestMethod.POST)
 	public String hotelResgiterPost(HotelVO vo) throws Exception {
+		vo.setTotalcapacity(vo.getRoomcapacity() * vo.getCapacity());
+		vo.setPdiv(false);
 		hotelService.insertHotel(vo);
-		return "redirect:/hotelMngList";
+		return "redirect:/manager/hotelMngList";
 	}
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.GET)
@@ -2017,14 +2022,15 @@ public class ManagerController {
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.POST)
 	public String hotelModifyPost(HotelVO vo, SearchCriteria cri) throws Exception {
+		vo.setTotalcapacity(vo.getRoomcapacity() * vo.getCapacity());
 		hotelService.updateHotel(vo);
-		return "redirect:/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/manager/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "hotelDelete", method = RequestMethod.GET)
 	public String hotelDelete(HotelVO vo, SearchCriteria cri) throws Exception {
 		hotelService.deleteHotel(vo);
-		return "redirect:/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/manager/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 	
 	// 상품 문의사항

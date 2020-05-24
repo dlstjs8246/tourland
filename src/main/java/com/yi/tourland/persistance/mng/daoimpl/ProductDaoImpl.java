@@ -9,7 +9,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
@@ -221,4 +220,12 @@ public class ProductDaoImpl implements ProductDao {
 	public List<ProductVO> tourlandProductKRSearchLowPriceList(SearchCriteria cri) throws SQLException {
 		return sqlSession.selectList(namespace + "tourlandProductKRSearchLowPriceList", cri);
 	}
+	@Override
+	public void insertpUserStatus(UserVO uvo, ProductVO pvo) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("u", uvo);
+		map.put("p", pvo);
+		sqlSession.insert(namespace + "insertpUserStatus",map);
+	}
+	
 }
