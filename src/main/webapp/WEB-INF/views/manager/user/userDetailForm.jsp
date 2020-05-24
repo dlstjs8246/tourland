@@ -148,8 +148,10 @@
 						</div>
 						<div class="form-group">
 							<label>보유쿠폰</label>
-							<select style="width:165px; height:25px">
-							    <!-- 보유 쿠폰이 있을 때 forEach처리  -->
+							<select style="width:155px; height:25px">
+							   <c:forEach var="couponList" items="${couponList }">
+							     <option>${couponList.cname }</option>
+							   </c:forEach>
 							</select>
 						</div>
 						<div class="form-group">
