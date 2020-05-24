@@ -881,11 +881,10 @@ public class CustomerController {
 			air.add(flightService.airplaneByNo(new AirplaneVO(i)));
 			air.add(flightService.airplaneByNo(new AirplaneVO(i+1)));
 		}
-		for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
-		for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
-		for(int i : rno) rentcar.add(rentcarService.readByNo(i));
+		if(hno!=null) for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
+		if(tno!=null) for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
+		if(rno!=null) for(int i : rno) rentcar.add(rentcarService.readByNo(i));
 		for(int i=0;i<acapacity.length;i++) {
-			air.get(i+i).setNo(flightService.totalCountAirplane(cri)+(i+i+1));
 			air.get(i+i).setCapacity(acapacity[i]);
 			air.get(i+i).setPdiv(1);
 			air.get(i+i+1).setNo(flightService.totalCountAirplane(cri)+(i+i+1)+1);
@@ -893,16 +892,14 @@ public class CustomerController {
 			air.get(i+i+1).setPdiv(1);
 		}
 		for(int i=0;i<hcapacity.length;i++) {
-			hotel.get(i).setNo(hotelService.totalCountHotel()+(i+1));
+			hotel.get(i).setTotalcapacity(hcapacity[i]);
 			hotel.get(i).setPdiv(true);
 		}
 		for(int i=0;i<tour.size();i++) {
-			tour.get(i).setNo(tourService.totalCount()+(i+1));
 			tour.get(i).setCapacity(tcapacity);
 			tour.get(i).setPdiv(true);
 		}
 		for(int i=0;i<rentcar.size();i++) {
-			rentcar.get(i).setNo(rentcarService.totalCountRentcar()+(i+1));
 			rentcar.get(i).setCapacity(rcapacity);
 			rentcar.get(i).setPdiv(1);
 		}
@@ -917,7 +914,7 @@ public class CustomerController {
 		userProduct.setRentcar(rentcar);
 		userProduct.setPno(productService.totalCountProduct()+1);
 		try {
-			productService.insertUserProduct(product, userProduct, user);
+			productService.insertUserProduct(product, userProduct, user, cri);
 			entity = new ResponseEntity<String>(HttpStatus.OK);
 		}
 		catch(Exception e) {

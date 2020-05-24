@@ -237,7 +237,7 @@ from user
 where username='황태원' and userbirth='1991-12-18' and usertel='010-4245-3825';
 
 -- 하나 --------------------------------------------------------------------------------------------
-
+select * from reservation;
 SELECT * FROM notice;
 select count(*) from airplane; 
 select * from coupon;

@@ -56,6 +56,7 @@
 <!-- 검색 기능 날짜 검색은 추후에 200503 -->
  <sql id="search">
       <where>
+      		pdiv = #{pdiv}
 	      <if test="searchType=='rentcarType'.toString()">
 	       and cdiv like CONCAT('%',#{keyword},'%')
 	      </if>

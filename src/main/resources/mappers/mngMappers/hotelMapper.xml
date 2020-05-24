@@ -44,7 +44,7 @@
     
     <!-- 호텔상품 전체 개수 -->
     <select id="totalCountHotel" resultType="int">
-       select count(no) from hotel 
+       select count(no) from hotel
     </select>
     
    	 <sql id="search">

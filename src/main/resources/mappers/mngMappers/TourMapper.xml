@@ -3,7 +3,7 @@
 <mapper namespace="mappers.mngMappers.TourMapper">
 <sql id="search">
 	<where>
-		pdiv = 0
+		pdiv = #{pdiv}
 		<if test='searchType=="name"'>
 			and tname like CONCAT('%',#{keyword},'%')
 		</if>
@@ -37,8 +37,19 @@
 	(#{no},#{tname},#{tlocation},#{startDate},#{endDate},#{taddr},#{etime},#{capacity},#{tprice},#{ldiv})
 </insert>
 <update id="updateTour" parameterType="TourVO">
-	update tour set tname = #{tname}, tlocation = #{tlocation}, startdate = #{startDate}, enddate = #{endDate},
-	taddr = #{taddr}, etime = #{etime}, capacity = #{capacity}, tprice = #{tprice}, ldiv = #{ldiv} where no = #{no}
+	update tour 
+	<set>
+			<if test="tname!=null">tname = #{tname},</if>
+			<if test="tlocation!=null">tlocation = #{tlocation},</if>
+			<if test="startDate!=null">startdate = #{startDate},</if>
+			<if test="endDate!=null">enddate = #{endDate},</if>
+			<if test="taddr!=null">taddr = #{taddr},</if>
+			<if test="etime!=null">etime = #{etime},</if>
+			<if test="capacity!=null">capacity = #{capacity},</if>
+			<if test="tprice!=null">tprice = #{tprice},</if>
+			<if test="ldiv!=null">ldiv = #{ldiv},</if>
+	</set>
+	where no = #{no}
 </update>
 <delete id="deleteTour" parameterType="TourVO">
 	delete from tour where no = #{no}

@@ -221,4 +221,11 @@ public class ProductDaoImpl implements ProductDao {
 	public List<ProductVO> tourlandProductKRSearchLowPriceList(SearchCriteria cri) throws SQLException {
 		return sqlSession.selectList(namespace + "tourlandProductKRSearchLowPriceList", cri);
 	}
+	@Override
+	public void insertpUserStatus(UserVO uvo, ProductVO pvo) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("u", uvo);
+		map.put("p", pvo);
+		sqlSession.insert(namespace + "insertUserPackages",map);
+	}
 }

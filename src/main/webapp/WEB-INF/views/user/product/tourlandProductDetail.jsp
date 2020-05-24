@@ -44,6 +44,7 @@
 <body>
 	<%@ include file="../../include/userHeader.jsp"%>
 	<script>
+		var uno = 0;
 		var price = 0; 
 		var bookCapacity = 0;
 		function calDateDiff(checkin,checkout) {
@@ -268,7 +269,6 @@
 					location.href = "${pageContext.request.contextPath}/loginForm";
 					return false;
 				}
-				var uno = ${Auth.userno};
 				var pno = ${vo.pno};
 				var price = replaceAll($("#price").text(),",","");
 				var ano = [];
@@ -304,7 +304,7 @@
 					rno[0] = $(this).attr("data-rentno");
 				}
 				$.ajax({
-					url : "ProductDetail/reserv",
+					url : "tourlandProductDetail/reserv",
 					method : "get",
 					traditional : true,
 					data : {
@@ -322,10 +322,12 @@
 					},
 					dataType : "json",
 					success : function(res) {
-						console.log(res);
+						if(confirm("예약이 완료되었습니다. 예약 확인으로 넘어갈까요?")) {
+							
+						}
 					}
 				})
-			})
+			}) 
 			$("#doWish").click(function(){
 				alert("장바구니");
 				/* //상품 번호
@@ -348,7 +350,6 @@
 				return false;
 			}
 				//유저 번호
-				var uno = ${Auth.userno};
 				//상품 번호
 				var pno = ${vo.pno};
 				//가격
@@ -445,11 +446,15 @@
 							console.log(res);
 						}
 					}) 
-				}
-				 
+				} 
 			})
 		})
 	</script>
+	<c:if test="${Auth!=null}">
+		<script>
+			uno = ${Auth.userno};
+		</script>
+	</c:if>
 		<section>
 				<div id="proBox">
 					<h1>${vo.pname}</h1>

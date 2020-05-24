@@ -1,6 +1,5 @@
 package com.yi.tourland.service.mng;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
@@ -132,13 +130,85 @@ public class ProductService {
 		return dao.tourlandProductKRSearchLowPriceList(cri);
 	};
 	@Transactional
-	public void insertUserProduct(ProductVO pvo,ProductVO upvo, UserVO uvo) throws Exception {
+	public void insertUserProduct(ProductVO pvo,ProductVO upvo, UserVO uvo, SearchCriteria cri) throws Exception {
+		//선택한 상품 옵션들의 인원수에 따라 전체 상품 옵션들 update
+		for(int i=0;i<pvo.getAir().size();i++) {
+			for(int j=0;j<upvo.getAir().size();j++) {
+				if(pvo.getAir().get(i).getNo()==upvo.getAir().get(j).getNo()) {
+					if(pvo.getAir().get(i).getCapacity()<=0) {
+						return;
+					}
+					pvo.getAir().get(i).setCapacity(pvo.getAir().get(i).getCapacity() - upvo.getAir().get(j).getCapacity());
+					adao.editAirplane(pvo.getAir().get(i));
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		for(int i=0;i<pvo.getHotel().size();i++) {
+			for(int j=0;j<upvo.getHotel().size();j++) {
+				if(pvo.getHotel().get(i).getNo()==upvo.getHotel().get(j).getNo()) {
+					if(pvo.getHotel().get(i).getTotalcapacity()<=0) {
+						pvo.getHotel().get(i).setBookedup(1);
+						hdao.updateHotel(pvo.getHotel().get(i));
+						return;
+					}
+					pvo.getHotel().get(i).setTotalcapacity(pvo.getHotel().get(i).getTotalcapacity() - upvo.getHotel().get(j).getTotalcapacity());
+					hdao.updateHotel(pvo.getHotel().get(i));
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		for(int i=0;i<pvo.getTour().size();i++) {
+			for(int j=0;j<upvo.getTour().size();j++) {
+				if(pvo.getTour().get(i).getNo()==upvo.getTour().get(j).getNo()) {
+					if(pvo.getTour().get(i).getCapacity()<=0) {
+						return;
+					}
+					pvo.getTour().get(i).setCapacity(pvo.getTour().get(i).getCapacity() - upvo.getTour().get(j).getCapacity());
+					tdao.updateTour(pvo.getTour().get(i));
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		for(int i=0;i<pvo.getRentcar().size();i++) {
+			for(int j=0;j<upvo.getRentcar().size();j++) {
+				if(pvo.getRentcar().get(i).getNo()==upvo.getRentcar().get(j).getNo()) {
+					if(pvo.getRentcar().get(i).getCapacity()<=0) {
+						return;
+					}
+					pvo.getRentcar().get(i).setCapacity(pvo.getRentcar().get(i).getCapacity() - upvo.getRentcar().get(j).getCapacity());
+					rdao.updateRentcar(pvo.getRentcar().get(i));
+				}
+				else {
+					continue;
+				}
+			}
+		}
 		//선택한 상품 옵션들 insert
-		for(AirplaneVO vo : upvo.getAir()) adao.addAirplane(vo);
-		for(HotelVO vo : upvo.getHotel()) hdao.insertHotel(vo);
-		for(TourVO vo : upvo.getTour()) tdao.insertTour(vo);
-		for(RentcarVO vo : upvo.getRentcar()) rdao.insertRentcar(vo);
-		//선택한 상품 옵션들에 따라 기존의 상품 옵션들 인원 조정
-		
+		for(AirplaneVO vo : upvo.getAir()) {
+			vo.setNo(adao.totalCountAirplane(cri)+1);
+			adao.addAirplane(vo);
+		}
+		for(HotelVO vo : upvo.getHotel()) {
+			vo.setNo(hdao.totalSearchCountHotel(cri)+1);
+			hdao.insertHotel(vo);
+		}
+		for(TourVO vo : upvo.getTour()) {
+			vo.setNo(tdao.totalCountBySearchCriteria(cri)+1);
+			tdao.insertTour(vo);
+		}
+		for(RentcarVO vo : upvo.getRentcar()) {
+			vo.setNo(rdao.totalSearchCountRentcar(cri)+1);
+			rdao.insertRentcar(vo);
+		}
+		//새로운 상품 insert
+		insertProduct(upvo);
+		dao.insertpUserStatus(uvo, upvo);
 	}
 }

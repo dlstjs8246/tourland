@@ -988,6 +988,7 @@ public class ManagerController {
 
 	@RequestMapping(value = "tourRegister", method = RequestMethod.POST)
 	public String tourRegisterPost(TourVO vo, Model model) throws SQLException {
+		vo.setPdiv(false);
 		tourService.insertTour(vo);
 		return "redirect:/tourMngList";
 	}
@@ -1010,6 +1011,7 @@ public class ManagerController {
 
 	@RequestMapping(value = "tourModify", method = RequestMethod.POST)
 	public String tourModifyPost(TourVO vo, SearchCriteria cri) throws SQLException {
+		vo.setPdiv(false);
 		tourService.updateTour(vo);
 		return "redirect:/tourDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
 				+ "&searchType2=" + cri.getSearchType2() + "&keyword=" + cri.getKeyword();
