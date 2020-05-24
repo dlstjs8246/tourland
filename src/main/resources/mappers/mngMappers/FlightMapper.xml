@@ -3,49 +3,48 @@
 <mapper namespace="mappers.mngMappers.FlightMapper">
 	<sql id="search">
 		<if test='searchType=="no"'>
-			where no = #{keyword}
+			and no = #{keyword}
 		</if>
 		<if test='searchType=="ano"'>
-			where ano like concat('%',#{keyword},'%') 
+			and ano like concat('%',#{keyword},'%') 
 		</if>
 		<if test='searchType=="dloca"'>
-			where dlocation like concat('%',#{keyword},'%') 
+			and dlocation like concat('%',#{keyword},'%') 
 		</if>
 		<if test='searchType=="rloca"'>
 			<if test= 'keyword=="제주"'>
-				where rlocation like '%CJU%'
+				and rlocation like '%CJU%'
 			</if>
 			<if test= 'keyword=="CJU"'>
-				where rlocation like '%CJU%'
+				and rlocation like '%CJU%'
 			</if>
 			<if test= 'keyword=="베이징"'>
-				where rlocation like '%PEK%'
+				and rlocation like '%PEK%'
 			</if>
 			<if test= 'keyword=="중국"'>
-				where rlocation like '%PEK%'
+				and rlocation like '%PEK%'
 			</if>
 			<if test= 'keyword=="PEK"'>
-				where rlocation like '%PEK%'
+				and rlocation like '%PEK%'
 			</if>
 			<if test= 'keyword=="일본"'>
-				where rlocation like '%NRT%'
+				and rlocation like '%NRT%'
 			</if>
 			<if test= 'keyword=="나리타"'>
-				where rlocation like '%NRT%'
+				and rlocation like '%NRT%'
 			</if>
 			<if test= 'keyword=="NRT"'>
-				where rlocation like '%NRT%'
+				and rlocation like '%NRT%'
 			</if>
-			<!-- where rlocation like concat('%',#{keyword},'%') -->
 		</if>
 		<if test='searchType=="ddate"'>
-			where ddate = #{keyword}
+			and ddate = #{keyword}
 		</if>
 		<if test='searchType=="rdate"'>
-			where rdate = #{keyword}
+			and rdate = #{keyword}
 		</if>
 		<if test='searchType=="date"'>
-			where ddate like concat('%',#{keyword},'%')  
+			and ddate like concat('%',#{keyword},'%')  
 		</if>
 		
 	</sql>
@@ -75,6 +74,7 @@
 	<!-- 항공 전체 리스트  -->
 	<select id="airplaneList" resultType="AirplaneVO">
 		select * from airplane
+		where pdiv = 0  
 		<include refid="search"/>  
 		order by no desc   
 		limit #{pageStart}, #{perPageNum}
@@ -82,48 +82,49 @@
 	<!-- 항공 국내만 -->
 	<select id="airplaneDomList" resultType="AirplaneVO">
 		select * from airplane 
-		where ldiv = 1    
+		where ldiv = 1 and pdiv = 0
 		order by no desc
 		limit #{pageStart}, #{perPageNum}
 	</select>
 	<!-- 항공 해외만 -->
 	<select id="airplaneAbroadList" resultType="AirplaneVO">
 		select * from airplane 
-		where ldiv = 0    
+		where ldiv = 0 and pdiv = 0 
 		order by no desc
 		limit #{pageStart}, #{perPageNum}
 	</select>
 	<!-- 항공 날짜 검색 -->
 	<select id="airplaneDateSearchList" resultType="AirplaneVO">
 		select * from airplane 
-		where ddate like concat('%',#{date},'%')  
+		where ddate like concat('%',#{date},'%') and pdiv = 0
 		order by no desc
 		limit #{pageStart}, #{perPageNum}
 	</select>	
 	<select id="airplaneListByDepature" resultType="AirplaneVO">
 		select * from airplane where dlocation = 'ICN'
+		and pdiv = 0
 		<include refid="searchDiv"/> 
 		order by no desc
 		limit #{pageStart}, #{perPageNum}
 	</select>
 	<select id="airplaneListByRending" resultType="AirplaneVO">
-		select * from airplane where no = #{no}
+		select * from airplane where no = #{no} and pdiv = 0
 	</select>
 	<!-- 항공편 전체 숫자 -->
 	<select id="totalCountAirplane" resultType="int">
-		select count(*) from airplane
+		select count(*) from airplane where pdiv = 0
 		<include refid="search"/>
 	</select>
 	<select id="totalCountAirplaneByDepature" resultType="int">
-		select count(*) from airplane where dlocation = 'ICN'
+		select count(*) from airplane where dlocation = 'ICN' and pdiv = 0
 		<include refid="searchDiv"/>
 	</select>
 	<select id="totalCountAirplaneByRending" resultType="int">
-		select * from airplane where no = #{no}
+		select * from airplane where no = #{no} and pdiv = 0
 	</select>
 	<!-- 항공 번호로 검색 -->
 	<select id="airplaneByNo" resultType="AirplaneVO">
-		select * from airplane where no = #{no}
+		select * from airplane where no = #{no} and pdiv = 0
 	</select>
 	<!-- 항공 추가 -->
 	<insert id="addAirplane">
@@ -135,6 +136,11 @@
 	</delete>
 	<!-- 항공 수정 -->
 	<update id="editAirplane">
-		update airplane set price = #{price} where no = #{no}
+		update airplane 
+			<set>
+				<if test="price!=null">price = #{price},</if>
+				<if test="capacity!=null">capacity = #{capacity},</if>
+			</set>
+		 where no = #{no}
 	</update>
 </mapper> 
