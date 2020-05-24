@@ -1069,7 +1069,8 @@ public class ManagerController {
 	
 	@RequestMapping(value = "rentcarRegister", method = RequestMethod.POST)
 	public String rentcarRegisterPost(RentcarVO vo, Model model) throws Exception {
-		  rentcarService.insertRentcar(vo);
+		vo.setPdiv(0);  
+		rentcarService.insertRentcar(vo);
 		return "redirect:/rentcarMngList";
 	}
 	
