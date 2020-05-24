@@ -187,6 +187,7 @@ select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no;
 select * from userpstatus;
 select * from cart;
+select * from hotel;
 select * from reservation;
 -- 태원 --------------------------------------------------------------------------------------------
 SELECT *

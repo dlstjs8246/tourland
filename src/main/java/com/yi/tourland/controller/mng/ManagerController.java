@@ -2003,8 +2003,10 @@ public class ManagerController {
 
 	@RequestMapping(value = "hotelRegister", method = RequestMethod.POST)
 	public String hotelResgiterPost(HotelVO vo) throws Exception {
+		vo.setTotalcapacity(vo.getRoomcapacity() * vo.getCapacity());
+		vo.setPdiv(false);
 		hotelService.insertHotel(vo);
-		return "redirect:/hotelMngList";
+		return "redirect:/manager/hotelMngList";
 	}
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.GET)
@@ -2017,14 +2019,15 @@ public class ManagerController {
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.POST)
 	public String hotelModifyPost(HotelVO vo, SearchCriteria cri) throws Exception {
+		vo.setTotalcapacity(vo.getRoomcapacity() * vo.getCapacity());
 		hotelService.updateHotel(vo);
-		return "redirect:/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/manager/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "hotelDelete", method = RequestMethod.GET)
 	public String hotelDelete(HotelVO vo, SearchCriteria cri) throws Exception {
 		hotelService.deleteHotel(vo);
-		return "redirect:/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/manager/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 	
 	// 상품 문의사항

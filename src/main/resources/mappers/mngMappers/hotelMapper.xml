@@ -3,8 +3,8 @@
 <mapper namespace="mappers.mngMappers.hotelMapper">
 	<!-- 호텔상품 추가 -->
 	<insert id="insertHotel">
-		insert into hotel (no, hname, haddr, checkin, checkout, capacity, price, roomcapacity, roomtype, ldiv, bookedup) values
-		(#{no}, #{hname}, #{haddr}, #{checkin}, #{checkout}, #{capacity}, #{price}, #{roomcapacity}, #{roomtype}, #{ldiv}, #{bookedup})
+		insert into hotel values
+		(#{no}, #{hname}, #{haddr}, #{checkin}, #{checkout}, #{capacity}, #{price}, #{roomcapacity}, #{roomtype}, #{ldiv}, #{bookedup}, #{totalcapacity}, #{pdiv})
 	</insert>
 	
 	<!-- 호텔번호로 검색 -->
@@ -14,7 +14,20 @@
 	
 	<!-- 호텔상품 수정 -->
 	<update id="updateHotel" parameterType="HotelVO">
-		update hotel set hname=#{hname}, haddr=#{haddr}, checkin=#{checkin}, checkout=#{checkout}, capacity=#{capacity}, price=#{price}, roomcapacity=#{roomcapacity}, roomtype=#{roomtype}, ldiv=#{ldiv}, bookedup=#{bookedup}
+		update hotel
+		<set>
+			<if test="hname!=null">hname = #{hname},</if>
+			<if test="haddr!=null">haddr = #{haddr},</if>
+			<if test="checkin!=null">checkin = #{checkin},</if>
+			<if test="checkout!=null">checkout = #{checkout},</if>
+			<if test="capacity!=null">capacity = #{capacity},</if>
+			<if test="price!=null">price = #{price},</if>
+			<if test="roomcapacity!=null">roomcapacity = #{roomcapacity},</if>
+			<if test="roomtype!=null">roomtype = #{roomtype},</if>
+			<if test="ldiv!=null">ldiv = #{ldiv},</if>
+			<if test="bookedup!=null">bookedup = #{bookedup},</if>
+			<if test="totalcapacity!=null">totalcapacity = #{totalcapacity},</if>
+		</set>
 		where no=#{no}
 	</update>
 	
@@ -35,25 +48,26 @@
     </select>
     
    	 <sql id="search">
+   	 	where pdiv = 0
    	 	<if test="searchType=='total'.toString()">
-			where hname like CONCAT('%',#{keyword},'%')
+			and hname like CONCAT('%',#{keyword},'%')
 		</if>
 		<if test="searchType=='hname'.toString()">
-			where hname like CONCAT('%',#{keyword},'%')
+			and hname like CONCAT('%',#{keyword},'%')
 		</if>
 		<if test="searchType=='haddr'.toString()">
-			where haddr like CONCAT('%',#{keyword},'%')
+			and haddr like CONCAT('%',#{keyword},'%')
 		</if> 
 		<if test="searchType=='bookedup'">
  			<if test='keyword=="가능" or keyword=="예약가능"'>
-				where bookedup = 0
+				and bookedup = 0
 			</if>
 			<if test='keyword=="불가능" or keyword=="예약불가능"'>
-				where bookedup = 1
+				and bookedup = 1
 			</if>
 		</if>
 		<if test='searchType=="checkDate"'>
-	       where checkin =  #{keyword2} and checkout = #{keyword3}
+	       and checkin =  #{keyword2} and checkout = #{keyword3}
 	     </if>
 		
 	</sql>
