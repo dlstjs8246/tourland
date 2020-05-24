@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -952,9 +953,6 @@ public class CustomerController {
 		List<HotelVO> hotelList = new ArrayList<>();
 		List<TourVO> tourList = new ArrayList<>();
 		List<RentcarVO> rentList = new ArrayList<>();
-		//유저
-		UserVO user = userService.readByNoUser(uno);
-		System.out.println("유저번호 : " + uno );
 		
 		
 		//항공 출발편
@@ -988,8 +986,7 @@ public class CustomerController {
 		for(AirplaneVO air : airList) {
 			System.out.println("변경된 항공편 : ");
 			System.out.println(air);
-			//Airplane 테이블에 객체2 insert
-			flightService.addAirplane(air);
+			
 		}
 		for(int i=0; i<hno.length; i++) {
 			System.out.println("호텔 번호 :"+hno[i]);
@@ -1009,11 +1006,7 @@ public class CustomerController {
 			hotelList.get(i).setPdiv(true);
 			
 		}
-		for(HotelVO h : hotelList) {
-			System.out.println("변경된 호텔 : " + h);
-			//호텔 테이블에 객체2 insert
-			hotelService.insertHotel(h);
-		}
+		
 		for(int i=0; i<tno.length; i++) {
 			System.out.println("투어 번호 : "+tno[i]);
 		
@@ -1077,11 +1070,30 @@ public class CustomerController {
 		product.setRentcar(rentList);
 		product.setPdiv(true);
 		
+		//INSERT
+		//Airplane 테이블에 객체2 insert
+		for(AirplaneVO air : airList) {
+			System.out.println("변경된 항공 : " + air);
+			//호텔 테이블에 객체2 insert
+			flightService.addAirplane(air);
+		}
+		//호텔 테이블에 객체2 insert
+		for(HotelVO h : hotelList) {
+			System.out.println("변경된 호텔 : " + h);
+		
+			hotelService.insertHotel(h);
+		}
 		productService.insertProduct(product);
 		
+		//유저
+		UserVO user = userService.readByNoUser(uno);
+		System.out.println("유저번호 : " + uno );
 		
 		//연결 테이블 1(userpstatus)
+		productService.tourlandProductUserPStatus(user, product);
 		
+		//연결 테이블 2
+		productService.insertProduct(product);
 		return entity;
 	}
 	
