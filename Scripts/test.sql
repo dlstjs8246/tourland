@@ -12,6 +12,8 @@ delete from employee where empid = 'apple';
 insert into employee values (6,'장우주','1987-01-01','010-4444-4321','대구 광역시 달서구',0,'employee4',password('employee'),1);
 desc user;
 select * from `user` u ;
+select * from usercoupon u ;
+select user.username, coupon.cno, coupon.cname from user left join usercoupon uc on user.userno = uc.userno left join coupon on uc.cno = coupon.cno;
 delete from `user` where userno = 7;
 insert into user values (6,'도라지','1989-12-18','010-4333-3825','대구시 북구 태전동 254-30',null,'customer5',password('customer'),1);
 select * from rentcar r order by no desc ;

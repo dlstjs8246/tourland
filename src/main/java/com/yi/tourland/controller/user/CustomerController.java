@@ -377,7 +377,7 @@ public class CustomerController {
 	}
 
 	//비밀번호 확인 되었을때 나타나는곳
-	@ResponseBody
+	
 	@RequestMapping(value = "EditPasswordCheck/{totalId}/{checkPass}", method = RequestMethod.GET)
 	public ResponseEntity<String> EditPasswordCheck(@PathVariable("totalId") String totalId,@PathVariable("checkPass") String checkPass,Model model) {
 		ResponseEntity<String> entity = null;
@@ -746,14 +746,16 @@ public class CustomerController {
 			int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
 			model.addAttribute("jejucount",jejulistCount);
 			String keyword = cri.getKeyword();
-			String keyword2 = cri.getKeyword3();
-			String keyword3 = cri.getKeyword2();
+			String keyword2 = cri.getKeyword2();
+			String keyword3 = cri.getKeyword3();
 			//System.out.println("키워드3"+keyword3);
-			//System.out.println("크리찍업ㄴ다"+cri);
+			System.out.println("리스트에서크리찍업ㄴ다"+cri);
 			if(keyword3 !=null) {
 				  if(keyword3.contentEquals("forsearchchina")) {
 						cri.setPerPageNum(10); //다시 리스트 10개로 세팅
+						System.out.println("안에서 크리는"+cri);
 						model.addAttribute("keyword",keyword);
+						model.addAttribute("keyword3","china");
 						if(keyword2 != null) {
 							model.addAttribute("keyword2",keyword2);
 						}
@@ -764,7 +766,8 @@ public class CustomerController {
 						pageMaker.setTotalCount(chinalistCount);
 						System.out.println("페이지 메이커"+pageMaker);
 						model.addAttribute("pageMaker", pageMaker);
-					       return "redirect:/customer/tourlandProductChinaList?searchType=&keyword3=forsearchchina";
+					      // return "redirect:/customer/tourlandProductChinaList?searchType=&page=1&chinalistCount="+chinalistCount;
+						return "redirect:/customer/tourlandProductChinaList?searchType=";
 				   }
 			}
 			List<ProductVO> list = productService.productListPageByChina(cri);
@@ -1264,7 +1267,6 @@ public class CustomerController {
 		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
 		model.addAttribute("jejucount",jejulistCount);
 		
-		
         model.addAttribute("searchkeyword",cri.getKeyword());
 		String keyword = cri.getKeyword();
 		String keyword2 = cri.getKeyword2();
@@ -1277,17 +1279,16 @@ public class CustomerController {
 		if(keyword3 !=null) {
 		  if(keyword3.contentEquals("forsearchchina")) {
 				cri.setPerPageNum(10); //다시 리스트 10개로 세팅
-				model.addAttribute("keyword",keyword);
+	            model.addAttribute("keyword",keyword);
 				if(keyword2 != null) {
-					model.addAttribute("keyword2",keyword2);
-				}
 				model.addAttribute("keyword2",keyword2);
-				model.addAttribute("keyword3","searchforchina");
-				PageMaker pageMaker = new PageMaker();
+   		    	}
+                model.addAttribute("keyword3",keyword3);
+		    	PageMaker pageMaker = new PageMaker();
 				pageMaker.setCri(cri);
 				pageMaker.setTotalCount(chinalistCount);
-				System.out.println("페이지 메이커"+pageMaker);
-				model.addAttribute("pageMaker", pageMaker);
+//				System.out.println("페이지 메이커"+pageMaker);
+//				model.addAttribute("pageMaker", pageMaker);
 			       return "redirect:/customer/tourlandProductChinaList?searchType=";
 		   }else if(keyword3.contentEquals("forsearchjapan")) {
 				cri.setPerPageNum(10); //다시 리스트 10개로 세팅
