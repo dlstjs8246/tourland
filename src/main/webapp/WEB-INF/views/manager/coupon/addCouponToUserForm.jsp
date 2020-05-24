@@ -23,10 +23,12 @@
 	.info { color: maroon; font-weight: bold; }
 	.box-primary { height: 900px; }  
 	h3 { font-weight: bold; text-indent: 10px; }  	
-	table th, td {text-align: center; }       
+	table th, td {text-align: center; }     
+	#toAllUSers { margin: 10px 0;}  
+	
 </style>  
 <script>
-$(document).ready(function(){   
+$(document).ready(function(){      
 		 $(".cpTd").mouseover(function(){
 			$(this).css("background", "#b0c4de");
 		})
@@ -56,15 +58,15 @@ $(document).ready(function(){
 				var uno = $(this).find(".uno").html();
 				$("#userno").val(uno);
 		})   
-		
-		
-		$("h3").click(function(){
-			var cno = $("#couponno").val();
-			
-			var uno = $("#userno").val();
-			alert(cno);
-			alert(uno);
-		})     
+		//일단 allUsers input 에 name 삭제 (모든 고객에게 지급하기 클릭 했을 때만 name 생김)
+		$("#allUsers").removeAttr("name");
+		 $("#toAllUSers").click(function(){ //모든 고객에게 지급 하기 클릭했을 때
+			 $("#allUsers").attr("name", "allUsers");//allUsers input에 name 붙여서 String으로 컨트롤러에 들고가기(모든 고객 클릭했는지 아닌지 구별하기 위해서)
+			 $(".urTd").css("background", "#fff"); //고객 리스트에서 고객 선택했다면 색깔 없앰
+			 
+			 
+			 alert("모든 고객에게 해당 쿠폰을 지급하시겠습니까?");
+		 })
 	                 
 	});   
 	
@@ -114,6 +116,8 @@ $(document).ready(function(){
 		 		  <div class="group">
 			      <h3>고객</h3>
 				    <div class="box-body">
+				    <button id="toAllUSers">모든 고객에게 지급</button>
+				    <input type="hidden" id="allUsers" value="allUsers">
 					<table class="table table-bordered">
 						<tr>
 							<th>번호</th>
@@ -125,14 +129,14 @@ $(document).ready(function(){
 						<tr class="urTd">
 							<td class="uno">${u.userno}</td>
 							<td>${u.username }</td>
-							<td>${u.usertel }</td>
+							<td>${u.usertel }</td>   
 							<td>${u.userid }</td>
 						</tr>
 					</c:forEach> 
 					
 					</table>
 					<input type="hidden" id="couponno" name="cno">
-					<input type="hidden" id="userno" name="userno">  
+					<input type="hidden" id="userno" name="userno" value="1">  
 				</div>      
 		    </div>
 		     <div class="form-group">   

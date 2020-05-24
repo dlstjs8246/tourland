@@ -126,7 +126,7 @@
 				$(".selHotel").val("");
 				$(".selHotel").eq(0).val("N");
 				$(".selHotel").change();
-				$(".selTour").prop("checked",true);
+				$(".selTour").prop("checked",true); 
 				$("#selRentcar").eq(0).val("DS"); 
 				calPrice();
 			})
@@ -136,14 +136,14 @@
 					$(this).find("option").eq(0).prop("selected",true);
 					return false;
 				}
-				var selOption = $(this).find("option:selected").val()
+				var selOption = $(this).find("option:selected").val();
 				$(this).parent().next().remove();
 				var airSelect = $("<select class='airSelect'>").html(" ");
 				var p = $("<p>").html("탑승인원 ");
 				switch(selOption) {
 				case "F":
 					for(var i=1;i<=${vo.air[0].capacity};i++) {
-						var option = $("<option>").html(i+"명");
+						var option = $("<option data-capacity='"+i+"'>").html(i+"명");
 						airSelect.append(option);	
 					}
 					p.append(airSelect);
@@ -151,7 +151,7 @@
 					break;
 				case "B":
 					for(var i=1;i<=${vo.air[3].capacity};i++) { 
-						var option = $("<option>").html(i+"명");
+						var option = $("<option data-capacity='"+i+"'>").html(i+"명");
 						airSelect.append(option);	
 					}
 					p.append(airSelect);
@@ -159,7 +159,7 @@
 					break;
 				case "E":
 					for(var i=1;i<=${vo.air[5].capacity};i++) {
-						var option = $("<option>").html(i+"명");
+						var option =$("<option data-capacity='"+i+"'>").html(i+"명");
 						airSelect.append(option);	
 					}
 					p.append(airSelect);
@@ -167,6 +167,16 @@
 					break;
 				}
 				calPrice();
+				var airCapacity = 0;
+				$(".airSelect").each(function(i,obj){ 
+					airCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
+				})
+				if(bookCapacity<airCapacity) {
+					alert("현재 예약인원보다 항공기 탑승인원이 더 많을 수 없습니다");
+					$(this).find("option").eq(0).prop("selected",true);
+					$(this).parent().next().remove();
+					calPrice();  
+				}
 			})
 			$(document).on("change",".airSelect",function(){
 				var airCapacity = 0;
@@ -193,7 +203,7 @@
 				switch(selOption) {
 				case "S":
 					for(var i=1;i<=${vo.hotel[0].capacity}*${vo.hotel[0].roomcapacity};i++) {
-						var option = $("<option>").html(i+"명");
+						var option = $("<option data-capacity='"+i+"'>").html(i+"명");
 						hotelSelect.append(option);	
 					}
 					p.append(hotelSelect);
@@ -201,7 +211,7 @@
 					break;
 				case "D":
 					for(var i=1;i<=${vo.hotel[1].capacity}*${vo.hotel[1].roomcapacity};i++) { 
-						var option = $("<option>").html(i+"명");
+						var option = $("<option data-capacity='"+i+"'>").html(i+"명");
 						hotelSelect.append(option);	
 					}
 					p.append(hotelSelect);
@@ -209,7 +219,7 @@
 					break;
 				case "N":
 					for(var i=1;i<=${vo.hotel[2].capacity}*${vo.hotel[2].roomcapacity};i++) {
-						var option = $("<option>").html(i+"명"); 
+						var option = $("<option data-capacity='"+i+"'>").html(i+"명");
 						hotelSelect.append(option);	
 					}
 					p.append(hotelSelect);  
@@ -217,7 +227,17 @@
 					break;
 				}
 				calPrice();
-			})
+				var hotelCapacity = 0; 
+				$(".hotelSelect").each(function(i,obj){
+					hotelCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
+				})
+				if(bookCapacity<hotelCapacity) {
+					alert("현재 예약인원보다 호텔 투숙 인원이 더 많을 수 없습니다");
+					$(this).find("option").eq(0).prop("selected",true);
+					$(this).parent().next().remove();
+					calPrice();
+				}
+			}) 
 			$(document).on("change",".hotelSelect",function(){
 				var hotelCapacity = 0;
 				$(".hotelSelect").each(function(i,obj){
@@ -248,29 +268,185 @@
 					location.href = "${pageContext.request.contextPath}/loginForm";
 					return false;
 				}
-				
+				var uno = ${Auth.userno};
+				var pno = ${vo.pno};
+				var price = replaceAll($("#price").text(),",","");
+				var ano = [];
+				var acapacity = [];
+				var hno = [];
+				var hcapacity = [];
+				var tno = [];
+				var tcapacity = bookCapacity;
+				var rno = [];
+				var rcapacity = bookCapacity;
+				$(".selAir option:selected").each(function(i,obj){
+					if($(this).val()!="") {
+						var dno = $(this).attr("data-dano");
+						ano[i] = dno;
+					}
+				})
+				$(".airSelect option:selected").each(function(i,obj){
+					acapacity[i] = $(this).attr("data-capacity"); 
+				})
+				$(".selHotel option:selected").each(function(i,obj){
+					if($(this).val()!="" || $(this).val=="DS") {
+						var no = $(this).attr("data-hno");
+						hno[i] = no;
+					}
+				})
+				$(".hotelSelect option:selected").each(function(i,obj){
+					hcapacity[i] = $(this).attr("data-capacity"); 
+				})
+				$(".selTour:checked").each(function(i,obj){
+					tno[i] = $(this).val();
+				})
+				if($("#selRentcar option:selected").val()=="S") {
+					rno[0] = $(this).attr("data-rentno");
+				}
+				$.ajax({
+					url : "ProductDetail/reserv",
+					method : "get",
+					traditional : true,
+					data : {
+						uno:uno,
+						pno:pno,
+						price:price,
+						ano:ano,
+						acapacity:acapacity,
+						hno:hno,
+						hcapacity:hcapacity,
+						tno:tno,
+						tcapacity:tcapacity,
+						rno:rno,
+						rcapacity:rcapacity
+					},
+					dataType : "json",
+					success : function(res) {
+						console.log(res);
+					}
+				})
 			})
 			$("#doWish").click(function(){
+				alert("장바구니");
+				/* //상품 번호
 				var pno = $("#pno").text().substring($("#pno").text().indexOf("P"),$("#pno").text().length);
+				//가격
 				var price = replaceAll($("#price").text(),",","");
+				//항공편 번호
 				var ano;
+				//호텔번호
 				var hno;
+				//투어 번호 
 				var tno;
+				//렌트카 번호
 				var rno;
-				if(${Auth==null}) {
-					alert("로그인부터 먼저해주세요");
-					location.href = "${pageContext.request.contextPath}/loginForm";
-					return false;
-				}
-				/* $.ajax({
-					url = "tourlandProductDetail/cart",
-					method = "get",
-					data = 
-					dataType = "json",
-					success : function(res) {
-						alert(res);
+				 */
+
+			if(${Auth==null}) {
+				alert("로그인부터 먼저해주세요");
+				location.href = "${pageContext.request.contextPath}/loginForm";
+				return false;
+			}
+				//유저 번호
+				var uno = ${Auth.userno};
+				//상품 번호
+				var pno = ${vo.pno};
+				//가격
+				var price = replaceAll($("#price").text(),",","");
+				//항공 출발편 번호
+				var ano = [];
+				//항공 도착편 번호
+				var rano = [];
+				//항공 선택 인원 (좌석 별)
+				var acapacity = [];
+				//호텔 번호
+				var hno = [];
+				//호텔 룸
+				var hroomtype = [];
+				//호텔 인원 (룸 별)
+				var hcapacity = [];
+				//투어 번호
+				var tno = [];
+				//투어 인원 == 예약 인원
+				var tcapacity = bookCapacity;
+				//렌트카 번호
+				var rno = [];
+				//렌트카 인원 == 예약 인원
+				var rcapacity = bookCapacity;
+				
+				$(".selAir option:selected").each(function(i,obj){
+					if($(this).val()!="") {
+						var rno = $(this).attr("data-rano");
+						ano[i] = rno;
 					}
-				}) */
+				})
+				$(".selAir option:selected").each(function(i,obj){
+					if($(this).val()!="") {
+						var dno = $(this).attr("data-dano");
+						rano[i] = dno;
+					}
+				})
+				$(".airSelect option:selected").each(function(i,obj){
+					acapacity[i] = $(this).attr("data-capacity"); 
+				})
+				//alert(ano);
+				//alert(acapacity);
+				$(".selHotel option:selected").each(function(i,obj){
+					if($(this).val()!="" || $(this).val=="DS") {
+						var no = $(this).attr("data-hno");
+						hno[i] = no;
+					}
+				})
+				$(".hotelSelect option:selected").each(function(i,obj){
+					hcapacity[i] = $(this).attr("data-capacity"); 
+				})
+			//	alert(hno);
+				//alert(hcapacity);
+				$(".selTour:checked").each(function(i,obj){
+					tno[i] = $(this).val();
+				})
+				//alert(tno);
+				//alert(tcapacity);
+				if($("#selRentcar option:selected").val()=="S") {
+					rno[0] = $("#selRentcar option:selected").attr("data-rentno");
+				}
+				//alert(rno);
+				//alert("인원");
+				//alert(rcapacity);
+				
+				//alert("항공기 옵션 길이");
+				//alert(acapacity.length);
+			//	alert("호텔 옵션 길이");
+			//	alert(hcapacity.length);
+				if(rcapacity != acapacity.length || rcapacity != hcapacity.length){ //예약 인원과 옵션 선택 인원이 맞지 않을 때 return
+					alert("예약 인원에 맞게 옵션을 선택해주세요.");
+					return;  
+				}else{/* traditional :true -> ajax에서 배열을 컨트롤러로 보낼때 컨트롤러에서 배열 형태로 받을 수 있게 설정하는 것 */
+					$.ajax({
+						url : "tourlandProductDetail/cart",
+						method : "get",
+     					traditional : true, 
+						data : {
+							uno:uno,
+							pno:pno,
+							price:price,
+							ano:ano,
+							rano:rano,
+							acapacity:acapacity,
+							hno:hno,
+							hcapacity:hcapacity,
+							tno:tno,
+							tcapacity:tcapacity,
+							rno:rno,
+							rcapacity:rcapacity
+						},
+						dataType : "json",
+						success : function(res) {
+							console.log(res);
+						}
+					}) 
+				}
+				 
 			})
 		})
 	</script>
@@ -426,9 +602,9 @@
 									렌터카옵션
 									<select id="selRentcar">
 										<option value="">선택</option>
-										<option value="S" value="${vo.rentcar[0].no}">선택함</option>
+										<option value="S" data-rentno="${vo.rentcar[0].no}">선택함</option>
 										<option value="DS">선택안함</option>
-									</select>
+									</select>   
 								</p>
 							</li>
 							<li id="infoPrice" style="clear : both;">가격 : <span id="price"><fmt:formatNumber value="${price}" pattern="###,###"/></span>원</li>

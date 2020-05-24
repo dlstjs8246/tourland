@@ -3,13 +3,13 @@ package com.yi.tourland.persistance.mng.dao;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
 import com.yi.tourland.domain.mng.TourVO;
+import com.yi.tourland.domain.mng.UserVO;
 
 public interface ProductDao {
 	public List<ProductVO> productListPage(SearchCriteria cri) throws SQLException;

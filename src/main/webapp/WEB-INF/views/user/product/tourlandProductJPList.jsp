@@ -310,7 +310,7 @@ $(function(){
 						<fmt:formatNumber var="price" value="${N+(1-(N%1))%1}" type="number"/>
 						<fmt:formatDate var="expire" value="${product.pexpire}" pattern="yyyy/MM/dd"/>
 						<p class="pkgPrice">${price}원 부터~</p>
-						<p class="pkgDate">~ ${expire}까지</p>
+						<p class="pkgDate">~ ${expire}까지 예약 가능</p>
 						<p class="pkgReserv">
 							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
 						</p>

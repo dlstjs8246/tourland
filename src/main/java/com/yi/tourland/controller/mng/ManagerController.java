@@ -491,12 +491,14 @@ public class ManagerController {
 	// 사원 리스트 클릭했을 때 자세한 정보 보기로 넘어가기
 	@RequestMapping(value = "employeeDetail/{empretired}", method = RequestMethod.GET)
 	public String employeeDetail(EmployeeVO vo, SearchCriteria cri, Model model,
-			@PathVariable("empretired") int empretired) throws Exception {
+			@PathVariable("empretired") int empretired, HttpSession session) throws Exception {
 		vo = employeeService.readByNoEmployee(vo.getEmpno());
 		model.addAttribute("empVO", vo);
 		// System.out.println(vo); //퇴사사원 null로 찍혀서 mapper수정
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
+		session.setAttribute("Retired", empretired);
+		System.out.println("================="+empretired);
 		return "/manager/employee/empDetailForm";
 	}
 
@@ -509,9 +511,14 @@ public class ManagerController {
 		model.addAttribute("empVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
-		session.setAttribute("Page", cri.getPage());
-		session.setAttribute("Search", cri.getSearchType());
-		session.setAttribute("Keyword", cri.getKeyword());
+//		session.setAttribute("Retired", empretired);
+//		System.out.println("================="+empretired);
+//		session.setAttribute("Page", cri.getPage());
+//		System.out.println("================="+cri.getPage());
+//		session.setAttribute("Search", cri.getSearchType());
+//		System.out.println("================="+cri.getSearchType());
+//		session.setAttribute("Keyword", cri.getKeyword());
+//		System.out.println("================="+cri.getKeyword());
 		return "redirect:/manager/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
 				+ "&searchType=" + cri.getSearchType() + "&keyword=" + cri.getKeyword();
 	}
@@ -1867,7 +1874,7 @@ public class ManagerController {
 	public String addCouponResult(CouponVO coupon,Model model) throws Exception{
 
 		couponService.addCoupon(coupon);
-		return "redirect:/couponMngList";
+		return "redirect:/manager/couponMngList";
 	}
 	
 	//쿠폰 지급 GET
@@ -1900,22 +1907,40 @@ public class ManagerController {
 			}
 	//쿠폰 지급 POST
 	@RequestMapping(value="addCouponToUserForm", method=RequestMethod.POST)
-	public ModelAndView addCouponToUserResult(CouponVO c, UserVO u,Model model,SearchCriteria cri) throws Exception{
-		//선택한 고객과 쿠폰 가져옴
-		//해당 고객이 쿠폰을 가지고 있는지 확인
-		List<Integer> list = couponService.userHasACouponOrNot(c.getCno(), u.getUserno());
-		//가지고 있으면 반려
-		if(list.size()>0) {
-			
-			model.addAttribute("hasCoupon", "hasCoupon");
-			return new ModelAndView(new RedirectView("addCouponToUserForm", true));
-		}
-		//안 가지고 있으면 insert 후 리스트로 돌아가기
-		else {
-			couponService.addCouponToUser(u.getUserno(), c.getCno());
-			model.addAttribute("addCouponToUser", "addCouponToUser");
+	public ModelAndView addCouponToUserResult(CouponVO c, UserVO u,String allUsers,Model model,SearchCriteria cri) throws Exception{
+		
+		//특정 고객 선택 했을 때
+		if(allUsers == null) {
+			//선택한 고객과 쿠폰 가져옴
+			//해당 고객이 쿠폰을 가지고 있는지 확인
+			List<Integer> list = couponService.userHasACouponOrNot(c.getCno(), u.getUserno());
+			//가지고 있으면 반려
+			if(list.size()>0) {
+				
+				model.addAttribute("hasCoupon", "hasCoupon");
+				return new ModelAndView(new RedirectView("addCouponToUserForm", true));
+			}
+			//안 가지고 있으면 insert 후 리스트로 돌아가기
+			else {
+				couponService.addCouponToUser(u.getUserno(), c.getCno());
+				model.addAttribute("addCouponToUser", "addCouponToUser");
+				return new ModelAndView(new RedirectView("couponMngList", true));
+			}
+		}else {//전체 고객 지급 선택했을 때
+			//전체 고객 리스트
+			List<UserVO> userList = userService.listSearchCriteriaUser(cri, 0);
+			List<Integer> list = new ArrayList<>();
+			for(UserVO vo : userList) {
+				list = couponService.userHasACouponOrNot(vo.getUserno(), c.getCno());
+				if(list.size()==0) {//전체 고객 중 forEach 문으로 불러온 n번째 고객이 해당 쿠폰을 가지고 있는지 검사 후, 해당 쿠폰이 없으면 add
+					couponService.addCouponToUser(vo.getUserno(), c.getCno());
+					
+				}
+			}
+			model.addAttribute("addCouponToAll", "addCouponToAll");
 			return new ModelAndView(new RedirectView("couponMngList", true));
 		}
+		
 	}
 	//쿠폰 상세페이지
 		@RequestMapping(value="couponDetail", method=RequestMethod.GET)
@@ -1935,7 +1960,7 @@ public class ManagerController {
 		public String removeCoupon(int cno, SearchCriteria cri, Model model) throws Exception {
 			couponService.removeCoupon(cno);
 			model.addAttribute("cri",cri);
-			return "redirect:/couponMngList";
+			return "redirect:/manager/couponMngList";
 		}
 
 	// 쿠폰 수정
@@ -1978,8 +2003,10 @@ public class ManagerController {
 
 	@RequestMapping(value = "hotelRegister", method = RequestMethod.POST)
 	public String hotelResgiterPost(HotelVO vo) throws Exception {
+		vo.setTotalcapacity(vo.getRoomcapacity() * vo.getCapacity());
+		vo.setPdiv(false);
 		hotelService.insertHotel(vo);
-		return "redirect:/hotelMngList";
+		return "redirect:/manager/hotelMngList";
 	}
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.GET)
@@ -1992,14 +2019,15 @@ public class ManagerController {
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.POST)
 	public String hotelModifyPost(HotelVO vo, SearchCriteria cri) throws Exception {
+		vo.setTotalcapacity(vo.getRoomcapacity() * vo.getCapacity());
 		hotelService.updateHotel(vo);
-		return "redirect:/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/manager/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "hotelDelete", method = RequestMethod.GET)
 	public String hotelDelete(HotelVO vo, SearchCriteria cri) throws Exception {
 		hotelService.deleteHotel(vo);
-		return "redirect:/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/manager/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 	
 	// 상품 문의사항

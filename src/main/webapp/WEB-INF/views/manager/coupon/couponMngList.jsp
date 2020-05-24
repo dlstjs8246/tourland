@@ -24,6 +24,11 @@ $(function(){
 		alert("해당 고객에게 쿠폰을 지급하였습니다.");
 	</script>
 </c:if>
+<c:if test="${addCouponToAll != null }">
+	<script>
+		alert("모든 고객에게 쿠폰을 지급하였습니다.");
+	</script>
+</c:if>
 <div class="content">	
 	<div class="row">
 		<div class="col-sm-12">    

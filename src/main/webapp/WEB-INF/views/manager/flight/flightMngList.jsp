@@ -132,12 +132,17 @@ function getDomList(page){
 
 //국내 항공편 검색하는 버튼
 	$(function(){
+		$("#listAll").css("background", "goldenrod");
 		//datePicker
-		$("#datepicker").datepicker({
+		$("#datepicker").datepicker({   
 			format : "yyyy-mm-dd",
-			autoclose : true
+			autoclose : true    
 		}).datepicker("setDate", 'now');
 		$("#dom").click(function(){
+			$("#ab").css("background", "rgb(239,239,239)");
+			$("#listAll").css("background", "rgb(239,239,239)");
+		
+			$(this).css("background", "goldenrod");
 			alert("국내 항공편이 검색되었습니다.");
 			 getDomList(1); 
 		})
@@ -148,6 +153,10 @@ function getDomList(page){
 		})
 //해외 항공편 검색하는 버튼
 		$("#ab").click(function(){
+			$("#dom").css("background", "rgb(239,239,239)");
+			$("#listAll").css("background", "rgb(239,239,239)");
+		
+			$(this).css("background", "goldenrod");
 			alert("해외 항공편이 검색되었습니다.");
 			getAbroadList(1); 
 		})
@@ -157,7 +166,11 @@ function getDomList(page){
 			getAbroadList(page);
 		})
 //전체 리스트 보기
-		$("#listAll").click(function(){
+		$("#listAll").click(function(){      
+			$("#ab").css("background", "rgb(239,239,239)");
+			$("#dom").css("background", "rgb(239,239,239)");
+		
+			$(this).css("background", "goldenrod");
 			alert("전체 리스트가 검색되었습니다.");
 			location.href = "${pageContext.request.contextPath}/manager/flightMngList";
 		})
