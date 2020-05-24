@@ -15,10 +15,23 @@ import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
 import com.yi.tourland.domain.mng.TourVO;
+import com.yi.tourland.domain.mng.UserVO;
+import com.yi.tourland.persistance.mng.dao.FlightDAO;
+import com.yi.tourland.persistance.mng.dao.HotelDAO;
 import com.yi.tourland.persistance.mng.dao.ProductDao;
+import com.yi.tourland.persistance.mng.dao.RentcarDAO;
+import com.yi.tourland.persistance.mng.dao.TourDao;
 
 @Service
 public class ProductService {
+	@Autowired
+	private FlightDAO adao;
+	@Autowired
+	private HotelDAO hdao;
+	@Autowired
+	private TourDao tdao;
+	@Autowired
+	private RentcarDAO rdao;
 	@Autowired
 	private ProductDao dao;	
 	public List<ProductVO> listPage(SearchCriteria cri) throws SQLException {
@@ -49,7 +62,6 @@ public class ProductService {
 			dao.insertpTourStatus(pvo, tvo);
 		}
 		for(RentcarVO rvo : pvo.getRentcar()) {
-			System.out.println(rvo.getNo());
 			dao.insertpRentcarStatus(pvo, rvo);
 		}	
 	}
@@ -119,4 +131,14 @@ public class ProductService {
 	public List<ProductVO> tourlandProductKRSearchLowPriceList(SearchCriteria cri) throws SQLException {
 		return dao.tourlandProductKRSearchLowPriceList(cri);
 	};
+	@Transactional
+	public void insertUserProduct(ProductVO pvo,ProductVO upvo, UserVO uvo) throws Exception {
+		//선택한 상품 옵션들 insert
+		for(AirplaneVO vo : upvo.getAir()) adao.addAirplane(vo);
+		for(HotelVO vo : upvo.getHotel()) hdao.insertHotel(vo);
+		for(TourVO vo : upvo.getTour()) tdao.insertTour(vo);
+		for(RentcarVO vo : upvo.getRentcar()) rdao.insertRentcar(vo);
+		//선택한 상품 옵션들에 따라 기존의 상품 옵션들 인원 조정
+		
+	}
 }

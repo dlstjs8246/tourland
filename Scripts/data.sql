@@ -50,24 +50,36 @@ IGNORE 1 lines;
 
 
 
--- 현서 렌트카 ----------------------------------------------------------------------------------------------
+-- 패키지 상품을 구성하는 구성요소들 ----------------------------------------------------------------------------------------------
+-- 렌터카
 DESC rentcar; 
 load DATA LOCAL infile 'D:/workspace/workspace_spring/tourland/file/CSV/rentcar.csv'
 INTO TABLE tour.rentcar
+character set 'utf8'
+fields terminated by ',';
+-- 호텔
+desc hotel;
+load data local infile 'D:/workspace/workspace_spring/tourland/file/CSV/hotel.csv'
+into table tour.hotel
+character set 'utf8'
+fields terminated by ',';
+-- 투어
+load DATA LOCAL infile 'D:/workspace/workspace_spring/tourland/file/CSV/tour.csv'
+INTO table tour
+character set 'utf8'
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 lines;
+-- 항공
+load data local infile 'D:/workspace/workspace_spring/tourland/file/CSV/flight.csv'
+into table tour.airplane
 character set 'utf8'
 fields terminated by ',';
 
 -- 인선 ---------------------------------------------------------------------------------------------------
 LOAD DATA LOCAL INFILE 'D:/workspace/workspace_spring/tourland/file/CSV/FAQ.csv'  
 INTO TABLE faq
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 lines;
-
-load DATA LOCAL infile 'D:/workspace/workspace_spring/tourland/file/CSV/tour.csv'
-INTO table tour
-character set 'utf8'
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
@@ -113,30 +125,16 @@ IGNORE 1 lines;
 
 -- 태원 ---------------------------------------------------------------------------------------------------
 
--- 호텔
-desc hotel;
-load data local infile 'D:/workspace/workspace_spring/tourland/file/CSV/hotel.csv'
-into table tour.hotel
-character set 'utf8'
-fields terminated by ',';
-
 -- 상품문의사항
 desc planboard;
-insert into planboard values
-(null, "문의합니다", "단체상품에 대해 문의하고싶습니다.", "박인선", "2020-04-27","D", "J", "0",null),
-(null, "상품 문의사항입니다.", "이미 예약을 했는데 호텔만 변경가능할까요?", "장현서", "2020-04-27","I","P","0",null),
-(null, "상품 4가지 중 한가지만 가능한가요?", "패키지 상품 중 1가지만 예약하고싶습니다.", "황하나", "2020-04-27","R","B","0",null),
-(null, "상품 환불 문의입니다.", "일이 생겨 못가게 되었습니다. 환불 규정이 어떻게 되나요?", "황태원", "2020-04-27","R","R","0",null),
-(null, "렌트카 보험 문의입니다.", "보험을 안들어도 괜찮은가요?", "정아름", "2020-04-27","U","C","0",null);
+insert into planboard(title,content,writer,lcate,mcate,answer) values
+("문의합니다", "단체상품에 대해 문의하고싶습니다.", "박인선","D", "J", "0"),
+("상품 문의사항입니다.", "이미 예약을 했는데 호텔만 변경가능할까요?", "장현서","I","P","0"),
+("상품 4가지 중 한가지만 가능한가요?", "패키지 상품 중 1가지만 예약하고싶습니다.", "황하나","R","B","0"),
+("상품 환불 문의입니다.", "일이 생겨 못가게 되었습니다. 환불 규정이 어떻게 되나요?", "황태원","R","R","0"),
+("렌트카 보험 문의입니다.", "보험을 안들어도 괜찮은가요?", "정아름","U","C","0");
 
 -- 하나 ---------------------------------------------------------------------------------------------------
-
--- 항공
-load data local infile 'D:/workspace/workspace_spring/tourland/file/CSV/flight.csv'
-into table tour.airplane
-character set 'utf8'
-fields terminated by ',';
-
 
 -- 공지사항
 insert into notice values
