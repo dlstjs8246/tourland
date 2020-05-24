@@ -278,7 +278,7 @@
 				var tno = [];
 				var tcapacity = bookCapacity;
 				var rno = [];
-				var rcacaacity = bookCapacity;
+				var rcapacity = bookCapacity;
 				$(".selAir option:selected").each(function(i,obj){
 					if($(this).val()!="") {
 						var dno = $(this).attr("data-dano");
@@ -288,8 +288,6 @@
 				$(".airSelect option:selected").each(function(i,obj){
 					acapacity[i] = $(this).attr("data-capacity"); 
 				})
-				alert(ano);
-				alert(acapacity);
 				$(".selHotel option:selected").each(function(i,obj){
 					if($(this).val()!="" || $(this).val=="DS") {
 						var no = $(this).attr("data-hno");
@@ -299,22 +297,16 @@
 				$(".hotelSelect option:selected").each(function(i,obj){
 					hcapacity[i] = $(this).attr("data-capacity"); 
 				})
-				alert(hno);
-				alert(hcapacity);
 				$(".selTour:checked").each(function(i,obj){
 					tno[i] = $(this).val();
 				})
-				alert(tno);
-				alert(tcapacity);
 				if($("#selRentcar option:selected").val()=="S") {
 					rno[0] = $(this).attr("data-rentno");
 				}
-				alert("렌트카");
-				alert(rno);
-				alert(rcapacity);
 				$.ajax({
 					url : "ProductDetail/reserv",
 					method : "get",
+					traditional : true,
 					data : {
 						uno:uno,
 						pno:pno,

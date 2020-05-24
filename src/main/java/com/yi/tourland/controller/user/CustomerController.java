@@ -869,6 +869,63 @@ public class CustomerController {
 		model.addAttribute("price",price);
 		return "/user/product/tourlandProductDetail"; 
 	}
+	@ResponseBody
+	@RequestMapping(value="tourlandProductDetail/reserv", method=RequestMethod.GET)
+	public ResponseEntity<String> tourlandProductReservation(SearchCriteria cri, Model model, int uno, int pno, int price, int[] ano, int[] acapacity, int[] hno, int[] hcapacity, int[] tno, int tcapacity, int[] rno, int rcapacity) throws Exception {
+		ResponseEntity<String> entity = null;
+		List<AirplaneVO> air = new ArrayList<>();
+		List<HotelVO> hotel = new ArrayList<>();
+		List<TourVO> tour = new ArrayList<>();
+		List<RentcarVO> rentcar = new ArrayList<>();
+		for(int i : ano) {
+			air.add(flightService.airplaneByNo(new AirplaneVO(i)));
+			air.add(flightService.airplaneByNo(new AirplaneVO(i+1)));
+		}
+		for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
+		for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
+		for(int i : rno) rentcar.add(rentcarService.readByNo(i));
+		for(int i=0;i<acapacity.length;i++) {
+			air.get(i+i).setNo(flightService.totalCountAirplane(cri)+(i+i+1));
+			air.get(i+i).setCapacity(acapacity[i]);
+			air.get(i+i).setPdiv(1);
+			air.get(i+i+1).setNo(flightService.totalCountAirplane(cri)+(i+i+1)+1);
+			air.get(i+i+1).setCapacity(acapacity[i]);
+			air.get(i+i+1).setPdiv(1);
+		}
+		for(int i=0;i<hcapacity.length;i++) {
+			hotel.get(i).setNo(hotelService.totalCountHotel()+(i+1));
+			hotel.get(i).setPdiv(true);
+		}
+		for(int i=0;i<tour.size();i++) {
+			tour.get(i).setNo(tourService.totalCount()+(i+1));
+			tour.get(i).setCapacity(tcapacity);
+			tour.get(i).setPdiv(true);
+		}
+		for(int i=0;i<rentcar.size();i++) {
+			rentcar.get(i).setNo(rentcarService.totalCountRentcar()+(i+1));
+			rentcar.get(i).setCapacity(rcapacity);
+			rentcar.get(i).setPdiv(1);
+		}
+		UserVO user = userService.readByNoUser(uno);
+		ProductVO product = productService.productByNo(new ProductVO(pno));
+		ProductVO userProduct = productService.productByNo(new ProductVO(pno));
+		userProduct.setPprice(price);
+		userProduct.setPdiv(true);
+		userProduct.setAir(air);
+		userProduct.setHotel(hotel);
+		userProduct.setTour(tour);
+		userProduct.setRentcar(rentcar);
+		userProduct.setPno(productService.totalCountProduct()+1);
+		try {
+			productService.insertUserProduct(product, userProduct, user);
+			entity = new ResponseEntity<String>(HttpStatus.OK);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+		return entity;
+	}
 	
 	//상품 장바구니에 담기 ajax
 	@RequestMapping(value="tourlandProductDetail/cart", method=RequestMethod.GET)
