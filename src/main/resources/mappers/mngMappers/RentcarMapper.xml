@@ -92,5 +92,4 @@
 	        select  count(no) from rentcar
 		    <include refid="search"/>  
 	    </select>
-
 </mapper>

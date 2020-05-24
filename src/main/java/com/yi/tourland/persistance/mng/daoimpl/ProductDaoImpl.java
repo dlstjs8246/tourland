@@ -225,13 +225,7 @@ public class ProductDaoImpl implements ProductDao {
 		Map<String,Object> map = new HashMap<>();
 		map.put("u", uvo);
 		map.put("p", pvo);
-		sqlSession.insert(namespace + "insertUserPackages",map);
+		sqlSession.insert(namespace + "insertpUserStatus",map);
 	}
-	@Override
-	public void tourlandProductUserPStatus(UserVO user, ProductVO product) throws SQLException {
-		Map<String,Object> map = new HashMap<>();
-		map.put("u", user);
-		map.put("p", product);
-		sqlSession.insert(namespace + "tourlandProductUserPStatus", map);
-	}
+	
 }

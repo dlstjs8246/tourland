@@ -110,10 +110,14 @@
 	<select id="airplaneListByRending" resultType="AirplaneVO">
 		select * from airplane where no = #{no} and pdiv = 0
 	</select>
-	<!-- 항공편 전체 숫자 -->
+	<!-- 항공편 전체 숫자 (pdiv= 0) -->
 	<select id="totalCountAirplane" resultType="int">
 		select count(*) from airplane where pdiv = 0
 		<include refid="search"/>
+	</select>
+	<!-- 항공편 전체 숫자 -->
+	<select id="totalAllCountAirplane" resultType="int">
+		select count(*) from airplane 
 	</select>
 	<select id="totalCountAirplaneByDepature" resultType="int">
 		select count(*) from airplane where dlocation = 'ICN' and pdiv = 0
