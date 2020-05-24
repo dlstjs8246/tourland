@@ -16,7 +16,6 @@ public interface FlightDAO {
 	public List<AirplaneVO> airplaneListByDepature(SearchCriteria cri) throws Exception;
 	public List<AirplaneVO> airplaneListByRending(AirplaneVO vo) throws Exception;
 	//항공편 전체 숫자
-	public int totalCountAirplaneByReserv() throws SQLException;
 	public int totalCountAirplane(SearchCriteria cri) throws Exception;
 	public int totalCountAirplaneByDepature(SearchCriteria cri) throws Exception;
 	public int totalCountAirplaneByRending(AirplaneVO vo) throws Exception;

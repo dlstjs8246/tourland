@@ -33,7 +33,7 @@ public class ReservationDaoImpl implements ReservationDao {
 		Map<String,Object> map = new HashMap<>();
 		map.put("u", vo);
 		map.put("cri", cri);
-		return sqlSession.selectList(namespace + "ReadReservationByNo",map);
+		return sqlSession.selectList(namespace + "ReadReservationByUserNo",map); 
 	}
 
 	@Override

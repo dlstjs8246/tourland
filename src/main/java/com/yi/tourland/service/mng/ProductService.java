@@ -197,7 +197,7 @@ public class ProductService {
 				}
 			}
 		}
-		int insertAno = adao.totalCountAirplaneByReserv()+1;
+		int insertAno = adao.totalAllCountAirplane()+1;
 		int insertHno = hdao.totalCountHotel()+1;
 		int insertTno = tdao.totalCount()+1;
 		int insertRno = rdao.totalCountRentcar()+1;
@@ -225,7 +225,7 @@ public class ProductService {
 		//새로운 상품 insert
 		insertProduct(upvo);
 		dao.insertpUserStatus(uvo, upvo);
-		ReservationVO vo = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo, "1");
+		ReservationVO vo = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo, "1"); 
 		reservDao.insertReservation(vo);
 	}
 	@Transactional

@@ -320,15 +320,17 @@
 						rno:rno,
 						rcapacity:rcapacity
 					},
-					dataType : "json",
+					dataType : "text", 
 					success : function(res) {
-						console.log(res); 
 						if(confirm("예약이 완료되었습니다. 예약 확인으로 넘어갈까요?")) {
-							location.href = "tourlandMyReserv?"+uno;
+							location.href = "tourlandMyReserv?uno="+uno;
 						}
+					},
+					error : function(res) {
+						console.log(res);
 					}
 				})
-			}) 
+			}); 
 			$("#doWish").click(function(){
 				alert("장바구니");
 				/* //상품 번호
