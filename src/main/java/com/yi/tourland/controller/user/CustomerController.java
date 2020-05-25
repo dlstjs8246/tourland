@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,7 @@ import com.yi.tourland.service.mng.PlanBoardService;
 import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
+import com.yi.tourland.service.mng.ReservationService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 
@@ -134,7 +136,7 @@ public class CustomerController {
 	private EmailVO emailVo;
 	
 	@Autowired
-	private ReservationDao reservationDao;
+	private ReservationService reservationService;
 		
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 		@ResponseBody
@@ -439,14 +441,12 @@ public class CustomerController {
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
 	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model) throws SQLException {
-		if(vo==null) {
-			HttpSession session = req.getSession();
-			vo = (UserVO)session.getValue("Auth");
-		}
-		List<ReservationVO> list = reservationDao.ReadReservationByUserNo(vo, cri);
+		HttpSession session = req.getSession();
+		vo = (UserVO)session.getValue("Auth");
+		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
-		pageMaker.setTotalCount(reservationDao.totalSearchReservationCount(cri));
+		pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
 		return "/user/mypage/tourlandMyReserv"; 
@@ -903,7 +903,6 @@ public class CustomerController {
 		for(int i=0;i<acapacity.length;i++) {
 			air.get(i+i).setCapacity(acapacity[i]);
 			air.get(i+i).setPdiv(1);
-			air.get(i+i+1).setNo(flightService.totalCountAirplane(cri)+(i+i+1)+1);
 			air.get(i+i+1).setCapacity(acapacity[i]);
 			air.get(i+i+1).setPdiv(1);
 		}
@@ -930,12 +929,33 @@ public class CustomerController {
 		userProduct.setRentcar(rentcar);
 		userProduct.setPno(productService.totalCountProduct()+1);
 		try {
+			Date chkStartDate = null;
+			Date chkEndDate = null;
+			Date startDate = null;
+			Date endDate = null;
+			List<ReservationVO> list = reservationService.ReadReservationByUserNo(user, cri);
+			for(ReservationVO vo : list) {
+				if(vo.getUserno().getUserno()==uno) {
+					chkStartDate = vo.getProduct().getAir().get(0).getDdate();
+					chkEndDate = vo.getProduct().getAir().get(1).getRdate();
+					startDate = userProduct.getAir().get(0).getDdate();
+					endDate = userProduct.getAir().get(1).getRdate();
+					if(chkStartDate.equals(startDate) && chkEndDate.getTime() - chkStartDate.getTime() == endDate.getTime() - startDate.getTime()) {
+						throw new Exception("중복");
+					}
+				}	
+			}
 			productService.insertUserProduct(product, userProduct, user, cri);
 			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		}
 		catch(Exception e) {
-			e.printStackTrace();
-			entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+			if(e.getMessage().equals("중복")) {
+				entity = new ResponseEntity<String>("redundancy",HttpStatus.BAD_REQUEST);
+			}
+			else {
+				e.printStackTrace();
+				entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+			}
 		}
 		return entity;
 	}

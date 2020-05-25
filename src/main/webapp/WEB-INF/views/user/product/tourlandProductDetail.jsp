@@ -323,11 +323,15 @@
 					dataType : "text", 
 					success : function(res) {
 						if(confirm("예약이 완료되었습니다. 예약 확인으로 넘어갈까요?")) {
-							location.href = "tourlandMyReserv?uno="+uno;
+							location.href = "tourlandMyReserv";
 						}
 					},
 					error : function(res) {
 						console.log(res);
+						if(res.responseText=="redundancy") {
+							alert("중복 예약할 수 없습니다");
+							return;
+						}
 					}
 				})
 			}); 

@@ -203,6 +203,7 @@ public class ProductService {
 		int insertRno = rdao.totalCountRentcar()+1;
 		//선택한 상품 옵션들 insert
 		for(AirplaneVO vo : upvo.getAir()) {
+			System.out.println(vo);
 			vo.setNo(insertAno);
 			adao.addAirplane(vo);
 			insertAno++;
@@ -224,9 +225,9 @@ public class ProductService {
 		}
 		//새로운 상품 insert
 		insertProduct(upvo);
-		dao.insertpUserStatus(uvo, upvo);
 		ReservationVO vo = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo, "1"); 
 		reservDao.insertReservation(vo);
+		dao.insertpUserStatus(vo,uvo,upvo);
 	}
 	@Transactional
 	public void insertProductInUserCart(ProductVO product, UserVO uvo, SearchCriteria cri) throws Exception {
@@ -250,8 +251,8 @@ public class ProductService {
 			rdao.insertRentcar(product.getRentcar().get(i));
 		}
 		insertProduct(product);
-		dao.insertpUserStatus(uvo, product);
 		ReservationVO cart = new ReservationVO(reservDao.listReservation(cri).size(), uvo ,Integer.toString(0));
 		reservDao.insertReservation(cart);
+		dao.insertpUserStatus(cart,uvo, product);
 	}
 }

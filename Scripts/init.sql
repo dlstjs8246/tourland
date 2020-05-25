@@ -365,6 +365,7 @@ ALTER TABLE tour.pairstatus
 
 -- 유저상품현황
 CREATE TABLE tour.userpstatus (
+	no     INT NOT NULL COMMENT '예약번호', -- 예약번호
 	userno INT NOT NULL COMMENT '유저번호', -- 유저번호
 	pno    INT NOT NULL COMMENT '상품번호' -- 상품번호
 )
@@ -374,6 +375,7 @@ COMMENT '유저상품현황';
 ALTER TABLE tour.userpstatus
 	ADD CONSTRAINT PK_userpstatus -- 유저상품현황 기본키
 		PRIMARY KEY (
+			no,     -- 예약번호
 			userno, -- 유저번호
 			pno     -- 상품번호
 		);
@@ -523,6 +525,16 @@ ALTER TABLE tour.userpstatus
 		)
 		REFERENCES tour.user ( -- 회원
 			userno -- 유저번호
+		);
+
+-- 유저상품현황
+ALTER TABLE tour.userpstatus
+	ADD CONSTRAINT FK_reservation_TO_userpstatus -- 예약 -> 유저상품현황
+		FOREIGN KEY (
+			no -- 예약번호
+		)
+		REFERENCES tour.reservation ( -- 예약
+			no -- 예약번호
 		);
 
 -- 상품렌트카현황
