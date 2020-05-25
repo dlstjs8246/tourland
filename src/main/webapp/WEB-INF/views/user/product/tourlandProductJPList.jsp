@@ -317,6 +317,7 @@ $(function(){
 					</div>
 					</c:forEach>
 				</div>
+				<c:if test="${keyword3 == null }">
 				<ul class="pagination">
 					<c:if test="${pageMaker.prev == true}">
 						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductJPList?page=${pageMaker.startPage-1}">&laquo;</a></li>
@@ -328,6 +329,20 @@ $(function(){
 						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductJPList?page=${pageMaker.endPage+1}">&raquo;</a></li>
 					</c:if>
 				</ul>
+				</c:if>
+				<c:if test="${keyword3 != null }">
+				<ul class="pagination">
+					<c:if test="${pageMaker.prev == true}">
+						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductJPList?searchType=&keyword=${keyword }&keyword2=${keyword2 }&keyword3=forsearchjapan&page=${pageMaker.startPage-1}">&laquo;</a></li>
+					</c:if>
+					<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="idx">
+						<li class="${cri.page==idx?'active':''}"><a href="${pageContext.request.contextPath}/customer/tourlandProductJPList?searchType=&keyword=${keyword }&keyword2=${keyword2 }&keyword3=forsearchjapan&page=${idx}" class="pageNumA">${idx}</a></li>
+					</c:forEach>
+					<c:if test="${pageMaker.next == true}">
+						<li><a href="${pageContext.request.contextPath}/customer/tourlandProductJPList?searchType=&keyword=${keyword }&keyword2=${keyword2 }&keyword3=forsearchjapan&page=${pageMaker.endPage+1}">&raquo;</a></li>
+					</c:if>
+				</ul>
+				</c:if>
 			</div>
 		</div>
 	</section>

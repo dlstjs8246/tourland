@@ -465,11 +465,11 @@ div.pkgInfoBox .pkgTitle {
     	 var keyword = $("#mainSearchKeyword").val();
  	     var keyword2= $("#secondSearchKeyword").val();
     	  if(wherewhere == "china"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/china?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchchina";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductChinaList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchchina";
     	  }else if(wherewhere == "japan"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/japan?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjapan";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductJPList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjapan";
     	  }else if(wherewhere == "jeju"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/jeju?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjeju";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductKRList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjeju";
     	  }
       })
     	
