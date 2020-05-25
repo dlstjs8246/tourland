@@ -437,7 +437,7 @@
 						}
 					}) 
 				}); 
-		})
+		});
 </script>
 	<c:if test="${Auth!=null}">
 		<script>
