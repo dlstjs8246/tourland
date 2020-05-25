@@ -689,7 +689,7 @@ public class ManagerController {
 		vo.setPno(no);
 		vo = productService.productByNo(vo);
 		model.addAttribute("vo",vo);
-		model.addAttribute("cri",cri);
+		model.addAttribute("cri",cri); 
 		return "manager/product/productDetail";
 	}
 	@RequestMapping(value = "productModify", method = RequestMethod.GET)

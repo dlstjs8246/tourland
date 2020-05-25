@@ -3,7 +3,7 @@
 <mapper namespace="mappers.mngMappers.TourMapper">
 <sql id="search">
 	<where>
-		pdiv = #{pdiv}
+		pdiv = 0
 		<if test='searchType=="name"'>
 			and tname like CONCAT('%',#{keyword},'%')
 		</if>
