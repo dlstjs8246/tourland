@@ -234,20 +234,16 @@ public class ProductService {
 		System.out.println("들어옴");
 		//선택한 상품 옵션들 insert
 		for (int i=0; i<product.getAir().size(); i++) {
-			product.getAir().get(i).setNo(adao.totalAllCountAirplane() + i +1);
 			System.out.println("번호 " + product.getAir().get(i).getNo());
 			adao.addAirplane(product.getAir().get(i));
 		}
 		for (int i=0; i<product.getHotel().size(); i++) {
-			product.getHotel().get(i).setNo(hdao.totalCountHotel() + i + 1);
 			hdao.insertHotel(product.getHotel().get(i));
 		}
 		for (int i=0; i<product.getTour().size(); i++) {
-			product.getTour().get(i).setNo(tdao.totalCount() + i + 1);
 			tdao.insertTour(product.getTour().get(i));
 		}
 		for (int i=0; i<product.getRentcar().size(); i++) {
-			product.getRentcar().get(i).setNo(rdao.totalCountRentcar() + i + 1);
 			rdao.insertRentcar(product.getRentcar().get(i));
 		}
 		

@@ -1150,6 +1150,8 @@ public class CustomerController {
 				e.printStackTrace();
 				entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
 			}
+			e.printStackTrace();
+			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 		return entity;
 	}
