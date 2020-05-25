@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +53,6 @@ import com.yi.tourland.domain.mng.RentcarVO;
 import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
-import com.yi.tourland.persistance.mng.dao.ReservationDao;
 import com.yi.tourland.service.mng.BannerService;
 import com.yi.tourland.service.mng.CouponService;
 import com.yi.tourland.service.mng.CustBoardService;
@@ -446,7 +444,7 @@ public class CustomerController {
 		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
-		pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
+		pageMaker.setTotalCount(reservationService.totalSearchReservationCountByUserNo(cri, vo));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
 		return "/user/mypage/tourlandMyReserv"; 
@@ -459,7 +457,15 @@ public class CustomerController {
 	}
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
-	public String tourlandMyWishes() { 
+	public String tourlandMyWishes(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model) throws SQLException { 
+		HttpSession session = req.getSession();
+		vo = (UserVO)session.getValue("Auth");
+		List<ReservationVO> list = reservationService.ReadCartByUserNo(vo, cri);
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(reservationService.totalSearchCartCountByUserNo(cri, vo));
+		model.addAttribute("list",list);
+		model.addAttribute("pageMaker",pageMaker);
 		return "/user/mypage/tourlandMyWishes"; 
 	}
 	//마이 페이지 - 내 쿠폰
@@ -950,7 +956,7 @@ public class CustomerController {
 		}
 		catch(Exception e) {
 			if(e.getMessage().equals("중복")) {
-				entity = new ResponseEntity<String>("redundancy",HttpStatus.BAD_REQUEST);
+				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
 			}
 			else {
 				e.printStackTrace();
@@ -1064,26 +1070,23 @@ public class CustomerController {
 			tourList.get(i).setPdiv(true);
 			System.out.println("변경된 투어 : " + tourList.get(i));
 		}
-		for(int i=0; i<rno.length; i++) {
-			System.out.println("렌트카 번호 : "+rno[i]);
-
-			RentcarVO rent = new RentcarVO();
-			rent.setNo(Integer.parseInt(rno[i]));
-			RentcarVO newRent = rentcarService.readByNo(rent.getNo());
-			System.out.println("렌트카  : "+newRent);
-			rentList.add(newRent);
-		
-			
-		}
-		for(int i=0; i<rcapacity.length; i++) {
-			System.out.println("렌트카 인원 : "+rcapacity[i]);
-			
-		
-			System.out.println("변경 전 렌트카 : " + rentList.get(i));
-			rentList.get(i).setNo(rentcarService.totalCountRentcar() + i + 1);
-			rentList.get(i).setCapacity(Integer.parseInt(rcapacity[i]));
-			rentList.get(i).setPdiv(1);
-			System.out.println("변경 후 렌트카 : " + rentList.get(i));
+		if(rno!=null) {
+			for(int i=0; i<rno.length; i++) {
+				System.out.println("렌트카 번호 : "+rno[i]);
+				RentcarVO rent = new RentcarVO();
+				rent.setNo(Integer.parseInt(rno[i]));
+				RentcarVO newRent = rentcarService.readByNo(rent.getNo());
+				System.out.println("렌트카  : "+newRent);
+				rentList.add(newRent);
+			}
+			for(int i=0; i<rcapacity.length; i++) {
+				System.out.println("렌트카 인원 : "+rcapacity[i]);
+				System.out.println("변경 전 렌트카 : " + rentList.get(i));
+				rentList.get(i).setNo(rentcarService.totalCountRentcar() + i + 1);
+				rentList.get(i).setCapacity(Integer.parseInt(rcapacity[i]));
+				rentList.get(i).setPdiv(1);
+				System.out.println("변경 후 렌트카 : " + rentList.get(i));
+			}
 		}
 		
 		// 가격
@@ -1120,12 +1123,33 @@ public class CustomerController {
 			System.out.println(i);
 		}
 		try {
+			Date chkStartDate = null;
+			Date chkEndDate = null;
+			Date startDate = null;
+			Date endDate = null;
+			List<ReservationVO> list = reservationService.ReadCartByUserNo(user, cri);
+			for(ReservationVO vo : list) {
+				if(vo.getUserno().getUserno()==uno) {
+					chkStartDate = vo.getProduct().getAir().get(0).getDdate();
+					chkEndDate = vo.getProduct().getAir().get(1).getRdate();
+					startDate = product.getAir().get(0).getDdate();
+					endDate = product.getAir().get(1).getRdate();
+					if(chkStartDate.equals(startDate) && chkEndDate.getTime() - chkStartDate.getTime() == endDate.getTime() - startDate.getTime()) {
+						throw new Exception("중복");
+					}
+				}	
+			}
 			productService.insertProductInUserCart(product, user, cri);
-			entity = new ResponseEntity<String>(HttpStatus.OK);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		}
 		catch(Exception e) {
-			e.printStackTrace();
-			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			if(e.getMessage().equals("중복")) {
+				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
+			}
+			else {
+				e.printStackTrace();
+				entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+			}
 		}
 		return entity;
 	}

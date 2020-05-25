@@ -20,11 +20,20 @@ public class ReservationService {
 	public List<ReservationVO> listReservation(SearchCriteria cri) throws SQLException {
 		return dao.listReservation(cri);
 	}
+	public List<ReservationVO> ReadCartByUserNo(UserVO vo,SearchCriteria cri) throws SQLException {
+		return dao.ReadCartByUserNo(vo,cri);
+	}
 	public List<ReservationVO> ReadReservationByUserNo(UserVO vo,SearchCriteria cri) throws SQLException {
 		return dao.ReadReservationByUserNo(vo,cri);
 	}
 	public int totalSearchReservationCount(SearchCriteria cri) throws SQLException {
 		return dao.totalSearchReservationCount(cri);
+	}
+	public int totalSearchCartCountByUserNo(SearchCriteria cri, UserVO vo) throws SQLException {
+		return dao.totalSearchCartCountByUserNo(cri, vo);
+	}
+	public int totalSearchReservationCountByUserNo(SearchCriteria cri, UserVO vo) throws SQLException {
+		return dao.totalSearchReservationCountByUserNo(cri, vo);
 	}
 	public void updateReservation(ReservationVO vo) throws SQLException {
 		dao.updateReservation(vo);

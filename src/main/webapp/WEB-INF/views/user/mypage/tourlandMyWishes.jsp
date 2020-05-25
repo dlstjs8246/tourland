@@ -52,26 +52,24 @@
 							<th>예약 상태</th>
 							<th id="btns">장바구니 관리</th>
 						</tr>
+						<c:forEach var="cart" items="${list}">
 						<tr>
-							<td>P15487200</td>
-							<td>2020/05/20 까지</td>
-							<td><img src="images/osaka.jpg"></td>
-							<td>진짜 오사카를 만나다, 오사카 3박 4일</td>
-							<td>2020/05/03</td>
-							<td>2020/05/05</td>
-							<td class="red">예약 가능</td>
+							<td>P${cart.product.pno}</td>
+							<td><fmt:formatDate value="${cart.product.pexpire}" pattern="yyyy-MM-dd"/></td>
+							<td><img src="displayFile/product?filename=${cart.product.pic}"></td>
+							<td>${cart.product.pname}</td>
+							<c:forEach var="f" items="${cart.product.air}" begin="1" end="1">
+								<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
+							</c:forEach>
+							<c:forEach var="f" items="${cart.product.air}" begin="0" end="0">
+								<fmt:formatDate var="enddate" value="${f.rdate}" pattern="yyyy-MM-dd"/>
+							</c:forEach>
+							<td>${startdate}</td>
+							<td>${enddate}</td>
+							<td class="${cart.rstatus=='0'?'red':''}">${reserv.rstatus=='0'?'예약가능':'예약됨'}</td>
 							<td class="blue"><button id="reservBtns">예약하기</button><button id="delBtns">삭제하기</button></td>    
 						</tr>
-						<tr>
-							<td>P15487200</td>
-							<td>2020/05/20 까지</td>
-							<td><img src="images/osaka.jpg"></td>
-							<td>진짜 오사카를 만나다, 오사카 3박 4일</td>
-							<td>2020/05/03</td>
-							<td>2020/05/05</td>
-							<td class="red">예약 가능</td>
-							<td class="blue"><button id="reservBtns">예약하기</button><button id="delBtns">삭제하기</button></td>  
-						</tr>
+						</c:forEach>
 					</table>
 				</div>
 		

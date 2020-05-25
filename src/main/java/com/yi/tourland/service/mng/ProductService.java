@@ -250,6 +250,7 @@ public class ProductService {
 			product.getRentcar().get(i).setNo(rdao.totalCountRentcar() + i + 1);
 			rdao.insertRentcar(product.getRentcar().get(i));
 		}
+		
 		insertProduct(product);
 		ReservationVO cart = new ReservationVO(reservDao.listReservation(cri).size(), uvo ,Integer.toString(0));
 		reservDao.insertReservation(cart);

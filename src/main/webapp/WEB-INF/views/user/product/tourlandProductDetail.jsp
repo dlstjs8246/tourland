@@ -328,7 +328,7 @@
 					},
 					error : function(res) {
 						console.log(res);
-						if(res.responseText=="redundancy") {
+						if(res.responseText=="OVERLAP") {
 							alert("중복 예약할 수 없습니다");
 							return;
 						}
@@ -336,21 +336,6 @@
 				})
 			}); 
 			$("#doWish").click(function(){
-				alert("장바구니");
-				/* //상품 번호
-				var pno = $("#pno").text().substring($("#pno").text().indexOf("P"),$("#pno").text().length);
-				//가격
-				var price = replaceAll($("#price").text(),",","");
-				//항공편 번호
-				var ano;
-				//호텔번호
-				var hno;
-				//투어 번호 
-				var tno;
-				//렌트카 번호
-				var rno;
-				 */
-
 			if(${Auth==null}) {
 				alert("로그인부터 먼저해주세요");
 				location.href = "${pageContext.request.contextPath}/loginForm";
@@ -434,13 +419,23 @@
 							rno:rno,
 							rcapacity:rcapacity
 						}, 
-						dataType : "json",
+						dataType : "text",
 						success : function(res) {
-							console.log(res); 
+							console.log(res);
+							if(confirm("상품을 장바구니에 담았습니다. 장바구니로 넘어갈까요?")) {
+								location.href = "tourlandMyWishes";
+							}
+						},
+						error : function(res) {
+							console.log(res.responseText);
+							if(res.responseText=="OVERLAP") {
+								alert("이미 장바구니에 담겨 있는 상품입니다. 다시 확인하시고 장바구니에 추가해주세요");
+								return; 
+							}
 						}
 					}) 
 				} 
-			})
+			});
 		})
 	</script>
 	<c:if test="${Auth!=null}">

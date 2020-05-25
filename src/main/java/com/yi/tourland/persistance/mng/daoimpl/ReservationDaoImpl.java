@@ -29,6 +29,14 @@ public class ReservationDaoImpl implements ReservationDao {
 	}
 
 	@Override
+	public List<ReservationVO> ReadCartByUserNo(UserVO vo, SearchCriteria cri) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("u", vo);
+		map.put("cri", cri);
+		return sqlSession.selectList(namespace + "ReadCartByUserNo",map); 
+	}
+
+	@Override
 	public List<ReservationVO> ReadReservationByUserNo(UserVO vo, SearchCriteria cri) throws SQLException {
 		Map<String,Object> map = new HashMap<>();
 		map.put("u", vo);
@@ -56,6 +64,14 @@ public class ReservationDaoImpl implements ReservationDao {
 		Map<String,Object> map = new HashMap<>();
 		map.put("u", vo);
 		map.put("cri", cri);
-		return sqlSession.selectOne(namespace + "ReadReservationByNo",map);
+		return sqlSession.selectOne(namespace + "totalSearchReservationCountByUserNo",map);
+	}
+
+	@Override
+	public int totalSearchCartCountByUserNo(SearchCriteria cri, UserVO vo) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("u", vo);
+		map.put("cri", cri);
+		return sqlSession.selectOne(namespace + "totalSearchCartCountByUserNo",map);
 	}
 }
