@@ -66,6 +66,7 @@ delete from custboard where no = 3;
 select * from custboard order by no desc limit 1, 3;
 
 select * from product p ;
+select * from product where substring(pname,2,3) = '도쿄';
 
 -- 메인화면 검색을 위한
 select * from product where pname like concat('%','골동품','%');
