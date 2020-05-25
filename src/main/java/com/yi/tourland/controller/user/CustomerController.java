@@ -459,7 +459,9 @@ public class CustomerController {
 	}
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
-	public String tourlandMyWishes() { 
+	public String tourlandMyWishes(HttpSession session, Model model) {
+		UserVO user = (UserVO) session.getAttribute("Auth");
+		model.addAttribute("user", user);
 		return "/user/mypage/tourlandMyWishes"; 
 	}
 	//마이 페이지 - 내 쿠폰
@@ -1121,13 +1123,16 @@ public class CustomerController {
 		}
 		try {
 			productService.insertProductInUserCart(product, user, cri);
-			entity = new ResponseEntity<String>(HttpStatus.OK);
+			
+			entity = new ResponseEntity<String>("ok",HttpStatus.OK);
+			return entity;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return entity;
 		}
-		return entity;
+		
 	}
 	
 	

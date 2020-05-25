@@ -350,79 +350,78 @@
 				//렌트카 번호
 				var rno;
 				 */
-
-			if(${Auth==null}) {
-				alert("로그인부터 먼저해주세요");
-				location.href = "${pageContext.request.contextPath}/loginForm";
-				return false;
-			}
+				 
+				 if(${Auth==null}) {
+						alert("로그인부터 먼저해주세요");
+						location.href = "${pageContext.request.contextPath}/loginForm";
+						return false;
+					}
 				//유저 번호
-				//상품 번호
-				var pno = ${vo.pno};
-				//가격
-				var price = replaceAll($("#price").text(),",","");
-				//항공 출발편 번호
-				var ano = [];
-				//항공 도착편 번호
-				var rano = [];
-				//항공 선택 인원 (좌석 별)
-				var acapacity = [];
-				//호텔 번호
-				var hno = [];
-				//호텔 룸
-				var hroomtype = [];
-				//호텔 인원 (룸 별)
-				var hcapacity = [];
-				//투어 번호
-				var tno = [];
-				//투어 인원 == 예약 인원
-				var tcapacity = bookCapacity;
-				//렌트카 번호
-				var rno = [];
-				//렌트카 인원 == 예약 인원
-				var rcapacity = bookCapacity;
-				
-				$(".selAir option:selected").each(function(i,obj){
-					if($(this).val()!="") {
-						var rno = $(this).attr("data-rano");
-						ano[i] = rno;
+					//상품 번호
+					var pno = ${vo.pno};
+					//가격
+					var price = replaceAll($("#price").text(),",","");
+					//항공 출발편 번호
+					var ano = [];
+					//항공 도착편 번호
+					var rano = [];
+					//항공 선택 인원 (좌석 별)
+					var acapacity = [];
+					//호텔 번호
+					var hno = [];
+					//호텔 룸
+					var hroomtype = [];
+					//호텔 인원 (룸 별)
+					var hcapacity = [];
+					//투어 번호
+					var tno = [];
+					//투어 인원 == 예약 인원
+					var tcapacity = bookCapacity;
+					//렌트카 번호
+					var rno = [];
+					//렌트카 인원 == 예약 인원
+					var rcapacity = bookCapacity;
+					
+					$(".selAir option:selected").each(function(i,obj){
+						if($(this).val()!="") {
+							var rno = $(this).attr("data-rano");
+							ano[i] = rno;
+						}
+					})
+					$(".selAir option:selected").each(function(i,obj){
+						if($(this).val()!="") {
+							var dno = $(this).attr("data-dano");
+							rano[i] = dno;
+						}
+					})
+					
+					$(".airSelect option:selected").each(function(i,obj){
+						acapacity[i] = $(this).attr("data-capacity"); 
+					})
+					$(".selHotel option:selected").each(function(i,obj){
+						if($(this).val()!="" || $(this).val=="DS") {
+							var no = $(this).attr("data-hno");
+							hno[i] = no;
+						}
+					})
+					$(".hotelSelect option:selected").each(function(i,obj){
+						hcapacity[i] = $(this).attr("data-capacity"); 
+					})
+					$(".selTour:checked").each(function(i,obj){
+						tno[i] = $(this).val();
+					})
+					if($("#selRentcar option:selected").val()=="S") {
+						rno[0] = $("#selRentcar option:selected").attr("data-rentno");
 					}
-				})
-				$(".selAir option:selected").each(function(i,obj){
-					if($(this).val()!="") {
-						var dno = $(this).attr("data-dano");
-						rano[i] = dno;
-					}
-				})
-				$(".airSelect option:selected").each(function(i,obj){
-					acapacity[i] = $(this).attr("data-capacity"); 
-				})
-				$(".selHotel option:selected").each(function(i,obj){
-					if($(this).val()!="" || $(this).val=="DS") {
-						var no = $(this).attr("data-hno");
-						hno[i] = no;
-					}
-				})
-				$(".hotelSelect option:selected").each(function(i,obj){
-					hcapacity[i] = $(this).attr("data-capacity"); 
-				})
-				$(".selTour:checked").each(function(i,obj){
-					tno[i] = $(this).val();
-				})
-				if($("#selRentcar option:selected").val()=="S") {
-					rno[0] = $("#selRentcar option:selected").attr("data-rentno");
-				}
-				if(rcapacity != acapacity.length || rcapacity != hcapacity.length){ //예약 인원과 옵션 선택 인원이 맞지 않을 때 return
-					alert("예약 인원에 맞게 옵션을 선택해주세요.");
-					return;  
-				}else{/* traditional :true -> ajax에서 배열을 컨트롤러로 보낼때 컨트롤러에서 배열 형태로 받을 수 있게 설정하는 것 */
+					/* traditional :true -> ajax에서 배열을 컨트롤러로 보낼때 컨트롤러에서 배열 형태로 받을 수 있게 설정하는 것 */
+					
 					$.ajax({
 						url : "tourlandProductDetail/cart",
 						method : "get",
-     					traditional : true, 
+						traditional : true,
 						data : {
-							uno:uno,
-							pno:pno,
+							uno : uno,
+							pno: pno,
 							price:price,
 							ano:ano,
 							rano:rano,
@@ -433,16 +432,26 @@
 							tcapacity:tcapacity,
 							rno:rno,
 							rcapacity:rcapacity
-						}, 
+						},
 						dataType : "json",
-						success : function(res) {
-							console.log(res); 
+						success : function(rs){
+							var c = confirm("장바구니로 이동하시겠습니까?");
+							if(c==true){
+								location.href = "tourlandMyWishes";  
+							}
+							
 						}
-					}) 
-				} 
+					
+					})
+				 
 			})
-		})
-	</script>
+				
+			
+			
+			
+	})  
+
+</script>
 	<c:if test="${Auth!=null}">
 		<script>
 			uno = ${Auth.userno};
