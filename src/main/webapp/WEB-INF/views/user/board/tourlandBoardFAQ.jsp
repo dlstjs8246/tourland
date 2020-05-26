@@ -138,7 +138,13 @@
 		$(".FAQContent").css("display","none");
 		var no = $(this).attr("data-no");
 		$(this).children().children(".FAQContent").css("display","block");
+		
 	})
+	$(document).on("click",".FAQContent",function(){
+		$(this).css("display","none");
+		return false;
+	})
+	
 	$("#searchType").change(function() {
 		$("#searchType2").empty();
 		makeOption($("#searchType option:selected").val());

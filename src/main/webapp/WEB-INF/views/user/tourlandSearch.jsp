@@ -417,6 +417,11 @@ div.pkgInfoBox .pkgTitle {
 			
 		})
 		
+		$(document).on("click",".FAQContent",function(){
+		$(this).css("display","none");
+		return false;
+	})
+		
 	//이벤트
 	//각각의 이벤트를 클릭할 때 상세페이지로 이동
 	  $(".eventBox").click(function(){
