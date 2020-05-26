@@ -8,7 +8,7 @@
 </head>
 <style>    
 	/* 본문 */
-	section div#myreserv { width:1000px; height: 100%; 
+	section div#myreserv { width:1300px; height: 100%; 
 							  margin-left: 200px;
 							 }
 	section div#myreserv h1 { width: 200px;
@@ -19,7 +19,7 @@
 	#info { font-size: 13px; color: #929292; 
 			margin-left: 10px;  }	
 			
-	table#reserv { width: 1000px;  
+	table#reserv { width: 1300px;  
 				   border-collapse: collapse; 
 				   margin: 40px; 
 				   font-size: 14px; }
@@ -58,28 +58,25 @@
 							<th>결제 관리</th>
 							<th>리뷰 관리</th>
 						</tr>
+						<c:forEach var="reserv" items="${list}">
 						<tr>
-							<td>RE15487200</td>
-							<td>2020/04/27</td>
-							<td><img src="images/osaka.jpg"></td>
-							<td>진짜 오사카를 만나다, 오사카 3박 4일</td>
-							<td>2020/05/03</td>
-							<td>2020/05/20</td>
-							<td class="red">예약 미확정</td>
-							<td class="blue"><button>결제하기</button></td>  
-							<td class="grey"><button class="goReview">리뷰 쓰기</button></td>  
+							<td>RERV${reserv.no}</td>
+							<td><fmt:formatDate value="${reserv.rdate}" pattern="yyyy-MM-dd"/></td>
+							<td>${reserv.product.pname}</td>
+							<td><img src="displayFile/product?filename=${reserv.product.pic}"></td>
+							<c:forEach var="f" items="${reserv.product.air}" begin="0" end="0">
+								<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
+							</c:forEach>
+							<c:forEach var="f" items="${reserv.product.air}" begin="1" end="1">
+								<fmt:formatDate var="enddate" value="${f.rdate}" pattern="yyyy-MM-dd"/>
+							</c:forEach>
+							<td>${startdate}</td>
+							<td>${enddate}</td>
+							<td class="${reserv.rstatus=='1'?'red':''}">${reserv.rstatus=='1'?'결제가능':'결제됨'}</td>
+							<td class="blue"><button>결제하기</button></td> 
+							<td class="grey"><button>리뷰쓰기</button></td>
 						</tr>
-						<tr>
-							<td>RE15487200</td>
-							<td>2020/04/27</td>     
-							<td><img src="images/osaka.jpg"></td>
-							<td>진짜 오사카를 만나다, 오사카 3박 4일</td>    
-							<td>2020/05/03</td>
-							<td>2020/05/20</td>      
-							<td class="red">예약 미확정</td>
-							<td class="blue"><button>결제하기</button></td>
-							<td class="grey"><button class="goReview">리뷰 쓰기</button></td>  
-						</tr>
+						</c:forEach>
 					</table>
 				</div>
 		

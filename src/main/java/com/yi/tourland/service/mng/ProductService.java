@@ -197,51 +197,59 @@ public class ProductService {
 				}
 			}
 		}
+		int insertAno = adao.totalAllCountAirplane()+1;
+		int insertHno = hdao.totalCountHotel()+1;
+		int insertTno = tdao.totalCount()+1;
+		int insertRno = rdao.totalCountRentcar()+1;
 		//선택한 상품 옵션들 insert
 		for(AirplaneVO vo : upvo.getAir()) {
-			vo.setNo(adao.totalCountAirplane(cri)+1);
+			System.out.println(vo);
+			vo.setNo(insertAno);
 			adao.addAirplane(vo);
+			insertAno++;
 		}
 		for(HotelVO vo : upvo.getHotel()) {
-			vo.setNo(hdao.totalSearchCountHotel(cri)+1);
+			vo.setNo(insertHno);
 			hdao.insertHotel(vo);
+			insertHno++;
 		}
 		for(TourVO vo : upvo.getTour()) {
-			vo.setNo(tdao.totalCountBySearchCriteria(cri)+1);
+			vo.setNo(insertTno);
 			tdao.insertTour(vo);
+			insertTno++;
 		}
 		for(RentcarVO vo : upvo.getRentcar()) {
-			vo.setNo(rdao.totalSearchCountRentcar(cri)+1);
+			vo.setNo(insertRno);
 			rdao.insertRentcar(vo);
+			insertRno++;
 		}
 		//새로운 상품 insert
 		insertProduct(upvo);
-		dao.insertpUserStatus(uvo, upvo);
+		ReservationVO vo = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo, "1"); 
+		reservDao.insertReservation(vo);
+		dao.insertpUserStatus(vo,uvo,upvo);
 	}
 	@Transactional
 	public void insertProductInUserCart(ProductVO product, UserVO uvo, SearchCriteria cri) throws Exception {
 		System.out.println("들어옴");
 		//선택한 상품 옵션들 insert
 		for (int i=0; i<product.getAir().size(); i++) {
-			product.getAir().get(i).setNo(adao.totalAllCountAirplane() + i +1);
 			System.out.println("번호 " + product.getAir().get(i).getNo());
 			adao.addAirplane(product.getAir().get(i));
 		}
 		for (int i=0; i<product.getHotel().size(); i++) {
-			product.getHotel().get(i).setNo(hdao.totalCountHotel() + i + 1);
 			hdao.insertHotel(product.getHotel().get(i));
 		}
 		for (int i=0; i<product.getTour().size(); i++) {
-			product.getTour().get(i).setNo(tdao.totalCount() + i + 1);
 			tdao.insertTour(product.getTour().get(i));
 		}
 		for (int i=0; i<product.getRentcar().size(); i++) {
-			product.getRentcar().get(i).setNo(rdao.totalCountRentcar() + i + 1);
 			rdao.insertRentcar(product.getRentcar().get(i));
 		}
+		
 		insertProduct(product);
-		dao.insertpUserStatus(uvo, product);
 		ReservationVO cart = new ReservationVO(reservDao.listReservation(cri).size(), uvo ,Integer.toString(0));
 		reservDao.insertReservation(cart);
+		dao.insertpUserStatus(cart,uvo, product);
 	}
 }

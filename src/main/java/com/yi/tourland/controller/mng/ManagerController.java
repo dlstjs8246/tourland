@@ -583,7 +583,10 @@ public class ManagerController {
 	@RequestMapping(value = "userDetailForm/{usersecess}", method = RequestMethod.GET)
 	public String userDetailForm(int no, SearchCriteria cri, Model model, @PathVariable("usersecess") int usersecess) throws Exception {
 		UserVO vo = userService.readByNoUser(no);
-		System.out.println(vo);
+		//System.out.println(vo);
+		List<CouponVO> userCouponList = couponService.userCouponList(vo);
+		//System.out.println(userCouponList);
+		model.addAttribute("couponList",userCouponList);
 		model.addAttribute("userVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("usersecess", usersecess);
@@ -686,7 +689,7 @@ public class ManagerController {
 		vo.setPno(no);
 		vo = productService.productByNo(vo);
 		model.addAttribute("vo",vo);
-		model.addAttribute("cri",cri);
+		model.addAttribute("cri",cri); 
 		return "manager/product/productDetail";
 	}
 	@RequestMapping(value = "productModify", method = RequestMethod.GET)

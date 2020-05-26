@@ -11,7 +11,7 @@ public class ReservationVO {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date rdate;
 	private String rstatus;
-	private List<ProductVO> products;
+	private ProductVO product;
 	
 	public ReservationVO() {
 		
@@ -41,9 +41,6 @@ public class ReservationVO {
 	public void setRdate(Date rdate) {
 		this.rdate = rdate;
 	}
-	public String getConfirm() {
-		return rstatus;
-	}
 	
 	public String getRstatus() {
 		return rstatus;
@@ -52,19 +49,20 @@ public class ReservationVO {
 	public void setRstatus(String rstatus) {
 		this.rstatus = rstatus;
 	}
+	
 
-	public List<ProductVO> getProducts() {
-		return products;
+	public ProductVO getProduct() {
+		return product;
 	}
 
-	public void setProducts(List<ProductVO> products) {
-		this.products = products;
+	public void setProduct(ProductVO product) {
+		this.product = product;
 	}
 
 	@Override
 	public String toString() {
 		return String.format("ReservationVO [no=%s, userno=%s, rdate=%s, rstatus=%s, products=%s]", no, userno, rdate,
-				rstatus, products);
+				rstatus, product);
 	}
 	
 }

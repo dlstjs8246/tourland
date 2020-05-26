@@ -78,8 +78,10 @@ input[name='userid']{
 <%@ include file="../../include/userHeader.jsp"%>
 
 <script>
+
 $(function(){
 	$("form").submit(function(e){
+		
 		var no = "${no}";
 		var searchType = "${cri.searchType}";
 		var keyword = "${cri.keyword}";
@@ -87,7 +89,14 @@ $(function(){
 		var checkPass= $("input[name='checkPass']").val();
 		var userId = $("input[name='userid']").val();
 		var twowayPath = $(this).attr("data-name");
-
+		
+		var whoWroteThis = "${custBoardVO.writer}";
+        var loginedId = "${Auth.username}";
+       
+        if(whoWroteThis != loginedId){
+        	$(".error").css("display", "inline");
+        	return false;
+        }
 		// alert($(this).attr("data-name"));
 			 //아이디 중복 ajax로 처리하기
 			 $.ajax({
@@ -132,7 +141,7 @@ $(function(){
 					<p>
 						<label>비밀번호</label><input type="password" name="checkPass" placeholder="고객님의 로그인 비밀번호를 입력해주세요." required="required">
 					</p>
-						<span class="error">비밀번호가 일치하지 않습니다</span>
+						<span class="error">작성자, 혹은 비밀번호가 일치하지 않습니다</span>
 				</c:when>
 			</c:choose>
 				<p id="btns">
@@ -151,7 +160,7 @@ $(function(){
 					<p>
 						<label>비밀번호</label><input type="password" name="checkPass" placeholder="비밀번호를 재입력해주세요." required="required">
 					</p>
-						<span class="error">비밀번호가 일치하지 않습니다</span>
+						<span class="error">작성자, 혹은 비밀번호가 일치하지 않습니다</span>
 				</c:when>
 			</c:choose>
 				<p id="btns">

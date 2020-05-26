@@ -8,6 +8,7 @@ import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 
@@ -22,7 +23,7 @@ public interface ProductDao {
 	public void insertpHotelStatus(ProductVO pvo, HotelVO hvo) throws SQLException;
 	public void insertpTourStatus(ProductVO pvo, TourVO tvo) throws SQLException;
 	public void insertpRentcarStatus(ProductVO pvo, RentcarVO rvo) throws SQLException;
-	public void insertpUserStatus(UserVO uvo, ProductVO pvo) throws SQLException;
+	public void insertpUserStatus(ReservationVO rvo, UserVO uvo, ProductVO pvo) throws SQLException;
 	public void updateProduct(ProductVO vo) throws SQLException;
 	public void updatepAirStatus(ProductVO pvo, AirplaneVO avo) throws SQLException;
 	public void updatepHotelStatus(ProductVO pvo, HotelVO hvo) throws SQLException;

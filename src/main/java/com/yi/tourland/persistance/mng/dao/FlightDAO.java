@@ -1,5 +1,6 @@
 package com.yi.tourland.persistance.mng.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.yi.tourland.domain.SearchCriteria;

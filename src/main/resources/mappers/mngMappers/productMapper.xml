@@ -18,7 +18,7 @@
 		insert into prentstatus values(#{p.pno},#{r.no})
 	</insert>
 	<insert id="insertpUserStatus">
-		insert into userpstatus values(#{u.userno},#{p.pno})
+		insert into userpstatus values(#{r.no},#{u.userno},#{p.pno})
 	</insert>
 	<resultMap type="ProductVO" id="product">
 		<id property="pno" column="pno"/>

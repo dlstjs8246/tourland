@@ -14,6 +14,7 @@ import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.persistance.mng.dao.ProductDao;
@@ -221,8 +222,9 @@ public class ProductDaoImpl implements ProductDao {
 		return sqlSession.selectList(namespace + "tourlandProductKRSearchLowPriceList", cri);
 	}
 	@Override
-	public void insertpUserStatus(UserVO uvo, ProductVO pvo) throws SQLException {
+	public void insertpUserStatus(ReservationVO rvo, UserVO uvo, ProductVO pvo) throws SQLException {
 		Map<String,Object> map = new HashMap<>();
+		map.put("r", rvo);
 		map.put("u", uvo);
 		map.put("p", pvo);
 		sqlSession.insert(namespace + "insertpUserStatus",map);

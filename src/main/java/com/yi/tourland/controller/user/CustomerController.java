@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +50,7 @@ import com.yi.tourland.domain.mng.PlanBoardVO;
 import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
@@ -66,6 +66,7 @@ import com.yi.tourland.service.mng.PlanBoardService;
 import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
+import com.yi.tourland.service.mng.ReservationService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 
@@ -132,7 +133,8 @@ public class CustomerController {
 	@Autowired
 	private EmailVO emailVo;
 	
-
+	@Autowired
+	private ReservationService reservationService;
 		
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 		@ResponseBody
@@ -378,7 +380,7 @@ public class CustomerController {
 	}
 
 	//비밀번호 확인 되었을때 나타나는곳
-	@ResponseBody
+	
 	@RequestMapping(value = "EditPasswordCheck/{totalId}/{checkPass}", method = RequestMethod.GET)
 	public ResponseEntity<String> EditPasswordCheck(@PathVariable("totalId") String totalId,@PathVariable("checkPass") String checkPass,Model model) {
 		ResponseEntity<String> entity = null;
@@ -436,7 +438,15 @@ public class CustomerController {
 	
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
-	public String tourlandMyReserv() { 
+	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model) throws SQLException {
+		HttpSession session = req.getSession();
+		vo = (UserVO)session.getValue("Auth");
+		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(reservationService.totalSearchReservationCountByUserNo(cri, vo));
+		model.addAttribute("list",list);
+		model.addAttribute("pageMaker",pageMaker);
 		return "/user/mypage/tourlandMyReserv"; 
 	}
 	//상품 리뷰    
@@ -447,7 +457,15 @@ public class CustomerController {
 	}
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
-	public String tourlandMyWishes() { 
+	public String tourlandMyWishes(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model) throws SQLException { 
+		HttpSession session = req.getSession();
+		vo = (UserVO)session.getValue("Auth");
+		List<ReservationVO> list = reservationService.ReadCartByUserNo(vo, cri);
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(reservationService.totalSearchCartCountByUserNo(cri, vo));
+		model.addAttribute("list",list);
+		model.addAttribute("pageMaker",pageMaker);
 		return "/user/mypage/tourlandMyWishes"; 
 	}
 	//마이 페이지 - 내 쿠폰
@@ -500,6 +518,32 @@ public class CustomerController {
 	//상품 리스트   (제주 패키지)
 	@RequestMapping(value="tourlandProductKRList", method=RequestMethod.GET)
 	public String tourlandProductKRList(Model model,SearchCriteria cri) throws SQLException {
+
+		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
+		model.addAttribute("jejucount",jejulistCount);
+		String keyword = cri.getKeyword();
+		String keyword2 = cri.getKeyword2();
+		String keyword3 = cri.getKeyword3();
+		if(keyword3 !=null) {
+			  if(keyword3.contentEquals("forsearchjeju")) {
+					cri.setPerPageNum(10); //다시 리스트 10개로 세팅
+					model.addAttribute("keyword",keyword);
+					model.addAttribute("keyword3","jeju");
+					if(keyword2 != null) {
+						model.addAttribute("keyword2",keyword2);
+					}
+					List<ProductVO> list = productService.productListPageByDomestic(cri);
+					model.addAttribute("list",list);
+					PageMaker pageMaker = new PageMaker();
+					pageMaker.setCri(cri);
+					pageMaker.setTotalCount(jejulistCount);
+					model.addAttribute("pageMaker", pageMaker);
+					model.addAttribute("cri",cri);
+					model.addAttribute("count",jejulistCount);
+				    return "/user/product/tourlandProductKRList"; 
+			   }
+		}
+		
 		List<ProductVO> list = productService.productListPageByDomestic(cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
@@ -643,6 +687,34 @@ public class CustomerController {
 	//상품 리스트   (일본 패키지)
 	@RequestMapping(value="tourlandProductJPList", method=RequestMethod.GET)
 	public String tourlandProductJPList(SearchCriteria cri,Model model) throws SQLException { 
+		int japanlistCount = productService.totalCountBySearchProductJapan(cri);
+		model.addAttribute("japancount",japanlistCount);
+
+		String keyword = cri.getKeyword();
+		String keyword2 = cri.getKeyword2();
+		String keyword3 = cri.getKeyword3();
+		if(keyword3 !=null) {
+			  if(keyword3.contentEquals("forsearchjapan")) {
+					cri.setPerPageNum(10); //다시 리스트 10개로 세팅
+					model.addAttribute("keyword",keyword);
+					model.addAttribute("keyword3","japan");
+					if(keyword2 != null) {
+						model.addAttribute("keyword2",keyword2);
+					}
+					List<ProductVO> list = productService.productListPageByJapan(cri);
+					model.addAttribute("list",list);
+					PageMaker pageMaker = new PageMaker();
+					pageMaker.setCri(cri);
+					pageMaker.setTotalCount(japanlistCount);
+					model.addAttribute("pageMaker", pageMaker);
+					model.addAttribute("cri",cri);
+					model.addAttribute("count",japanlistCount);
+
+				    return "/user/product/tourlandProductJPList"; 
+			   }
+		}
+		
+		
 		List<ProductVO> list = productService.productListPageByJapan(cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
@@ -742,37 +814,33 @@ public class CustomerController {
 		public String tourlandProductChinaList(SearchCriteria cri,Model model) throws SQLException {
 			int chinalistCount = productService.totalCountBySearchProductChina(cri);
 			model.addAttribute("chinalistCount",chinalistCount);
-			int japanlistCount = productService.totalCountBySearchProductJapan(cri);
-			model.addAttribute("japancount",japanlistCount);
-			int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
-			model.addAttribute("jejucount",jejulistCount);
+
 			String keyword = cri.getKeyword();
-			String keyword2 = cri.getKeyword3();
-			String keyword3 = cri.getKeyword2();
-			//System.out.println("키워드3"+keyword3);
-			//System.out.println("크리찍업ㄴ다"+cri);
+			String keyword2 = cri.getKeyword2();
+			String keyword3 = cri.getKeyword3();
 			if(keyword3 !=null) {
 				  if(keyword3.contentEquals("forsearchchina")) {
 						cri.setPerPageNum(10); //다시 리스트 10개로 세팅
 						model.addAttribute("keyword",keyword);
+						model.addAttribute("keyword3","china");
 						if(keyword2 != null) {
 							model.addAttribute("keyword2",keyword2);
 						}
-						model.addAttribute("keyword2",keyword2);
-						
+						List<ProductVO> list = productService.productListPageByChina(cri);
+						model.addAttribute("list",list);
 						PageMaker pageMaker = new PageMaker();
 						pageMaker.setCri(cri);
 						pageMaker.setTotalCount(chinalistCount);
-						System.out.println("페이지 메이커"+pageMaker);
 						model.addAttribute("pageMaker", pageMaker);
-					       return "redirect:/customer/tourlandProductChinaList?searchType=&keyword3=forsearchchina";
+						model.addAttribute("cri",cri);
+						model.addAttribute("count",chinalistCount);
+					    return "/user/product/tourlandProductChinaList"; 
 				   }
 			}
 			List<ProductVO> list = productService.productListPageByChina(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
 			pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
-			System.out.println("페이지 메이커상품"+pageMaker);
 			
 			model.addAttribute("list",list);
 			model.addAttribute("pageMaker",pageMaker);
@@ -888,7 +956,6 @@ public class CustomerController {
 		for(int i=0;i<acapacity.length;i++) {
 			air.get(i+i).setCapacity(acapacity[i]);
 			air.get(i+i).setPdiv(1);
-			air.get(i+i+1).setNo(flightService.totalCountAirplane(cri)+(i+i+1)+1);
 			air.get(i+i+1).setCapacity(acapacity[i]);
 			air.get(i+i+1).setPdiv(1);
 		}
@@ -915,12 +982,33 @@ public class CustomerController {
 		userProduct.setRentcar(rentcar);
 		userProduct.setPno(productService.totalCountProduct()+1);
 		try {
+			Date chkStartDate = null;
+			Date chkEndDate = null;
+			Date startDate = null;
+			Date endDate = null;
+			List<ReservationVO> list = reservationService.ReadReservationByUserNo(user, cri);
+			for(ReservationVO vo : list) {
+				if(vo.getUserno().getUserno()==uno) {
+					chkStartDate = vo.getProduct().getAir().get(0).getDdate();
+					chkEndDate = vo.getProduct().getAir().get(1).getRdate();
+					startDate = userProduct.getAir().get(0).getDdate();
+					endDate = userProduct.getAir().get(1).getRdate();
+					if(chkStartDate.equals(startDate) && chkEndDate.getTime() - chkStartDate.getTime() == endDate.getTime() - startDate.getTime()) {
+						throw new Exception("중복");
+					}
+				}	
+			}
 			productService.insertUserProduct(product, userProduct, user, cri);
-			entity = new ResponseEntity<String>(HttpStatus.OK);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		}
 		catch(Exception e) {
-			e.printStackTrace();
-			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			if(e.getMessage().equals("중복")) {
+				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
+			}
+			else {
+				e.printStackTrace();
+				entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+			}
 		}
 		return entity;
 	}
@@ -1029,26 +1117,23 @@ public class CustomerController {
 			tourList.get(i).setPdiv(true);
 			System.out.println("변경된 투어 : " + tourList.get(i));
 		}
-		for(int i=0; i<rno.length; i++) {
-			System.out.println("렌트카 번호 : "+rno[i]);
-
-			RentcarVO rent = new RentcarVO();
-			rent.setNo(Integer.parseInt(rno[i]));
-			RentcarVO newRent = rentcarService.readByNo(rent.getNo());
-			System.out.println("렌트카  : "+newRent);
-			rentList.add(newRent);
-		
-			
-		}
-		for(int i=0; i<rcapacity.length; i++) {
-			System.out.println("렌트카 인원 : "+rcapacity[i]);
-			
-		
-			System.out.println("변경 전 렌트카 : " + rentList.get(i));
-			rentList.get(i).setNo(rentcarService.totalCountRentcar() + i + 1);
-			rentList.get(i).setCapacity(Integer.parseInt(rcapacity[i]));
-			rentList.get(i).setPdiv(1);
-			System.out.println("변경 후 렌트카 : " + rentList.get(i));
+		if(rno!=null) {
+			for(int i=0; i<rno.length; i++) {
+				System.out.println("렌트카 번호 : "+rno[i]);
+				RentcarVO rent = new RentcarVO();
+				rent.setNo(Integer.parseInt(rno[i]));
+				RentcarVO newRent = rentcarService.readByNo(rent.getNo());
+				System.out.println("렌트카  : "+newRent);
+				rentList.add(newRent);
+			}
+			for(int i=0; i<rcapacity.length; i++) {
+				System.out.println("렌트카 인원 : "+rcapacity[i]);
+				System.out.println("변경 전 렌트카 : " + rentList.get(i));
+				rentList.get(i).setNo(rentcarService.totalCountRentcar() + i + 1);
+				rentList.get(i).setCapacity(Integer.parseInt(rcapacity[i]));
+				rentList.get(i).setPdiv(1);
+				System.out.println("변경 후 렌트카 : " + rentList.get(i));
+			}
 		}
 		
 		// 가격
@@ -1085,10 +1170,33 @@ public class CustomerController {
 			System.out.println(i);
 		}
 		try {
+			Date chkStartDate = null;
+			Date chkEndDate = null;
+			Date startDate = null;
+			Date endDate = null;
+			List<ReservationVO> list = reservationService.ReadCartByUserNo(user, cri);
+			for(ReservationVO vo : list) {
+				if(vo.getUserno().getUserno()==uno) {
+					chkStartDate = vo.getProduct().getAir().get(0).getDdate();
+					chkEndDate = vo.getProduct().getAir().get(1).getRdate();
+					startDate = product.getAir().get(0).getDdate();
+					endDate = product.getAir().get(1).getRdate();
+					if(chkStartDate.equals(startDate) && chkEndDate.getTime() - chkStartDate.getTime() == endDate.getTime() - startDate.getTime()) {
+						throw new Exception("중복");
+					}
+				}	
+			}
 			productService.insertProductInUserCart(product, user, cri);
-			entity = new ResponseEntity<String>(HttpStatus.OK);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		}
 		catch(Exception e) {
+			if(e.getMessage().equals("중복")) {
+				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
+			}
+			else {
+				e.printStackTrace();
+				entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+			}
 			e.printStackTrace();
 			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
@@ -1231,7 +1339,7 @@ public class CustomerController {
 	
 	@RequestMapping(value = "tourlandCustBoardDetail", method = RequestMethod.GET)
 	public String tourlandCustBoardDetail(int no, SearchCriteria cri, Model model) throws Exception {
-		System.out.println("EnEm");
+		
 		CustBoardVO vo = custBoardService.readByNoCustBoard(no);
 		model.addAttribute("custBoardVO", vo);
 		model.addAttribute("cri", cri);
@@ -1332,7 +1440,6 @@ public class CustomerController {
 		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
 		model.addAttribute("jejucount",jejulistCount);
 		
-		
         model.addAttribute("searchkeyword",cri.getKeyword());
 		String keyword = cri.getKeyword();
 		String keyword2 = cri.getKeyword2();
@@ -1345,17 +1452,14 @@ public class CustomerController {
 		if(keyword3 !=null) {
 		  if(keyword3.contentEquals("forsearchchina")) {
 				cri.setPerPageNum(10); //다시 리스트 10개로 세팅
-				model.addAttribute("keyword",keyword);
+	            model.addAttribute("keyword",keyword);
 				if(keyword2 != null) {
-					model.addAttribute("keyword2",keyword2);
-				}
 				model.addAttribute("keyword2",keyword2);
-				model.addAttribute("keyword3","searchforchina");
-				PageMaker pageMaker = new PageMaker();
+   		    	}
+                model.addAttribute("keyword3",keyword3);
+		    	PageMaker pageMaker = new PageMaker();
 				pageMaker.setCri(cri);
 				pageMaker.setTotalCount(chinalistCount);
-				System.out.println("페이지 메이커"+pageMaker);
-				model.addAttribute("pageMaker", pageMaker);
 			       return "redirect:/customer/tourlandProductChinaList?searchType=";
 		   }else if(keyword3.contentEquals("forsearchjapan")) {
 				cri.setPerPageNum(10); //다시 리스트 10개로 세팅
@@ -1363,7 +1467,11 @@ public class CustomerController {
 				if(keyword2 != null) {
 					model.addAttribute("keyword2",keyword2);
 				}
-				model.addAttribute("keyword2",keyword2);
+				
+				model.addAttribute("keyword3",keyword3);
+			    PageMaker pageMaker = new PageMaker();
+				pageMaker.setCri(cri);
+				pageMaker.setTotalCount(japanlistCount);
 				   return "redirect:/customer/tourlandProductJPList?searchType=";
 			}else if(keyword3.contentEquals("forsearchjeju")) {
 				cri.setPerPageNum(10); //다시 리스트 10개로 세팅
@@ -1371,7 +1479,10 @@ public class CustomerController {
 				if(keyword2 != null) {
 					model.addAttribute("keyword2",keyword2);
 				}
-				model.addAttribute("keyword2",keyword2);
+				model.addAttribute("keyword3",keyword3);
+		    	PageMaker pageMaker = new PageMaker();
+				pageMaker.setCri(cri);
+				pageMaker.setTotalCount(jejulistCount);
 				   return "redirect:/customer/tourlandProductKRList?searchType=";
 			  }
 		}
