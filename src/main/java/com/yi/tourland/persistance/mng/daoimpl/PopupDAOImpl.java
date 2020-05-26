@@ -66,6 +66,11 @@ public class PopupDAOImpl implements PopupDAO {
 		return sqlSession.selectOne(namespace+"setPopup",position);
 	}
 
+	@Override
+	public List<PopupVO> setPopupList(String position) throws Exception {
+		return sqlSession.selectList(namespace+"setPopupList",position);
+	}
+
 
 	
 	

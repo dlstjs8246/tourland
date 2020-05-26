@@ -61,5 +61,9 @@ public class PopupService {
 	public PopupVO setPopup(String position) throws Exception {
 		return dao.setPopup(position);
 	}
+	
+	public List<PopupVO> setPopupList(String position) throws Exception {
+		return dao.setPopupList(position);
+	}
     
 }
