@@ -69,12 +69,12 @@ h4 {
 						</tr>	
 							<c:forEach var="payment" items="${list}">
 								<tr>
-									<td>${payment.username}</td>
-									<td>${payment.pname }</td>
-									<td>${payment.ano }</td>
-									<td><fmt:formatDate value="${payment.checkin}" pattern="yyyy-MM-dd"/></td>
-									<td><fmt:formatDate value="${payment.checkout}" pattern="yyyy-MM-dd"/></td>
-									<td>${payment.rdate }</td>
+									<td>${payment.userno.username}</td>
+									<td>${payment.product.pname }</td>
+									<td>${payment.product.air[0].ano }</td>
+									<td><fmt:formatDate value="${payment.product.air[0].ddate}" pattern="yyyy-MM-dd"/></td>
+									<td><fmt:formatDate value="${payment.product.air[1].rdate}" pattern="yyyy-MM-dd"/></td>
+									<td><fmt:formatDate value="${payment.rdate}" pattern="yyyy-MM-dd"/></td>
 									<c:choose>
 										<c:when test="${payment.rstatus ==2}">
 											<td><span class="badge bg-orange">결제완료</span></td>

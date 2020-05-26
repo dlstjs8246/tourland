@@ -82,7 +82,4 @@
 		select count(no) from hotel
 		<include refid="search"/>
 	</select>
-    
-    
-	
 </mapper>

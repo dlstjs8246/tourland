@@ -66,15 +66,23 @@
 							</c:forEach>
 							<td>${startdate}</td>
 							<td>${enddate}</td>
-							<td class="${cart.rstatus=='0'?'red':''}">${reserv.rstatus=='0'?'예약가능':'예약됨'}</td>
+							<td class="${cart.rstatus=='0'?'red':''}">${cart.rstatus=='0'?'예약가능':'예약됨'}</td>
 							<td class="blue"><button id="reservBtns">예약하기</button><button id="delBtns">삭제하기</button></td>    
 						</tr>
 						</c:forEach>
 					</table>
 				</div>
-		
 		</section>
-		
+		<script>
+			$("#delBtns").click(function(){
+				var con = confirm("삭제하시겠습니까?");
+				
+				if(con){
+					
+				}
+				
+			})
+		</script>
 		<%@ include file="../../include/userFooter.jsp"%>
 </body>
 </html>

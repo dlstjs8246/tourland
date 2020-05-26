@@ -439,7 +439,7 @@
 				}); 
 		});
 </script>
-	<c:if test="${Auth!=null and manager!=null}">
+	<c:if test="${Auth!=null && login=='user'}">
 		<script>
 			uno = ${Auth.userno};
 		</script>

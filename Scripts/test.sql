@@ -262,12 +262,32 @@ select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 		where p.pno = 2;
 	
 select * from usercoupon uc join user u on uc.userno = u.userno join coupon c on uc.cno = c.cno where u.userno = 2 order by edate asc;
-	
 
+select * from userpstatus;
 
-select u.username, u.userno, 
-where r.rstatus =2;
+insert into userpstatus values(1,2,270);
 
+select u.username, p.pname, a.ano, a.ddate, a.rdate, r.rstatus
+from user u join reservation r on u.userno = r.userno 
+			join userpstatus up on up.userno = u.userno and up.no = r.no
+			join product p on p.pno = up.pno
+			join pairstatus ps on ps.pno = p.pno 
+			join airplane a on ps.ano = a.no
+where r.rstatus=2 order by u.userno desc limit 5, 5;
+
+select * from user;
+
+select * from reservation;
+
+select count(userno) from reservation
+where rstatus=2;
+select r.no,r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate, r.rstatus
+	from user u join reservation r on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+	where r.rstatus=2; 
 -- 하나 --------------------------------------------------------------------------------------------
 select * from reservation;
 SELECT * FROM notice;

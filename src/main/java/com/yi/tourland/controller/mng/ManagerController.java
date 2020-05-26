@@ -53,6 +53,7 @@ import com.yi.tourland.domain.mng.PlanBoardVO;
 import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
@@ -2089,12 +2090,9 @@ public class ManagerController {
 			planBoardService.deletePlanBoard(vo);
 			return "redirect:/planBoardList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 					+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
-		}
-
-		
+		}		
 		
 		//결제 관리
-		
 		@RequestMapping(value = "paymentList", method = RequestMethod.GET)
 		public String paymentList(SearchCriteria cri, Model model) throws Exception {
 			List<UserVO> list = userService.listSearchCriteriaPaymentUser(cri);
@@ -2144,6 +2142,4 @@ public class ManagerController {
 			}
           return null;
 		}
-
-	
 }
