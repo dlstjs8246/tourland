@@ -37,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.google.gson.JsonObject;
+import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.PageMaker;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
@@ -69,6 +70,7 @@ import com.yi.tourland.service.mng.PlanBoardService;
 import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
+import com.yi.tourland.service.mng.ReservationService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 import com.yi.tourland.util.UploadFileUtils;
@@ -130,10 +132,15 @@ public class ManagerController {
 
 	@Autowired
 	PlanBoardService planBoardService;
+	
+	@Autowired
+	private ReservationService reservationService;
 
 	// 예약관리
 	@RequestMapping(value = "reservMngList", method = RequestMethod.GET)
-	public String reservMngList(SearchCriteria cri, Model model) {
+	public String reservMngList(SearchCriteria cri, Model model) throws Exception {
+		
+		
 		return "/manager/reservation/reservationMngList";
 	}
 
@@ -603,7 +610,21 @@ public class ManagerController {
 
 	// 예약관리
 	@RequestMapping(value = "reservationMgnList", method = RequestMethod.GET)
-	public String reservationMgnList() {
+	public String reservationMgnList(SearchCriteria cri,Model model) throws Exception {
+		
+		
+		List<ReservationVO> list = reservationService.listReservationForMng(cri);
+		for(int i =0; i<list.size(); i++) {
+			String username = userService.readByNoUser(list.get(i).getUserno().getUserno()).getUsername();
+			list.get(i).getUserno().setUsername(username);
+		}
+		
+		System.out.println();
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
+		model.addAttribute("list",list);
+		model.addAttribute("pageMaker",pageMaker);
 		return "/manager/reservation/reservationMngList";
 	}
 
