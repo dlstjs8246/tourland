@@ -342,7 +342,7 @@ window.onload = function() {
 							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword" value="${searchkeyword }"><i class="fas fa-search" id="mainSearchIcon"></i>
 							</c:if>
 							<c:if test="${searchkeyword ==null }">
-							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword"><i class="fas fa-search" style="font-size:25px;"></i></i>
+							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword"><i class="fas fa-search" style="font-size:25px;" id="mainSearchIcon"></i>
 							</c:if>
 							<!-- <button>찾기</button> -->
 						</div>
@@ -359,7 +359,6 @@ window.onload = function() {
 			</header>
 			
 <script>
-
     $(function(){
     	$("#mainSearchIcon").click(function(){
             var mainKeyword = $("#mainSearchKeyword").val();
@@ -370,8 +369,5 @@ window.onload = function() {
             }
     		location.href="${pageContext.request.contextPath }/customer/tourlandSearch/default?searchType=&keyword="+mainKeyword+"&keyword2=";
     	})
-    	
-    	
     })
-    
 </script>

@@ -29,7 +29,6 @@ public class UserDAOImpl implements UserDAO{
 
 	@Override
 	public UserVO readByNoUser(int userno) throws Exception {
-		// TODO Auto-generated method stub
 		return sqlSession.selectOne(namespace+"readByNoUser", userno);
 	}
 

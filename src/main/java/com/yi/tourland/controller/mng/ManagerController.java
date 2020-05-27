@@ -2098,13 +2098,11 @@ public class ManagerController {
 			List<UserVO> list = userService.listSearchCriteriaPaymentUser(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri));
-			model.addAttribute("list", list);
+			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri) <10? 10: userService.totalSearchCountPaymentUser(cri));			model.addAttribute("list", list);
 			model.addAttribute("cri", cri);
 			model.addAttribute("pageMaker", pageMaker);
 			return "/manager/payment/paymentList";
 		}
-		
 		
 	//ckEditor 이미지 업로드용
 		@ResponseBody

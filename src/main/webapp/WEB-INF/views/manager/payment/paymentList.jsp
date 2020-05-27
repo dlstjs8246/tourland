@@ -40,7 +40,6 @@ h4 {
 				</div>
 				<div class="box-body">
 					<select name="searchType" id="searchType">
-						<option value="total" ${cri.searchType == 'total'? 'selected':'' }>전체</option>
 						<option value="username" ${cri.searchType == 'username'? 'selected':'' }>고객명</option>
 						<option value="pname" ${cri.searchType == 'pname'? 'selected':'' }>상품명</option>
 						<option value="rdate" ${cri.searchType == 'rdate'? 'selected':'' }>결제일</option>
@@ -108,6 +107,12 @@ $("#btnSearch").click(function() {
 	var keyword = $("#keyword").val();
 	location.href = "paymentList?searchType="+searchType+"&keyword="+ keyword;
 })
+
+$("i.fas.fa-search").click(function(){
+	var startDate = $("input[name='startDate']").val();
+	var endDate = $("input[name='endDate']").val();
+	location.href = "${pageContext.request.contextPath}/manager/paymentList?searchType=checkDate"+"&keyword2="+startDate+"&keyword3="+endDate;
+ })
 </script>
 
 <%@ include file="../../include/footer.jsp"%>
