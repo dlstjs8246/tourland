@@ -46,45 +46,44 @@
 							<th>도착날짜</th>
 							<th>예약 관리</th>
 						</tr>  
+					<c:forEach items="${list }" var="r">
 						<tr>
-								<td>1</td>
-								<td><a href="#">테스트 고객</a></td>
-								<td>상품1</td>
-								<td>AK001</td>  
-								<td>2020/04/25</td>
-								<td>2020/04/26</td>
+								<td>${r.no}</td>
+								<td>${r.userno.username }</td>
+								<td>${r.product.pname }</td>
+								<c:forEach var="f" items="${r.product.air}" begin="0" end="0">
+								<td>${f.ano }</td>
+								</c:forEach>
+								<c:forEach var="f" items="${r.product.air}" begin="0" end="0">
+								<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
+								</c:forEach>
+							<c:forEach var="f" items="${r.product.air}" begin="1" end="1">
+								<fmt:formatDate var="enddate" value="${f.rdate}" pattern="yyyy-MM-dd"/>
+							</c:forEach>
+								
+								<td>${startdate }</td>	
+								<td>${enddate }</td>
 								<td><button type="button" class="btn btn-info btn-lg modalbtn" data-toggle="modal" data-target="#myModal">예약 상세</button></td>
 							</tr>
-							<tr>
-								<td>2</td>
-								<td><a href="#">테스트 고객</a></td>
-								<td>상품1</td>
-								<td>AK001</td>  
-								<td>2020/04/25</td>
-								<td>2020/04/26</td>    
-								<td><button type="button" class="btn btn-info btn-lg modalbtn" data-toggle="modal" data-target="#myModal">예약 상세</button></td>
-							</tr>   
-							<tr>
-								<td>3</td>
-								<td><a href="#">테스트 고객</a></td>
-								<td>상품1</td>
-								<td>AK001</td>  
-								<td>2020/04/25</td>
-								<td>2020/04/26</td>
-								<td><button type="button" class="btn btn-info btn-lg modalbtn" data-toggle="modal" data-target="#myModal">예약 상세</button></td>
-							</tr>
-							<tr>   
-								<td>4</td>
-								<td><a href="#">테스트 고객</a></td>     
-								<td>상품1</td>
-								<td>AK001</td>  
-								<td>2020/04/25</td>
-								<td>2020/04/26</td>
-								<td><button type="button" class="btn btn-info btn-lg modalbtn" data-toggle="modal" data-target="#myModal">예약 상세</button></td>
-							</tr>
+					</c:forEach>
 					</table>      
-				</div>
-			
+				</div>    
+			<div class="box-footer">
+					<div class="text-center">
+						<ul class="pagination">
+							<c:if test="${pageMaker.prev == true }">
+								<li><a href="noticeMngList?page=${pageMaker.endPage -1 }&searchType=${cri.searchType}&keyword=${cri.keyword}">&laquo;</a></li>
+							</c:if>
+							<c:forEach begin="${pageMaker.startPage }" end="${pageMaker.endPage }" var="idx">
+								<li class="${pageMaker.cri.page == idx ?'active':''}"><a href="noticeMngList?page=${idx}&searchType=${cri.searchType}&keyword=${cri.keyword}">${idx }</a></li>
+								<!-- 주소의 시작이 /로 시작하지 않고 localhost:8080..으로 시작하면 맨 마지막 것만 바꿔주면됨 -->
+							</c:forEach>
+							<c:if test="${pageMaker.next == true }">
+								<li><a href="noticeMngList?page=${pageMaker.endPage +1 }&searchType=${cri.searchType}&keyword=${cri.keyword}">&raquo;</a></li>
+							</c:if>
+						</ul>
+					</div>
+				</div> 
 				<div id="myModal" class="modal fade" role="dialog">
 					<div class="modal-dialog" id="modalBox">
 
