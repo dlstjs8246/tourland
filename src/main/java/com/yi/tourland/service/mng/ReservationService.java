@@ -46,4 +46,8 @@ public class ReservationService {
 	public List<ReservationVO> listReservationForMng(SearchCriteria cri) throws SQLException{
 		return dao.listReservationForMng(cri);
 	}
+	//관리자 페이지 - 예약 관리 - 예약 상세 modal Ajax
+	public List<ReservationVO> listReservationForModal(String userno, String pno) throws SQLException {
+		return dao.listReservationForModal(userno, pno);
+	}
 }

@@ -8,6 +8,186 @@
 	.blue { color: steelblue; font-weight: bold;}   
 	h4 { font-weight: bold;}
 </style>     
+<script>
+	
+	function reservationDetail(){
+		
+	}
+	
+	function getFormatDate(date){
+	    var year = date.getFullYear();              //yyyy
+	    var month = (date.getMonth()+1);   		//M
+	    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
+	    var day = date.getDate();                   //d
+	    day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
+	    return  year + '-' + month + '-' + day;
+	}
+	
+	function msToTime(duration) {
+        var milliseconds = parseInt((duration%1000)/100)
+            , seconds = parseInt((duration/1000)%60)
+            , minutes = parseInt((duration/(1000*60))%60)
+            , hours = parseInt((duration/(1000*60*60))%24);
+
+        hours = (hours < 10) ? "0" + hours : hours;
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+        return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+    }
+	
+	$(function(){
+		$(".modalbtn").click(function(){
+			var userno = $(this).parent().parent().find(".hiddenuserno").html();
+			var pno = $(this).parent().parent().find(".hidden").html();
+		
+			$.ajax({
+				url : "reservationDetail",
+				type : "get",
+				dataType : "json",
+				data : {userno:userno, pno:pno},
+				success : function(rs){
+					console.log(rs);
+					$(".remove").remove();
+					 $(rs.list).each(function(i, obj) {
+						 //고객정보
+						 // 생년월일 (밀리세컨드)받아와서 날짜 객체로 세팅 
+						 var userbirth = new Date(obj.userno.userbirth);
+						 
+						 var $uttr = $("<tr>");
+						 var $uttd1 = $("<td>").html(obj.userno.userno);
+						 var $uttd2 = $("<td>").html(obj.userno.username);
+						 //yyyy-MM-dd 형태로 포맷
+						 var $uttd3 = $("<td>").html(getFormatDate(userbirth));
+						 if(obj.userno.userpassport==null){
+							 var $uttd4 = $("<td>").addClass("red").html("여권 미등록");
+						 }else{
+							 var $uttd4 = $("<td>").addClass("red").html(obj.userno.userpassport);
+						 }
+						
+						 var $uttd5 = $("<td>").html(obj.userno.userid);
+ 						 
+						 $uttr.addClass("remove").append($uttd1).append($uttd2).append($uttd3).append($uttd4).append($uttd5);
+						 
+						 $("#userTable").append($uttr);
+						 
+						 //항공 정보
+						 
+						
+						 
+						
+						 
+						 for(var i =0; i<obj.product.air.length; i++){
+							 var addate = new Date(obj.product.air[i].ddate);
+							 var ardate = new Date(obj.product.air[i].rdate); 
+							 var addate_r = new Date(obj.product.air[i].ddate);
+							 var ardate_r = new Date(obj.product.air[i].rdate);
+							 
+ 							 if(obj.product.air[i].dlocation == "ICN"){//출발편일 경우
+								 var $adttd1 = $("<td>").html(obj.product.air[i].no);
+								 var $adttd2 = $("<td>").html(obj.product.air[i].ano);
+								 var $adttd3 = $("<td>").html(obj.product.air[i].dlocation);
+								 var $adttd4 = $("<td>").html(obj.product.air[i].rlocation);
+								 var $adttd5 = $("<td>").html(getFormatDate(addate));
+								 var $adttd6 = $("<td>").html(getFormatDate(ardate));
+								 var $adttd7 = $("<td>").html(obj.product.air[i].capacity);
+								 var $adttd8 = $("<td>").html(obj.product.air[i].seat);
+								 var $adttd9 = $("<td>").html(obj.product.air[i].price);
+								 
+								 var $adttr = $("<tr>").addClass("remove").append($adttd1).append($adttd2).append($adttd3).append($adttd4).append($adttd5).append($adttd6).append($adttd7).append($adttd8).append($adttd9);
+								 $("#airdTable").append($adttr);
+								 
+							 }else{//도착편일 경우
+								 var $adttd1 = $("<td>").html(obj.product.air[i].no);
+								 var $adttd2 = $("<td>").html(obj.product.air[i].ano);
+								 var $adttd3 = $("<td>").html(obj.product.air[i].dlocation);
+								 var $adttd4 = $("<td>").html(obj.product.air[i].rlocation);
+								 var $adttd5 = $("<td>").html(getFormatDate(addate_r));
+								 var $adttd6 = $("<td>").html(getFormatDate(ardate_r));
+								 var $adttd7 = $("<td>").html(obj.product.air[i].capacity);
+								 var $adttd8 = $("<td>").html(obj.product.air[i].seat);
+								 var $adttd9 = $("<td>").html(obj.product.air[i].price);
+								 
+								 var $adttr = $("<tr>").addClass("remove").append($adttd1).append($adttd2).append($adttd3).append($adttd4).append($adttd5).append($adttd6).append($adttd7).append($adttd8).append($adttd9);
+								 $("#airrTable").append($adttr);
+							 }
+						 }
+						 
+						 
+						 //호텔
+						 for(var i =0; i<obj.product.hotel.length; i++){
+							 var chkin = new Date(obj.product.hotel[i].checkin);
+							 var chkout = new Date(obj.product.hotel[i].checkout);
+							 
+							 var $htd1 = $("<td>").html(obj.product.hotel[i].no);
+							 var $htd2 = $("<td>").html(obj.product.hotel[i].hname);
+							 var $htd3 = $("<td>").html(obj.product.hotel[i].haddr);
+							 var $htd4 = $("<td>").html(getFormatDate(chkin));
+							 var $htd5 = $("<td>").html(getFormatDate(chkout));
+							 var $htd6 = $("<td>").html(obj.product.hotel[i].capacity);
+							 var $htd7 = $("<td>").html(obj.product.hotel[i].price);
+							 var $htd8 = $("<td>").html(obj.product.hotel[i].roomcapacity);
+							 var $htd9 = $("<td>").html(obj.product.hotel[i].roomtype);
+							 
+							 var $htr = $("<tr>").addClass("remove").append($htd1).append($htd2).append($htd3).append($htd4).append($htd5).append($htd6).append($htd7).append($htd8).append($htd9);
+ 						 	 $("#hotelTable").append($htr);
+						 }
+						
+						 //투어
+						 for(var i =0; i<obj.product.tour.length; i++){
+							 var startDate = new Date(obj.product.tour[i].startDate);
+							 var endDate = new Date(obj.product.tour[i].endDate);
+							 console.log(obj.product.tour[i].etime);
+							 var $ttd1 = $("<td>").html(obj.product.tour[i].no);
+							 var $ttd2 = $("<td>").html(obj.product.tour[i].tname);
+							 var $ttd3 = $("<td>").html(obj.product.tour[i].tlocation);
+							 var $ttd4 = $("<td>").html(getFormatDate(startDate));
+							 var $ttd5 = $("<td>").html(getFormatDate(endDate));
+							 var $ttd6 = $("<td>").html(obj.product.tour[i].taddr);
+							 var $ttd7 = $("<td>").html(msToTime(obj.product.tour[i].etime));
+							 var $ttd8 = $("<td>").html(obj.product.tour[i].capacity);
+							 var $ttd9 = $("<td>").html(obj.product.tour[i].tprice);
+							 
+							 var $ttr = $("<tr>").addClass("remove").append($ttd1).append($ttd2).append($ttd3).append($ttd4).append($ttd5).append($ttd6).append($ttd7).append($ttd8).append($ttd9);
+ 						 	 $("#tourTable").append($ttr);
+						 }
+						 
+						 //렌트카
+						 if(obj.product.rentcar[0].cdiv==null){
+							 var $td1 = $("<td>").attr("colspan","10").addClass("red").html("선택한 렌트카가 없습니다.");
+							
+							 
+							 var $rtr = $("<tr>").addClass("remove").append($td1);
+							 $("#rentTable").append($rtr);
+						 }else{
+							 for(var i =0; i<obj.product.rentcar.length; i++){
+								 var rentdate = new Date(obj.product.rentcar[i].rentdate);
+								 var returndate = new Date(obj.product.rentcar[i].returndate);
+								
+								 var $rtd1 = $("<td>").html(obj.product.rentcar[i].no);
+								 var $rtd2 = $("<td>").html(obj.product.rentcar[i].cdiv);
+								 var $rtd3 = $("<td>").html(obj.product.rentcar[i].cno);
+								 var $rtd4 = $("<td>").html(getFormatDate(rentdate));
+								 var $rtd5 = $("<td>").html(getFormatDate(returndate));
+								 var $rtd6 = $("<td>").html(obj.product.rentcar[i].rentaddr);
+								 var $rtd7 = $("<td>").html(obj.product.rentcar[i].returnaddr);
+								 var $rtd8 = $("<td>").html(obj.product.rentcar[i].price);
+								 var $rtd9 = $("<td>").html(obj.product.rentcar[i].capacity);
+								 var $rtd10= $("<td>").html(obj.product.rentcar[i].insurance);
+								 
+								 var $rtr = $("<tr>").addClass("remove").append($rtd1).append($rtd2).append($rtd3).append($rtd4).append($rtd5).append($rtd6).append($rtd7).append($rtd8).append($rtd9).append($rtd10);
+	 						 	 $("#rentTable").append($rtr);
+							 }
+						 }
+						 
+						 
+					
+					 })
+				}
+			})
+		})
+	})
+</script>
 <div class="content">	
 	<div class="row">    
 		<div class="col-sm-12">       
@@ -49,8 +229,8 @@
 					<c:forEach items="${list }" var="r">
 						<tr>
 								<td>${r.no}</td>
-								<td>${r.userno.username }</td>
-								<td>${r.product.pname }</td>
+								<td>${r.userno.username } <span class="hiddenuserno">${r.userno.userno }</span></td>
+								<td>${r.product.pname } <span class="hidden">${r.product.pno }</span></td>
 								<c:forEach var="f" items="${r.product.air}" begin="0" end="0">
 								<td>${f.ano }</td>
 								</c:forEach>
@@ -66,7 +246,8 @@
 								<td><button type="button" class="btn btn-info btn-lg modalbtn" data-toggle="modal" data-target="#myModal">예약 상세</button></td>
 							</tr>
 					</c:forEach>
-					</table>      
+					</table>  
+					
 				</div>    
 			<div class="box-footer">
 					<div class="text-center">
@@ -95,7 +276,7 @@
 							</div>
 							<div class="modal-body">
 							<h4>고객 정보</h4>
-								<table class="table table-bordered" id="airTable"
+								<table class="table table-bordered" id="userTable"
 									style="width: 100%;">
 									<tr>
 										<th style="width: 100px;">유저번호</th>
@@ -104,17 +285,17 @@
 										<th>여권등록여부</th>
 										<th>유저아이디</th>
 									</tr>
-									<tr>
-										<td>6</td>
-										<td>테스트</td>
-										<td>1991-12-18</td>
-										<td class="red">등록 필요</td>
-										<td>user</td>
-									</tr>
+										<!-- <tr>
+											<td id="utUserno"></td>
+											<td id="utUsername">테스트</td>
+											<td id="utUserbirth">1992-11-21</td>
+											<td class="red" id="utUserpassport">M2223333</td>
+											<td id="utUserid">user</td>
+										</tr> -->
 								</table>
 								<h4>항공편</h4>
 							<h5>출발 항공편</h5>
-							<table class="table table-bordered" id="airTable" style="width : 100%;">
+							<table class="table table-bordered" id="airdTable" style="width : 100%;">
 							<tr>
 								<th>번호</th>
 								<th>항공기 번호</th>
@@ -126,7 +307,7 @@
 								<th>좌석</th>
 								<th>가격</th>
 							</tr>
-							<tr>  
+							<!-- <tr>  
 								<td>2483</td>
 								<td>JA121</td>
 								<td>ICN</td>
@@ -136,10 +317,10 @@
 								<td>10</td>
 								<td>Economy-Class</td>
 								<td>150000</td>
-							</tr>
+							</tr> -->
 							</table>
 							<h5>도착 항공편</h5>
-							<table class="table table-bordered" id="airTable" style="width : 100%;">
+							<table class="table table-bordered" id="airrTable" style="width : 100%;">
 							<tr>
 								<th>번호</th>
 								<th>항공기 번호</th>
@@ -151,7 +332,7 @@
 								<th>좌석</th>
 								<th>가격</th>
 							</tr>
-							<tr>  
+						<!-- 	<tr>  
 								<td>2484</td>
 								<td>JA122</td>
 								<td>NRT</td>
@@ -161,7 +342,7 @@
 								<td>10</td>
 								<td>Economy-Class</td>
 								<td>150000</td>
-							</tr>
+							</tr> -->
 							</table>
 							
 							<h4>호텔</h4>
@@ -177,7 +358,7 @@
 									<th>객실 수</th>
 									<th>객실타입</th>
 								</tr>
-								<tr>
+								<!-- <tr>
 									<td>420</td>
 									<td>Shinagawa Prince Hotel</td>
 									<td>4-10-30 Takanawa Minato Tokyo 108-8612 도쿄 일본</td>
@@ -187,7 +368,7 @@
 									<td>340000</td>
 									<td>3</td>
 									<td>디럭스</td>
-								</tr>
+								</tr> -->
 							</table>
 							<h4>현지 투어</h4>
 							<table class="table table-bordered" id="tourTable">
@@ -202,28 +383,7 @@
 									<th>허용인원</th>
 									<th>가격</th>
 								</tr>
-								<tr>
-									<td>2970</td>
-									<td>또 다른 신사, 하나조노 신사</td>
-									<td>도쿄</td>
-									<td>2020-05-16</td>
-									<td>2020-05-16</td>
-									<td>5 Chome-17-3 Shinjuku, Shinjuku City, Tokyo 160-0022</td>
-									<td>01:00:00</td>
-									<td>40</td>
-									<td>5,000</td>
-								</tr>
-								<tr>
-									<td>2969</td>
-									<td>놀이공원,아이스스케이팅,롤러코스터,워터파크및 공원,토시마엔</td>
-									<td>도쿄</td>
-									<td>2020-05-18</td>
-									<td>2020-05-18</td>
-									<td>3 Chome-25-1 Koyama, Nerima City, Tokyo 176-0022</td>
-									<td>03:00:00</td>
-									<td>40</td>
-									<td>10,000</td>
-								</tr>
+								
 							</table>
 							<h4>렌트카</h4>
 							<table class="table table-bordered" id="rentTable">
@@ -239,18 +399,7 @@
 									<th>허용인원</th>
 									<th>보험여부</th>	
 								</tr>
-								<tr>
-									<td>2850</td>
-									<td>V</td>
-									<td>足立215-13</td>
-									<td>2020-05-16</td>
-									<td>2020-05-22</td>
-									<td>나리타 공항</td>
-									<td>나리타 공항</td>
-									<td>350000</td>
-									<td>10</td>
-									<td>yes</td>
-								</tr>
+								
 							</table>
 							<h4>결제 여부</h4>
 							<p class="blue">결제 완료</p>

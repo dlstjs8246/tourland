@@ -136,13 +136,6 @@ public class ManagerController {
 	@Autowired
 	private ReservationService reservationService;
 
-	// 예약관리
-	@RequestMapping(value = "reservMngList", method = RequestMethod.GET)
-	public String reservMngList(SearchCriteria cri, Model model) throws Exception {
-		
-		
-		return "/manager/reservation/reservationMngList";
-	}
 
 	// 항공 관리
 	@RequestMapping(value = "flightMngList", method = RequestMethod.GET)
@@ -612,20 +605,55 @@ public class ManagerController {
 	@RequestMapping(value = "reservationMgnList", method = RequestMethod.GET)
 	public String reservationMgnList(SearchCriteria cri,Model model) throws Exception {
 		
-		
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
 		List<ReservationVO> list = reservationService.listReservationForMng(cri);
 		for(int i =0; i<list.size(); i++) {
-			String username = userService.readByNoUser(list.get(i).getUserno().getUserno()).getUsername();
-			list.get(i).getUserno().setUsername(username);
+			UserVO user = userService.readByNoUser(list.get(i).getUserno().getUserno());
+			list.get(i).getUserno().setUsername(user.getUsername());
+			list.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
+			list.get(i).getUserno().setUserpassport(user.getUserpassport());
 		}
 		
-		System.out.println();
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
 		return "/manager/reservation/reservationMngList";
+	}
+	
+	//예약 상세 모달 Ajax
+	@ResponseBody
+	@RequestMapping(value = "reservationDetail", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> reservationDetail(String userno, String pno,SearchCriteria cri,Model model) throws Exception {
+		
+		ResponseEntity<Map<String,Object>> entity = null;
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			UserVO vo = new UserVO();
+			vo.setUserno(Integer.parseInt(userno));
+			List<ReservationVO> rs = reservationService.listReservationForModal(userno, pno);
+			 
+			for(int i =0; i<rs.size(); i++) {
+				UserVO user = userService.readByNoUser(Integer.parseInt(userno));
+				rs.get(i).getUserno().setUserno(Integer.parseInt(userno));
+				rs.get(i).getUserno().setUsername(user.getUsername());
+				rs.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
+				rs.get(i).getUserno().setUserpassport(user.getUserpassport());
+				rs.get(i).getUserno().setUserid(user.getUserid());
+			}
+			
+			Map<String,Object> map = new HashMap<>();
+			map.put("list", rs);
+			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
+		}catch(Exception e) {
+			e.printStackTrace();
+			Map<String, Object> map = new HashMap<>();
+			map.put("null", null);
+			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.BAD_REQUEST);
+		}
+		
+		return entity;
 	}
 
 	// 상품관리

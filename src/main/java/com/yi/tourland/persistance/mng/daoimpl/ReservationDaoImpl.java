@@ -80,4 +80,12 @@ public class ReservationDaoImpl implements ReservationDao {
 	public List<ReservationVO> listReservationForMng(SearchCriteria cri) throws SQLException {
 		return sqlSession.selectList(namespace + "listReservationForMng", cri);
 	}
+
+	@Override
+	public List<ReservationVO> listReservationForModal(String userno, String pno) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("userno", userno);
+		map.put("pno", pno);
+		return sqlSession.selectList(namespace + "listReservationForModal",map );
+	}
 }

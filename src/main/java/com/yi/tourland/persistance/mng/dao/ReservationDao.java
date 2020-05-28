@@ -20,4 +20,6 @@ public interface ReservationDao {
 	public void deleteReservation(ReservationVO vo) throws SQLException;
 	//관리자 페이지 - 예약 관리
 	public List<ReservationVO> listReservationForMng(SearchCriteria cri) throws SQLException;
+	//관리자 페이지 - 예약 관리 - 예약 상세 modal 
+	public List<ReservationVO> listReservationForModal(String userno, String pno) throws SQLException;
 }
