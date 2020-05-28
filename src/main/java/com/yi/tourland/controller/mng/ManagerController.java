@@ -37,7 +37,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.google.gson.JsonObject;
-import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.PageMaker;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
@@ -2147,7 +2146,9 @@ public class ManagerController {
 			List<UserVO> list = userService.listSearchCriteriaPaymentUser(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri) <10? 10: userService.totalSearchCountPaymentUser(cri));			model.addAttribute("list", list);
+			System.out.println(userService.totalSearchCountPaymentUser(cri));
+			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri));	
+			model.addAttribute("list", list);
 			model.addAttribute("cri", cri);
 			model.addAttribute("pageMaker", pageMaker);
 			return "/manager/payment/paymentList";

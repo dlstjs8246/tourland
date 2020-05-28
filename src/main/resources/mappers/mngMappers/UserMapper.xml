@@ -4,7 +4,7 @@
 <resultMap type="ReservationVO" id="userpayment">
 	<id property="no" column="no"/>
 		<result property="rstatus" column="rstatus"/>
- 		<result property="rdate" column="rdate"/>
+ 		<result property="rdate" column="reservdate"/>
  	<association property="userno" column="userno" javaType="UserVO">
  		<result property="username" column="username"/>
  	</association>
@@ -14,7 +14,7 @@
  		<collection property="air" ofType="AirplaneVO">
  			<result property="ano" column="ano"/>
  			<result property="ddate" column="ddate"/>
-			<result property="rdate" column="rdate"/>
+			<result property="rdate" column="returndate"/>
  		</collection>
  	</association>
 </resultMap> 
@@ -88,11 +88,11 @@
 		<if test='searchType=="ano".toString()'>
 			and a.ano like CONCAT('%',#{keyword},'%')
 		</if>
-        <if test="searchType=='rdate'">
+        <if test="searchType=='rdate'.toString()">
 	       and r.rdate = #{keyword}
 	    </if>
 	    <if test='searchType=="checkDate"'>
-	       and startDate =  #{keyword2} and endDate = #{keyword3}
+	       and a.ddate =  #{keyword2} and a.rdate = #{keyword3}
 	     </if>
 	    
  </sql>
@@ -120,25 +120,31 @@
 	
 	<!--결제관리에 나올 리스트-->
     <select id="listSearchCriteriaPaymentUser" resultMap="userpayment">
-	select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate, r.rdate, r.rstatus
-	from user u join reservation r on u.userno = r.userno 
+	select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+	from (select * from reservation where rstatus = '2' limit #{pageStart}, #{perPageNum}) r 
+				join user u on u.userno = r.userno 
 				join userpstatus up on up.userno = u.userno and up.no = r.no
 				join product p on p.pno = up.pno
 				join pairstatus ps on ps.pno = p.pno 
-				join airplane a on ps.ano = a.no 
-	where r.rstatus=2
-	<include refid="paySearch"/>
-	order by userno desc limit #{pageStart}, #{perPageNum}
+				join airplane a on ps.ano = a.no
+	where rstatus = '2' <include refid="paySearch"/>
+	order by userno desc
     </select>
 
 	<!-- 결제관리에서 검색한 결과 수  -->
     <select id="totalSearchCountPaymentUser" resultType="int">
-        select count(u.userno) from user u join reservation r on u.userno = r.userno 
-								  join userpstatus up on up.userno = u.userno and up.no = r.no
-								  join product p on p.pno = up.pno
-								  join pairstatus ps on ps.pno = p.pno 
-							      join airplane a on ps.ano = a.no
-        where r.rstatus=2 
-	    <include refid="paySearch"/>
+   	select count(r.userno)
+	from (select * from reservation where rstatus = '2') r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+				<if test='searchType!="ano"'>
+					and a.ano like '%21%'
+				</if>
+	where rstatus = '2' <include refid="paySearch"/>
+
+	
     </select>
 </mapper>
