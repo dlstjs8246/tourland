@@ -602,7 +602,7 @@ public class ManagerController {
 
 	// 예약관리
 	@RequestMapping(value = "reservationMgnList", method = RequestMethod.GET)
-	public String reservationMgnList(SearchCriteria cri,Model model) throws Exception {
+	public String reservationMgnList(SearchCriteria cri,Model model, String confirmSuccess) throws Exception {
 		
 		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
 		List<ReservationVO> list = reservationService.listReservationForMng(cri);
@@ -611,6 +611,8 @@ public class ManagerController {
 			list.get(i).getUserno().setUsername(user.getUsername());
 			list.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
 			list.get(i).getUserno().setUserpassport(user.getUserpassport());
+			
+		
 		}
 		
 		PageMaker pageMaker = new PageMaker();
@@ -618,6 +620,7 @@ public class ManagerController {
 		pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
+		model.addAttribute("confirmSuccess", confirmSuccess);
 		return "/manager/reservation/reservationMngList";
 	}
 	
@@ -640,6 +643,7 @@ public class ManagerController {
 				rs.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
 				rs.get(i).getUserno().setUserpassport(user.getUserpassport());
 				rs.get(i).getUserno().setUserid(user.getUserid());
+			
 			}
 			
 			Map<String,Object> map = new HashMap<>();
@@ -654,6 +658,19 @@ public class ManagerController {
 		
 		return entity;
 	}
+	//예약 확정
+	@RequestMapping(value="reservationConfirm", method = RequestMethod.GET)
+	public String reservationConfirm(String rno, Model model) throws Exception { 
+		ReservationVO rs = new ReservationVO();
+		rs.setNo(Integer.parseInt(rno));
+		rs.setRstatus("3");
+		reservationService.updateReservation(rs);
+		
+		model.addAttribute("confirmSuccess", "confirmSuccess");
+		
+		return "redirect:/manager/reservationMgnList";
+	}
+	
 
 	// 상품관리
 	@RequestMapping(value = "addProductForm", method = RequestMethod.GET)
