@@ -303,6 +303,43 @@ select count(r.userno)
 				join airplane a on ps.ano = a.no  
 	where rstatus = '2' and u.username = '정아름'
 	order by u.userno desc;
+
+
+select * from reservation;
+select * from airplane;
+
+select r.no, r.userno, u.username, p.pno, p.pname, a.ano, date_format(a.ddate, '%Y-%m-%d'), a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+	from (select * from reservation where rstatus = '2' limit 0, 10) r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+	where rstatus = '2'
+	order by userno desc;
+
+select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+	from (select * from reservation where rstatus = '2' limit 0, 10) r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+	where rstatus = '2'
+	order by userno asc;
+
+
+select count(u.userno)	
+from (select * from reservation where rstatus = '2') r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+	where rstatus = '2' and DATE(a.ddate) = '2020-04-30';
+	
+
+
 -- 하나 --------------------------------------------------------------------------------------------
 select * from reservation;
 SELECT * FROM notice;

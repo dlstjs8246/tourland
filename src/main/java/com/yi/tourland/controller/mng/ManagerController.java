@@ -2146,7 +2146,6 @@ public class ManagerController {
 			List<UserVO> list = userService.listSearchCriteriaPaymentUser(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			System.out.println(userService.totalSearchCountPaymentUser(cri));
 			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri));	
 			model.addAttribute("list", list);
 			model.addAttribute("cri", cri);

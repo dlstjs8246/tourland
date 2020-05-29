@@ -40,6 +40,7 @@ h4 {
 				</div>
 				<div class="box-body">
 					<select name="searchType" id="searchType">
+						<option value="total" ${cri.searchType ==total?'selected':''}>----------</option>
 						<option value="username" ${cri.searchType == 'username'? 'selected':'' }>고객명</option>
 						<option value="pname" ${cri.searchType == 'pname'? 'selected':'' }>상품명</option>
 						<option value="rdate" ${cri.searchType == 'rdate'? 'selected':'' }>결제일</option>
@@ -52,8 +53,6 @@ h4 {
 			<p id="datePick">
 				<span><i class="far fa-calendar-alt"></i> 출발일 </span> 
 				<span class="picker"><input type="date" class="datepicker" name="ddate" placeholder="날짜를 선택하려면 클릭." style="height:30px;" value="${cri.keyword2}"></span>
-				<span><i class="far fa-calendar-alt"></i> ~  도착일 </span> 
-				<span class="picker"><input type="date" class="datepicker" name="rdate" placeholder="날짜를 선택하려면 클릭." style="height:30px;" value="${cri.keyword3}"></span>
 				<span id="pickSearch"><a href="#"><i class="fas fa-search"></i></a></span>
 			</p>
 					<table class="table table-bordered" id="listTable">
@@ -72,19 +71,20 @@ h4 {
 									<td>${payment.product.pname }</td>
 									<td>${payment.product.air[0].ano }</td>
 									
-									<c:set var="str" value="${fn:substringBefore(payment.product.pname,'일')}"/>
-									<c:set var="tourdate" value="${fn:substringAfter(str,' ')}"/>
+                                <%--<c:set var="str" value="${fn:substringBefore(payment.product.pname,'일')}"/>
+									<c:set var="tourdate" value="${fn:substringAfter(str,' ')}"/> --%>
 									
-									<fmt:formatDate var="rdate" value="${payment.product.air[0].rdate}" pattern="yyyyMMdd"/>
+									<%-- <fmt:formatDate var="rdate" value="${payment.product.air[0].rdate}" pattern="yyyyMMdd"/> --%>
 									
-									<fmt:parseDate value="${rdate}" pattern="yyyyMMdd" var="rDate"/>
+								<%-- 	<fmt:parseDate value="${rdate}" pattern="yyyyMMdd" var="rDate"/> --%>
 									
 								<%-- 	<c:set var="calDate" value="${rDate.setDate(rDate.getDate()-tourDate)}"/> --%>
-									<c:set var="calDate" value="${rDate.setDate(rDate.getDate()-tourDate)}"/> 
+									<%-- <c:set var="calDate" value="${rDate.setDate(rDate.getDate()-tourDate)}"/>  --%>
 									
-									<fmt:formatDate var="ddate" value="${calDate}" pattern="yyyyMMdd"/>
-									<td><fmt:formatDate value="${payment.product.air[1].ddate==''?ddate:payment.product.air[1].ddate}" pattern="yyyy-MM-dd"/></td>
-									<td><fmt:formatDate value="${payment.product.air[0].rdate}" pattern="yyyy-MM-dd"/></td>
+									<%-- <fmt:formatDate var="ddate" value="${calDate}" pattern="yyyyMMdd"/> --%>
+									<%-- <td><fmt:formatDate value="${payment.product.air[1].ddate==''?ddate:payment.product.air[1].ddate}" pattern="yyyy-MM-dd"/></td>--%>	
+ 									<td class="start"><fmt:formatDate value="${payment.product.air[1].ddate!=' '? payment.product.air[1].ddate:payment.product.air[0].rdate}" pattern="yyyy-MM-dd"/></td>
+ 									<td class="end"><fmt:formatDate value="${payment.product.air[0].rdate}" pattern="yyyy-MM-dd"/></td>
 									<td><fmt:formatDate value="${payment.rdate}" pattern="yyyy-MM-dd"/></td>
 									<c:choose>
 										<c:when test="${payment.rstatus ==2}">
@@ -122,8 +122,7 @@ $("#btnSearch").click(function() {
 
 $("i.fas.fa-search").click(function(){
 	var ddate = $("input[name='ddate']").val();
-	var rdate = $("input[name='rdate']").val();
-	location.href = "${pageContext.request.contextPath}/manager/paymentList?searchType=checkDate"+"&keyword2="+ddate+"&keyword3="+rdate;
+	location.href = "${pageContext.request.contextPath}/manager/paymentList?searchType=checkDate"+"&keyword2="+ddate;
  })
 </script>
 
