@@ -10,8 +10,9 @@
 	h4 { font-weight: bold;}
 	.hiddenuserno { display: none;}
 	.hiddenrno { display: none;}
-</style>     
-<script>
+
+</style>         
+<script>  
 	
 	function reservationDetail(userno, pno, rno){
 		
@@ -198,7 +199,6 @@
     }
 	
 	$(function(){
-		
 		//예약 상세 버튼
 		$(".modalbtn").click(function(){
 			var userno = $(this).parent().parent().find(".hiddenuserno").html();
@@ -206,10 +206,16 @@
 			var rno = $(this).parent().parent().find(".rno").html();
 			reservationDetail(userno, pno, rno);		
 		})
-		
+		//예약 확정 버튼
 		$("#reservConfirm").click(function(){
 			var rno = $(".hiddenrno").html();
-			location.href="reservationConfirm?rno="+rno;
+			location.href="reservationConfirm?rno="+rno;  
+		})
+		//키워드 검색 버튼 
+		$("#btnSearch").click(function(){
+			var searchType = $("#searchType").val();
+			var keyword = $("#keywordInput").val();
+			location.href = "reservationMgnList?searchType="+searchType+"&keyword="+keyword;
 		})
 	})
 </script>
@@ -237,13 +243,9 @@
 						<option value="no">번호</option>    
 						<option value="name">고객명</option>
 						<option value="pname">상품명</option>  
-						<option value="ano">항공편</option>
 					</select>
 					<input type="text" name="keyword" id="keywordInput">
 					<button id="btnSearch">Search</button>
-				</div>
-				<div class="box-body">
-				
 				</div>
 				<div class="box-body">
 					<table class="table table-bordered">
@@ -257,35 +259,43 @@
 							<th>예약 상태</th>
 							<th>예약 관리</th>
 						</tr>  
-					<c:forEach items="${list }" var="r">
+					<c:if test="${noList != null}">
 						<tr>
-								<td class="rno">${r.no}</td>
-								<td>${r.userno.username } <span class="hiddenuserno">${r.userno.userno }</span></td>
-								<td>${r.product.pname } <span class="hidden">${r.product.pno }</span></td>
-								<c:forEach var="f" items="${r.product.air}" begin="0" end="0">
-								<td>${f.ano }</td>
+							<td colspan="8" class="red">불러올 예약이 없습니다.</td>
+						</tr>
+					</c:if>
+					<c:if test="${yesList != null }">
+						<c:forEach items="${list }" var="r">
+							<tr>
+									<td class="rno">${r.no}</td>
+									<td>${r.userno.username } <span class="hiddenuserno">${r.userno.userno }</span></td>
+									<td>${r.product.pname } <span class="hidden">${r.product.pno }</span></td>
+									<c:forEach var="f" items="${r.product.air}" begin="0" end="0">
+									<td>${f.ano }</td>
+									</c:forEach>
+									<c:forEach var="f" items="${r.product.air}" begin="0" end="0">
+									<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
+									</c:forEach>
+								<c:forEach var="f" items="${r.product.air}" begin="1" end="1">
+									<fmt:formatDate var="enddate" value="${f.rdate}" pattern="yyyy-MM-dd"/>
 								</c:forEach>
-								<c:forEach var="f" items="${r.product.air}" begin="0" end="0">
-								<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
-								</c:forEach>
-							<c:forEach var="f" items="${r.product.air}" begin="1" end="1">
-								<fmt:formatDate var="enddate" value="${f.rdate}" pattern="yyyy-MM-dd"/>
-							</c:forEach>
-								
-								<td>${startdate }</td>	
-								<td>${enddate }</td>
-								<c:if test="${r.rstatus=='1' }">
-									<td class="red">미결제</td>
-								</c:if>
-								<c:if test="${r.rstatus=='2' }">
-									<td class="blue">결제 완료</td>
-								</c:if>
-								<c:if test="${r.rstatus=='3' }">
-									<td class="yellow">예약 확정</td>
-								</c:if>
-								<td><button type="button" class="btn btn-info btn-lg modalbtn" data-toggle="modal" data-target="#myModal">예약 상세</button></td>
-							</tr>
-					</c:forEach>
+									
+									<td>${startdate }</td>	
+									<td>${enddate }</td>
+									<c:if test="${r.rstatus=='1' }">
+										<td class="red">미결제</td>
+									</c:if>
+									<c:if test="${r.rstatus=='2' }">
+										<td class="blue">결제 완료</td>
+									</c:if>
+									<c:if test="${r.rstatus=='3' }">
+										<td class="yellow">예약 확정</td>
+									</c:if>
+									<td><button type="button" class="btn btn-info btn-lg modalbtn" data-toggle="modal" data-target="#myModal">예약 상세</button></td>
+								</tr>
+						</c:forEach>
+						
+					</c:if>
 					</table>  
 					
 				</div>    

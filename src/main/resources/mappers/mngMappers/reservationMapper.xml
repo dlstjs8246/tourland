@@ -139,6 +139,19 @@
 <delete id="deleteReservation">
 	delete from reservation where no = #{no} 
 </delete>
+
+<sql id="search2">
+		<if test='searchType=="no"'>
+			where rv.no = #{keyword}
+		</if>
+		<if test='searchType=="name"'>
+			where us.username like concat('%',#{keyword},'%') 
+		</if>
+		<if test='searchType=="pname"'>
+			where p.pname like concat('%',#{keyword},'%') 
+		</if>
+	</sql>
+
 <!--관리자 페이지 예약 관리 리스트(고객 상세 정보 포함)  -->
 <select id="listReservationForMng" resultMap="reservation">
 	select rstatus, rv.*,us.userno, us.username, us.userbirth, us.userpassport,
@@ -153,6 +166,7 @@
 		left join photelstatus h on p.pno = h.pno left join hotel h2 on h.hno = h2.no
 		left join ptourstatus t on p.pno = t.pno left join tour t2 on t.tno = t2.no
 		left join prentstatus r on p.pno = r.pno left join rentcar r2 on r.rno = r2.no
+		<include refid="search2"/>  
 </select>
 <!--관리자 페이지 예약 관리 - 예약상세 modal Ajax 특정 고객의 특정 상품번호 검색 -->
 <select id="listReservationForModal" resultMap="reservation">

@@ -603,25 +603,32 @@ public class ManagerController {
 	// 예약관리
 	@RequestMapping(value = "reservationMgnList", method = RequestMethod.GET)
 	public String reservationMgnList(SearchCriteria cri,Model model, String confirmSuccess) throws Exception {
-		
+	
 		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
 		List<ReservationVO> list = reservationService.listReservationForMng(cri);
-		for(int i =0; i<list.size(); i++) {
-			UserVO user = userService.readByNoUser(list.get(i).getUserno().getUserno());
-			list.get(i).getUserno().setUsername(user.getUsername());
-			list.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
-			list.get(i).getUserno().setUserpassport(user.getUserpassport());
+		if(list.size()==0) {
+			model.addAttribute("noList", "noList");
+			return "/manager/reservation/reservationMngList";
+		}else {
+			for(int i =0; i<list.size(); i++) {
+				System.out.println(list.get(i).getProduct().getAir());
+				UserVO user = userService.readByNoUser(list.get(i).getUserno().getUserno());
+				list.get(i).getUserno().setUsername(user.getUsername());
+				list.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
+				list.get(i).getUserno().setUserpassport(user.getUserpassport());
+			}  
 			
-		
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
+			model.addAttribute("yesList", "yesList");
+			model.addAttribute("list",list);
+			model.addAttribute("pageMaker",pageMaker);
+			model.addAttribute("confirmSuccess", confirmSuccess);
+			return "/manager/reservation/reservationMngList";
 		}
-		
-		PageMaker pageMaker = new PageMaker();
-		pageMaker.setCri(cri);
-		pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
-		model.addAttribute("list",list);
-		model.addAttribute("pageMaker",pageMaker);
-		model.addAttribute("confirmSuccess", confirmSuccess);
-		return "/manager/reservation/reservationMngList";
+	
+	
 	}
 	
 	//예약 상세 모달 Ajax
