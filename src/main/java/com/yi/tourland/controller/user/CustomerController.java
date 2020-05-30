@@ -438,7 +438,7 @@ public class CustomerController {
 	
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
-	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model) throws SQLException {
+	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow) throws SQLException {
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
 		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
@@ -447,8 +447,23 @@ public class CustomerController {
 		pageMaker.setTotalCount(reservationService.totalSearchReservationCountByUserNo(cri, vo));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
+		if(payNow != null) {
+			model.addAttribute("paySuccess", "paySuccess");
+		}
 		return "/user/mypage/tourlandMyReserv"; 
 	}
+	//마이 페이지 - 내 예약 현황 - 결제
+	@RequestMapping(value="tourlandMyReservPayNow", method=RequestMethod.GET)
+	public String tourlandMyReservPayNowSearch(String rno, Model model) throws SQLException {
+		ReservationVO rs = new ReservationVO();
+		rs.setNo(Integer.parseInt(rno));
+		rs.setRstatus("2");
+		reservationService.updateReservation(rs);
+		model.addAttribute("payNow", "payNow");
+		return "redirect:/customer/tourlandMyReserv"; 
+	}
+	
+	
 	//상품 리뷰    
 	@RequestMapping(value="tourlandMyReview", method=RequestMethod.GET)
 	public String tourlandMyReview() throws SQLException {

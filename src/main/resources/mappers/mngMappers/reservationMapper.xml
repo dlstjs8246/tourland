@@ -110,7 +110,7 @@
 	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from reservation where userno = #{u.userno} and rstatus = '1' order by no desc limit #{cri.pageStart}, #{cri.perPageNum}) rv 
+		from (select * from reservation where userno = #{u.userno} and rstatus = '1' or rstatus = '2' or rstatus = '3' and userno = #{u.userno} order by no desc limit #{cri.pageStart}, #{cri.perPageNum}) rv 
 		join userpstatus u on rv.userno = u.userno and rv.no = u.no join product p on u.pno = p.pno
 		left join pairstatus a on p.pno = a.pno left join airplane a2 on a.ano = a2.no
 		left join photelstatus h on p.pno = h.pno left join hotel h2 on h.hno = h2.no
