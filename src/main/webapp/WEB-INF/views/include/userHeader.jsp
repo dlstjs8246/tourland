@@ -163,7 +163,8 @@ function getKRWeather() {
 			success : function(rs) {
 				var $img1 = $("<i>").addClass("fas fa-cloud cloud");
 				var $img2 = $("<i>").addClass("fas fa-sun cloud");
-				
+				var $img3 = $("<i>").addClass("fas fa-umbrella cloud");
+				 
 				var cloudSunny = rs.list[1].weather[0].description;
 				if(cloudSunny =="scattered clouds" || cloudSunny =="few clouds" || cloudSunny =="overcast clouds"|| cloudSunny =="broken clouds"){
 					cloudSunny = "구름 조금";
@@ -171,7 +172,7 @@ function getKRWeather() {
 				}else if(cloudSunny =="clear sky"){
 					cloudSunny = "맑음";
 					$("#krw").find(".weatherImgBox").append($img2);
-				}else if(cloudSunny =="light rain"){
+				}else if(cloudSunny =="light rain" || cloudSunny == "moderate rain"){
 					cloudSunny = "비 조금";
 					$("#krw").find(".weatherImgBox").append($img3);
 					
@@ -199,7 +200,7 @@ function getJPWeather() {
 				}else if(cloudSunny =="clear sky"){
 					cloudSunny = "맑음";
 					$("#jpw").find(".weatherImgBox").append($img2);
-				}else if(cloudSunny =="light rain"){
+				}else if(cloudSunny =="light rain" || cloudSunny == "moderate rain"){
 					cloudSunny = "비 조금";
 					$("#jpw").find(".weatherImgBox").append($img3);
 					
