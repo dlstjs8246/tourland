@@ -340,6 +340,12 @@ from (select * from reservation where rstatus = '2') r
 	
 
 
+select * from reservation;
+select * from userpstatus;
+select * from product;
+
+delete from userpstatus where no=1;
+
 -- 하나 --------------------------------------------------------------------------------------------
 select * from reservation;
 SELECT * FROM notice;

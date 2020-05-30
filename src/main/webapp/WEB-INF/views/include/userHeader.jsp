@@ -164,8 +164,8 @@ function getKRWeather() {
 				var $img1 = $("<i>").addClass("fas fa-cloud cloud");
 				var $img2 = $("<i>").addClass("fas fa-sun cloud");
 				var $img3 = $("<i>").addClass("fas fa-umbrella cloud");
-				 
 				var cloudSunny = rs.list[1].weather[0].description;
+				
 				if(cloudSunny =="scattered clouds" || cloudSunny =="few clouds" || cloudSunny =="overcast clouds"|| cloudSunny =="broken clouds"){
 					cloudSunny = "구름 조금";
 					$("#krw").find(".weatherImgBox").append($img1);

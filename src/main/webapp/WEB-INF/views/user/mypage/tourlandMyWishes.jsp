@@ -19,13 +19,14 @@
 	#info { font-size: 13px; color: #929292; 
 			margin-left: 10px;  }	
 			
-	table#reserv { width: 950px;  
+	table#reserv { width: 1090px;  
 				   border-collapse: collapse; 
 				   margin: 40px; 
-				   font-size: 14px; }
+				   font-size: 13px; }
 	table#reserv th, tr, td { border-top: 1px solid gray;
 							  border-bottom: 1px solid gray;
-						     text-align: center; }
+						     text-align: center;
+						     padding: 3px; }
 	table#reserv th { background: #F2F2F2; height: 40px; }						     		
 	table#reserv img { width: 100px; height: 70px; padding: 5px; }
 	.red { font-weight: bold;  color: maroon; }
@@ -44,13 +45,13 @@
 					
 					<table id="reserv">
 						<tr>
-							<th>상품 번호</th>
-							<th>상품 유효기간</th>
+							<th>번호</th>
+							<th>유효기간</th>
 							<th colspan="2">상품</th>
 							<th>출발일</th>
 							<th>도착일</th>
 							<th>예약 상태</th>
-							<th id="btns">장바구니 관리</th>
+							<th id="btns">관리</th>
 						</tr>
 						<c:forEach var="cart" items="${list}">
 						<tr>
@@ -75,10 +76,20 @@
 		</section>
 		<script>
 			$("#delBtns").click(function(){
-				var con = confirm("삭제하시겠습니까?");
-				
-				if(con){
-					
+				alert("이까지 들어오나");
+				var pno = "${cart.product.pno}";
+				var del = confirm("삭제하시겠습니까?");
+				if(!del){
+					return false;
+				}
+				location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDelete?pno="+280;
+				alert("삭제가 완료되었습니다.");
+			})
+			
+			$("#reservBtns").click(function(){
+				var res = confirm("예약하시겠습니까?");
+				if(!res){
+					return false;
 				}
 				
 			})

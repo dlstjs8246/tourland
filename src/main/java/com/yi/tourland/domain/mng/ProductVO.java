@@ -118,7 +118,8 @@ public class ProductVO {
 	public void setPdiv(boolean pdiv) {
 		this.pdiv = pdiv;
 	}
-
+	
+	
 	@Override
 	public String toString() {
 		return String.format(

@@ -34,6 +34,7 @@ public interface ProductDao {
 	public void deletepTourStatus(ProductVO pvo) throws SQLException;
 	public void deletepRentStatus(ProductVO pvo) throws SQLException;
 	public void deleteProduct(ProductVO vo) throws SQLException;
+	public void deleteProductInUserCart(ProductVO vo,ReservationVO rvo,UserVO uvo) throws SQLException;
 	public int totalCountBySearchProduct(SearchCriteria cri) throws SQLException;
 	public int totalCountBySearchProductDomestic(SearchCriteria cri) throws SQLException;
 	public int totalCountBySearchProductChina(SearchCriteria cri) throws SQLException;

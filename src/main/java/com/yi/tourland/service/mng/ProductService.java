@@ -253,5 +253,11 @@ public class ProductService {
 		dao.insertpUserStatus(cart,uvo, product);
 	}
 	
-	
+	public void deleteProductInUserCart(ProductVO product, UserVO uvo, ReservationVO rvo) throws Exception{
+		dao.deleteProductInUserCart(product, rvo, uvo);
+		product.setPdiv(false);
+		dao.updateProduct(product);
+		reservDao.deleteReservation(rvo);
+		dao.deleteProduct(product);
+	}
 }

@@ -71,15 +71,15 @@ h4 {
 									<td>${payment.product.pname }</td>
 									<td>${payment.product.air[0].ano }</td>
 									
-                                <%--<c:set var="str" value="${fn:substringBefore(payment.product.pname,'일')}"/>
-									<c:set var="tourdate" value="${fn:substringAfter(str,' ')}"/> --%>
+                                <c:set var="str" value="${fn:substringBefore(payment.product.pname,'일')}"/>
+								<c:set var="tourdate" value="${fn:substringAfter(str,' ')}"/>
+								
 									
-									<%-- <fmt:formatDate var="rdate" value="${payment.product.air[0].rdate}" pattern="yyyyMMdd"/> --%>
+								<fmt:formatDate var="rdate" value="${payment.product.air[0].rdate}" pattern="yyyyMMdd"/>
+								<fmt:parseDate value="${rdate}" pattern="yyyyMMdd" var="resDate"/>
 									
-								<%-- 	<fmt:parseDate value="${rdate}" pattern="yyyyMMdd" var="rDate"/> --%>
-									
-								<%-- 	<c:set var="calDate" value="${rDate.setDate(rDate.getDate()-tourDate)}"/> --%>
-									<%-- <c:set var="calDate" value="${rDate.setDate(rDate.getDate()-tourDate)}"/>  --%>
+								<c:set var="calDate" value="${resDate.setDate(resDate.getDate()-tourdate)}"/>
+								<c:out value="${calDate}"/>
 									
 									<%-- <fmt:formatDate var="ddate" value="${calDate}" pattern="yyyyMMdd"/> --%>
 									<%-- <td><fmt:formatDate value="${payment.product.air[1].ddate==''?ddate:payment.product.air[1].ddate}" pattern="yyyy-MM-dd"/></td>--%>	

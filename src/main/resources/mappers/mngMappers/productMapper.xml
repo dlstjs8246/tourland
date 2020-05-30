@@ -20,6 +20,10 @@
 	<insert id="insertpUserStatus">
 		insert into userpstatus values(#{r.no},#{u.userno},#{p.pno})
 	</insert>
+	
+	<delete id="deletepUserStatus">
+		delete from userpstatus where no=#{p.pno}
+	</delete>
 	<resultMap type="ProductVO" id="product">
 		<id property="pno" column="pno"/>
 		<result property="pname" column="pname"/>
