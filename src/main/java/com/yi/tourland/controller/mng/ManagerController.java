@@ -2113,10 +2113,7 @@ public class ManagerController {
 			return "/manager/board/planBoardDetail";
 		}
 
-		//달려져있는 답변내용 수정,삭제 하는 페이지
-
 		//답변내용 달기
-
 		@RequestMapping(value = "planBoardModify", produces = "application/text; charset=utf8", method = RequestMethod.GET)
 		public String planBoardModify(PlanBoardVO vo, SearchCriteria cri, Model model,int no, String respond) throws Exception {
 			vo = planBoardService.readByNoPlanBoard(no);

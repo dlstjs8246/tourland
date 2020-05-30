@@ -163,6 +163,7 @@ function getKRWeather() {
 			success : function(rs) {
 				var $img1 = $("<i>").addClass("fas fa-cloud cloud");
 				var $img2 = $("<i>").addClass("fas fa-sun cloud");
+				var $img3 = $("<i>").addClass("fas fa-umbrella cloud");
 				
 				var cloudSunny = rs.list[1].weather[0].description;
 				if(cloudSunny =="scattered clouds" || cloudSunny =="few clouds" || cloudSunny =="overcast clouds"|| cloudSunny =="broken clouds"){
