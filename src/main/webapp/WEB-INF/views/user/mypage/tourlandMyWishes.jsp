@@ -32,8 +32,8 @@
 	.red { font-weight: bold;  color: maroon; }
 	.blue button { width: 80px; height: 25px; border: none; margin-top: 10px; color: #fff; }
 	#btns{ width: 100px;}
-	#reservBtns { background: goldenrod;  }
-	#delBtns { background: steelblue;  }		    
+	.reservBtns { background: goldenrod;  }
+	.delBtns { background: steelblue;  }		    
 </style>
 <body>   
 	<%@ include file="../../include/userHeader.jsp"%>
@@ -55,7 +55,7 @@
 						</tr>
 						<c:forEach var="cart" items="${list}">
 						<tr>
-							<td>P${cart.product.pno}</td>
+							<td class="pno">P${cart.product.pno}</td>
 							<td><fmt:formatDate value="${cart.product.pexpire}" pattern="yyyy-MM-dd"/></td>
 							<td><img src="displayFile/product?filename=${cart.product.pic}"></td>
 							<td>${cart.product.pname}</td>
@@ -67,29 +67,31 @@
 							</c:forEach>
 							<td>${startdate}</td>
 							<td>${enddate}</td>
-							<td class="${cart.rstatus=='0'?'red':''}">${cart.rstatus=='0'?'예약가능':'예약됨'}</td>
-							<td class="blue"><button id="reservBtns">예약하기</button><button id="delBtns">삭제하기</button></td>    
+							<td class="${cart.rstatus=='0'?'red':''}">${cart.rstatus=='0'?'예약가능':'예약완료'}</td>
+							<td class="blue"><button class="reservBtns">예약하기</button><button class="delBtns">삭제하기</button></td>    
 						</tr>
 						</c:forEach>
+						<c:if test="${success!=null }">
+							<script>
+								alert("삭제가 완료 되었습니다.");
+							</script>
+						</c:if>
 					</table>
 				</div>
 		</section>
 		<script>
-			$("#delBtns").click(function(){
-				alert("이까지 들어오나");
-				var pno = "${cart.product.pno}";
+			$(".delBtns").click(function(){
+				var pnoStr = $(this).parent().parent().find(".pno").html();
+				var pno = pnoStr.substring(1);
 				var del = confirm("삭제하시겠습니까?");
-				if(!del){
-					return false;
+				if(del){
+					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDelete?pno="+pno;
 				}
-				location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDelete?pno="+280;
-				alert("삭제가 완료되었습니다.");
 			})
 			
-			$("#reservBtns").click(function(){
+			$(".reservBtns").click(function(){
 				var res = confirm("예약하시겠습니까?");
-				if(!res){
-					return false;
+				if(res){
 				}
 				
 			})

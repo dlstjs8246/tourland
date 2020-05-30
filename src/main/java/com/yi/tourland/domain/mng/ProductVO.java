@@ -12,7 +12,7 @@ public class ProductVO {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date pexpire;
 	private int pprice;
-	private String pic;
+	private String ppic;
 	private boolean pdiv;
 	private List<AirplaneVO> air;
 	private List<HotelVO> hotel;
@@ -32,7 +32,7 @@ public class ProductVO {
 		this.pcontent = pcontent;
 		this.pexpire = pexire;
 		this.pprice = pprice;
-		this.pic = pic;
+		this.ppic = pic;
 		this.pdiv = pdiv;
 	}
 	
@@ -44,7 +44,7 @@ public class ProductVO {
 		this.pcontent = pcontent;
 		this.pexpire = pexire;
 		this.pprice = pprice;
-		this.pic = pic;
+		this.ppic = pic;
 		this.pdiv = pdiv;
 		this.air = air;
 		this.hotel = hotel;
@@ -77,10 +77,10 @@ public class ProductVO {
 		this.pprice = pprice;
 	}
 	public String getPic() {
-		return pic;
+		return ppic;
 	}
 	public void setPic(String pic) {
-		this.pic = pic;
+		this.ppic = pic;
 	}
 	public List<AirplaneVO> getAir() {
 		return air;
@@ -124,7 +124,7 @@ public class ProductVO {
 	public String toString() {
 		return String.format(
 				"productVO [pno=%s, pname=%s, pcontent=%s, pexire=%s, pprice=%s, pic=%s, pdiv=%s, air=%s, hotel=%s, tour=%s, rentcar=%s]",
-				pno, pname, pcontent, pexpire, pprice, pic, pdiv, air, hotel, tour, rentcar);
+				pno, pname, pcontent, pexpire, pprice, ppic, pdiv, air, hotel, tour, rentcar);
 	}
 	
 }

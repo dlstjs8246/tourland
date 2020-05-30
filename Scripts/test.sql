@@ -342,9 +342,12 @@ from (select * from reservation where rstatus = '2') r
 
 select * from reservation;
 select * from userpstatus;
+
 select * from product;
 
-delete from userpstatus where no=1;
+delete 
+from userpstatus u join reservation r on u.no=r.no
+where no=10;
 
 -- 하나 --------------------------------------------------------------------------------------------
 select * from reservation;

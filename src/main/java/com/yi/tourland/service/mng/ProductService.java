@@ -88,6 +88,7 @@ public class ProductService {
 	}
 	@Transactional
 	public void deleteProduct(ProductVO pvo) throws SQLException {
+		dao.deleteUserpStatus(pvo);
 		dao.deletepAirStatus(pvo);
 		dao.deletepHotelStatus(pvo);
 		dao.deletepTourStatus(pvo);
@@ -253,11 +254,9 @@ public class ProductService {
 		dao.insertpUserStatus(cart,uvo, product);
 	}
 	
-	public void deleteProductInUserCart(ProductVO product, UserVO uvo, ReservationVO rvo) throws Exception{
-		dao.deleteProductInUserCart(product, rvo, uvo);
-		product.setPdiv(false);
-		dao.updateProduct(product);
+	public void deleteProductInUserCart(ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception{
+		dao.deleteUserpStatus(pvo);
+		rvo.setNo(reservDao.totalSearchReservationCount(cri));
 		reservDao.deleteReservation(rvo);
-		dao.deleteProduct(product);
 	}
 }

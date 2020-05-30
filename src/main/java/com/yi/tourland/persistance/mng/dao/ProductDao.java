@@ -29,12 +29,12 @@ public interface ProductDao {
 	public void updatepHotelStatus(ProductVO pvo, HotelVO hvo) throws SQLException;
 	public void updatepTourStatus(ProductVO pvo, TourVO tvo) throws SQLException;
 	public void updatepRentStatus(ProductVO pvo, RentcarVO rvo) throws SQLException;
+	public void deleteUserpStatus(ProductVO pvo) throws SQLException;
 	public void deletepAirStatus(ProductVO pvo) throws SQLException;
 	public void deletepHotelStatus(ProductVO pvo) throws SQLException;
 	public void deletepTourStatus(ProductVO pvo) throws SQLException;
 	public void deletepRentStatus(ProductVO pvo) throws SQLException;
 	public void deleteProduct(ProductVO vo) throws SQLException;
-	public void deleteProductInUserCart(ProductVO vo,ReservationVO rvo,UserVO uvo) throws SQLException;
 	public int totalCountBySearchProduct(SearchCriteria cri) throws SQLException;
 	public int totalCountBySearchProductDomestic(SearchCriteria cri) throws SQLException;
 	public int totalCountBySearchProductChina(SearchCriteria cri) throws SQLException;
@@ -52,5 +52,6 @@ public interface ProductDao {
 	public List<ProductVO> tourlandProductJapanSearchLowPriceList(SearchCriteria cri) throws SQLException; 
 	// 상품 리스트 검색 박스 Ajax "낮은 가격 순" (제주) 
 	public List<ProductVO> tourlandProductKRSearchLowPriceList(SearchCriteria cri) throws SQLException;
+	
 	
 }
