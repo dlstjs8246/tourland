@@ -53,10 +53,10 @@
        select  count(no) from rentcar 
     </select>
 
-<!-- 검색 기능 날짜 검색은 추후에 200503 -->
+<!-- 검색 기능 날짜 검색은 -->
  <sql id="search">
       <where>
-      		pdiv = #{pdiv}
+      		pdiv = 0 
 	      <if test="searchType=='rentcarType'.toString()">
 	       and cdiv like CONCAT('%',#{keyword},'%')
 	      </if>

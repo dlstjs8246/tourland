@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mappers.mngMappers.UserMapper">
-
+<resultMap type="ReservationVO" id="userpayment">
+	<id property="no" column="no"/>
+		<result property="rstatus" column="rstatus"/>
+ 		<result property="rdate" column="reservdate"/>
+ 	<association property="userno" column="userno" javaType="UserVO">
+ 		<result property="username" column="username"/>
+ 	</association>
+ 	<association property="product" column="pno" javaType="ProductVO">
+ 		<id property="pno" column="pno"/>
+ 		<result property="pname" column="pname"/>
+ 		<collection property="air" ofType="AirplaneVO">
+ 			<result property="ano" column="ano"/>
+ 			<result property="ddate" column="ddate"/>
+			<result property="rdate" column="returndate"/>
+ 		</collection>
+ 	</association>
+</resultMap> 
 <!-- 유저 추가  -->
   <insert id="insertUser" parameterType="UserVO"> 
      insert into user(userno, username, userbirth, usertel, useraddr, userpassport,  userid, userpass, usersecess) values
@@ -52,7 +68,7 @@
 <!-- 검색 기능 -->
  <sql id="search">
   <where>
-      usersecess=#{usersecess}
+  	 usersecess=#{usersecess}
           <if test="cri.searchType=='userId'.toString()">
 	       and userid like CONCAT('%',#{cri.keyword},'%')
 	      </if>
@@ -61,7 +77,25 @@
 	      </if>
   </where>
  </sql>
-
+ 
+  <sql id="paySearch">
+  		<if test="searchType=='username'.toString()">
+			and u.username like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test='searchType=="pname".toString()'>
+			and p.pname like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test='searchType=="ano".toString()'>
+			and a.ano like CONCAT('%',#{keyword},'%')
+		</if>
+        <if test="searchType=='rdate'.toString()">
+	       and DATE(r.rdate)=#{keyword}
+	    </if>
+	    <if test='searchType=="checkDate".toString()'>
+	       and DATE(a.ddate)=#{keyword2}
+	     </if> 
+ </sql>
+ 
 <!-- 검색으로 나타나는 리스트 부분 -->
     <select id="listSearchCriteriaUser" resultType="UserVO">
       select * from user 
@@ -79,21 +113,36 @@
 	<select id="readByNameBirthTel" resultType="UserVO">
 		select *
 		from user
-		where username=#{username} and userbirth=#{userbirth} and usertel=#{usertel};
+		where username=#{username} and userbirth=#{userbirth} and usertel=#{usertel}
 	</select>
 	
 	
 	<!--결제관리에 나올 리스트-->
-    <select id="listSearchCriteriaPaymentUser" resultType="UserVO">
-      select * from user 
-      <include refid="search"></include>
-      order by userno desc  limit #{cri.pageStart}, #{cri.perPageNum}
+    <select id="listSearchCriteriaPaymentUser" resultMap="userpayment">
+select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+	from (select * from reservation where rstatus = '2' limit #{pageStart}, #{perPageNum}) r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+	where rstatus = '2' <include refid="paySearch"/>
+	order by userno asc
     </select>
-    
-    	<!-- 결제관리에서 검색한 결과 수  -->
-	    <select id="totalSearchCountPaymentUser" resultType="int">
-	        select  count(userno) from user
-		    <include refid="search"/>  
-	    </select>
-    
+
+	<!-- 결제관리에서 검색한 결과 수  -->
+    <select id="totalSearchCountPaymentUser" resultType="int">
+   	select count(r.userno)
+	from (select * from reservation where rstatus = '2') r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+				<if test='searchType!="ano"'>
+					and a.ano like '%21%'
+				</if>
+	where rstatus = '2'
+	<include refid="paySearch"/>
+    </select>
 </mapper>

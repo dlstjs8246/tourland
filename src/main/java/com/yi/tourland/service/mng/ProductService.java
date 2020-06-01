@@ -88,6 +88,7 @@ public class ProductService {
 	}
 	@Transactional
 	public void deleteProduct(ProductVO pvo) throws SQLException {
+		dao.deleteUserpStatus(pvo);
 		dao.deletepAirStatus(pvo);
 		dao.deletepHotelStatus(pvo);
 		dao.deletepTourStatus(pvo);
@@ -229,6 +230,7 @@ public class ProductService {
 		reservDao.insertReservation(vo);
 		dao.insertpUserStatus(vo,uvo,upvo);
 	}
+	
 	@Transactional
 	public void insertProductInUserCart(ProductVO product, UserVO uvo, SearchCriteria cri) throws Exception {
 		System.out.println("들어옴");
@@ -246,10 +248,15 @@ public class ProductService {
 		for (int i=0; i<product.getRentcar().size(); i++) {
 			rdao.insertRentcar(product.getRentcar().get(i));
 		}
-		
 		insertProduct(product);
-		ReservationVO cart = new ReservationVO(reservDao.listReservation(cri).size(), uvo ,Integer.toString(0));
+		ReservationVO cart = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo ,Integer.toString(0));
 		reservDao.insertReservation(cart);
 		dao.insertpUserStatus(cart,uvo, product);
+	}
+	
+	public void deleteProductInUserCart(ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception{
+		dao.deleteUserpStatus(pvo);
+		rvo.setNo(reservDao.totalSearchReservationCount(cri));
+		reservDao.deleteReservation(rvo);
 	}
 }

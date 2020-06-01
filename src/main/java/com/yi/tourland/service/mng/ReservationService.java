@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.UserVO;
@@ -40,5 +41,13 @@ public class ReservationService {
 	}
 	public void deleteReservation(ReservationVO vo) throws SQLException {
 		dao.deleteReservation(vo);
+	}
+	//관리자 페이지 - 예약 관리
+	public List<ReservationVO> listReservationForMng(SearchCriteria cri) throws SQLException{
+		return dao.listReservationForMng(cri);
+	}
+	//관리자 페이지 - 예약 관리 - 예약 상세 modal Ajax
+	public List<ReservationVO> listReservationForModal(String userno, String pno) throws SQLException {
+		return dao.listReservationForModal(userno, pno);
 	}
 }

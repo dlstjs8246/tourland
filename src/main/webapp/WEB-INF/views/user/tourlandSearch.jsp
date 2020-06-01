@@ -197,6 +197,12 @@ div.pkgInfoBox .pkgTitle {
  .whereLi{
     cursor:pointer; 
  }
+ .eventBox:hover{
+  cursor: pointer;
+  background-color: lightyellow; 
+  height:60px;
+ }
+ 
 </style>
 <body>   
 	<%@ include file="../include/userHeader.jsp"%>
@@ -417,6 +423,11 @@ div.pkgInfoBox .pkgTitle {
 			
 		})
 		
+		$(document).on("click",".FAQContent",function(){
+		$(this).css("display","none");
+		return false;
+	})
+		
 	//이벤트
 	//각각의 이벤트를 클릭할 때 상세페이지로 이동
 	  $(".eventBox").click(function(){
@@ -465,11 +476,11 @@ div.pkgInfoBox .pkgTitle {
     	 var keyword = $("#mainSearchKeyword").val();
  	     var keyword2= $("#secondSearchKeyword").val();
     	  if(wherewhere == "china"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/china?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchchina";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductChinaList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchchina";
     	  }else if(wherewhere == "japan"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/japan?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjapan";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductJPList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjapan";
     	  }else if(wherewhere == "jeju"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/jeju?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjeju";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductKRList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjeju";
     	  }
       })
     	
