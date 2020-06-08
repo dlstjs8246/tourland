@@ -2211,4 +2211,11 @@ public class ManagerController {
 			}
           return null;
 		}
+		
+		//관리자 메인화면에 나올 통계
+		@RequestMapping(value="statistics", method=RequestMethod.GET)
+		public String mainStatistics() throws Exception { 
+			return "/manager/main/statistics";
+		}
+		
 }
