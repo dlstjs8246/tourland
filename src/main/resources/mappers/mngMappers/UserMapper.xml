@@ -91,9 +91,6 @@
         <if test="searchType=='rdate'.toString()">
 	       and DATE(r.rdate)=#{keyword}
 	    </if>
-	    <if test='searchType=="checkDate".toString()'>
-	       and DATE(a.ddate)=#{keyword2}
-	     </if> 
  </sql>
  
 <!-- 검색으로 나타나는 리스트 부분 -->
@@ -119,15 +116,36 @@
 	
 	<!--결제관리에 나올 리스트-->
     <select id="listSearchCriteriaPaymentUser" resultMap="userpayment">
-select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
-	from (select * from reservation where rstatus = '2' limit #{pageStart}, #{perPageNum}) r 
+    <if test='searchType!="checkDate"'>
+    	select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+		from (select * from reservation where rstatus = '2' limit #{pageStart}, #{perPageNum}) r 
 				join user u on u.userno = r.userno 
 				join userpstatus up on up.userno = u.userno and up.no = r.no
 				join product p on p.pno = up.pno
 				join pairstatus ps on ps.pno = p.pno 
 				join airplane a on ps.ano = a.no
-	where rstatus = '2' <include refid="paySearch"/>
-	order by userno asc
+		where rstatus = '2' <include refid="paySearch"/>
+		order by a.no asc
+    </if>
+	<if test='searchType=="checkDate"'>
+		select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+		from (select * from reservation where rstatus = '2') r 
+						join user u on u.userno = r.userno 
+						join userpstatus up on up.userno = u.userno and up.no = r.no
+						join product p on p.pno = up.pno
+						join pairstatus ps on ps.pno = p.pno 
+						join airplane a on ps.ano = a.no
+		where rstatus = '2' and DATE(a.ddate) = #{keyword2}
+		union 
+		select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+		from (select * from reservation where rstatus = '2') r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+		where rstatus = '2' and date(a.ddate) = date_add(str_to_date(#{keyword2},'%Y-%m-%d'), interval (trim(substring(substring_index(p.pname,'일]',1),5))-1) day)
+	</if>
     </select>
 
 	<!-- 결제관리에서 검색한 결과 수  -->
@@ -139,7 +157,7 @@ select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'r
 				join product p on p.pno = up.pno
 				join pairstatus ps on ps.pno = p.pno 
 				join airplane a on ps.ano = a.no
-				<if test='searchType!="ano"'>
+				<if test='searchType!="ano" || searchType!="checkDate"'>
 					and a.ano like '%21%'
 				</if>
 	where rstatus = '2'

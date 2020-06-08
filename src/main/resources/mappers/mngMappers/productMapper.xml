@@ -83,6 +83,12 @@
 			<result property="ldiv" column="ldiv"/>
 			<result property="pdiv" column="pdiv"/>
 		</collection>
+<!-- 		<collection property="" ofType="ReservationVO">
+			<id property="no" column="rno"/>
+			<result property="userno" column="userno"/>
+			<result property="rdate" column="rdate"/>
+			<result property="rstatus" column="rstatus"/>
+		</collection> -->
 	</resultMap>
 	<sql id="search">
 		<if test='searchType=="name"'>
