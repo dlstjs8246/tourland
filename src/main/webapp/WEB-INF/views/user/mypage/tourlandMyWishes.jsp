@@ -94,17 +94,12 @@
 			$(".reservBtns").click(function(){
 				var pnoStr = $(this).parent().parent().find(".pno").html();
 				var pno = pnoStr.substring(1);
-				var status = "${cart.rstatus}";
-				alert(status);
-				var rno = "${cart.reserv.no}";
-				alert(rno);
 				var res = confirm("예약하시겠습니까?");
 				if(res && status ==0){
 					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesRes?pno="+pno+"&status="+status;
 				}else if(status !=0){
 					alert("이미 예약완료하신 상품입니다. 예약 현황에서 확인해주세요.");
 				}
-				
 			})
 			
 			$(".clickPoint").click(function(){

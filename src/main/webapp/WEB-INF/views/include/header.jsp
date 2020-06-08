@@ -114,20 +114,18 @@
 
 		<header class="main-header">
 			<!-- Logo -->
-			<c:if test="${Manager.right==1 }">
-				<a href="${pageContext.request.contextPath }/manager/empMngList/0"
+			<a href="${pageContext.request.contextPath }/manager/statistics"
+					class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span
+					class="logo-mini"><b>A</b>LT</span> <!-- logo for regular state and mobile devices -->
+				<span class="logo-lg" id="logoTourLand"><b>TourLand</b></span></a>
+	
+<%-- 			<c:if test="${Manager.right==0 }">
+				<a href="${pageContext.request.contextPath }/manager/statistics"
 					class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span
 					class="logo-mini"><b>A</b>LT</span> <!-- logo for regular state and mobile devices -->
 				<span class="logo-lg" id="logoTourLand"><b>TourLand</b></span>
 			</a>
-			</c:if>
-			<c:if test="${Manager.right==0 }">
-				<a href="${pageContext.request.contextPath }/manager/userMngList/0"
-					class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span
-					class="logo-mini"><b>A</b>LT</span> <!-- logo for regular state and mobile devices -->
-				<span class="logo-lg" id="logoTourLand"><b>TourLand</b></span>
-			</a>
-			</c:if>
+			</c:if> --%>
 
 			<nav class="navbar navbar-static-top" role="navigation">
 				<!-- Sidebar toggle button-->
@@ -372,11 +370,11 @@
 					</div>
 					<div class="pull-left info">
 						<p>${Manager.name }</p>
-						<a href="#"><i class="fa fa-circle text-success"></i> 내 프로필</a>
+						<a href="${pageContext.request.contextPath }/manager/employeeDetail/${Auth.empretired }?empno=${Auth.empno}"><i class="fa fa-circle text-success"></i> 내 프로필</a>
 					</div>
 				</div>
 				<!-- 왼쪽 메인 메뉴 검색 부분 -->
-				<form action="#" method="get" class="sidebar-form">
+<!-- 				<form action="#" method="get" class="sidebar-form">
 					<div class="input-group">
 						<input type="text" name="q" class="form-control"
 							placeholder="Search..." /> <span class="input-group-btn">
@@ -386,7 +384,7 @@
 							</button>
 						</span>
 					</div>
-				</form>
+				</form> -->
 				<!-- /.search form -->
 				<!-- sidebar menu: : style can be found in sidebar.less -->
 				<ul class="sidebar-menu">
@@ -533,9 +531,9 @@
 					<li><a
 						href="${pageContext.request.contextPath }/manager/paymentList"><i
 							class="fa fa-book"></i> <span>결제 관리</span></a></li>
-					<li><a
+<%-- 					<li><a
 						href="${pageContext.request.contextPath }/resources/documentation/index.html"><i
-							class="fa fa-book"></i> <span>통계</span></a></li>
+							class="fa fa-book"></i> <span>통계</span></a></li> --%>
 					<li class="header">LABELS</li>
 					<li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
 					<li><a href="#"><i class="fa fa-circle-o text-yellow"></i>
