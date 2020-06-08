@@ -2164,7 +2164,8 @@ public class ManagerController {
 		//결제 관리
 		@RequestMapping(value = "paymentList", method = RequestMethod.GET)
 		public String paymentList(SearchCriteria cri, Model model) throws Exception {
-			List<UserVO> list = userService.listSearchCriteriaPaymentUser(cri);
+			List<ReservationVO> list = userService.listSearchCriteriaPaymentUser(cri);
+			for(ReservationVO vo : list) System.out.println(vo);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
 			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri));	

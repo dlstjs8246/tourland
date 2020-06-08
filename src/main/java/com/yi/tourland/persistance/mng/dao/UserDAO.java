@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.UserVO;
 
 public interface UserDAO {
@@ -27,7 +28,7 @@ public interface UserDAO {
 	
 	
 	//결제관리에서 쓰이는 리스트
-	public List<UserVO> listSearchCriteriaPaymentUser(SearchCriteria cri)throws Exception;
+	public List<ReservationVO> listSearchCriteriaPaymentUser(SearchCriteria cri)throws Exception;
 	public int totalSearchCountPaymentUser(SearchCriteria cri) throws Exception;
 	
 	//메일보낼때 쓸 이름 생일 전화번호

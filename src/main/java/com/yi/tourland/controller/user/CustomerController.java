@@ -499,14 +499,18 @@ public class CustomerController {
 	
 	//마이 페이지 - 장바구니 - 예약하기
 	@RequestMapping(value="tourlandMyWishesRes", method=RequestMethod.GET)
-	public String tourlandMyWishesRes(String pno,Model model,ProductVO pvo) throws Exception { 
-		return "redirect:/customer/tourlandMyWishes"; 
+	public String tourlandMyWishesRes(String pno,Model model,ProductVO pvo,ReservationVO rvo,String status) throws Exception { 
+		ReservationVO rs = new ReservationVO();
+		rs.setRstatus("1");
+		reservationService.updateReservation(rs);
+		return "redirect:/customer/tourlandMyWishes";
 	}
 	
 	//마이 페이지 - 장바구니 - 클릭으로 상세보기
 	@RequestMapping(value="tourlandMyWishesDetail", method=RequestMethod.GET)
-	public String tourlandMyWishesDetail(String pno,Model model,ProductVO pvo) throws Exception { 
-		return "redirect:/customer/tourlandMyWishes"; 
+	public String tourlandMyWishesDetail(String pno,Model model,ProductVO pvo) throws Exception {
+		pvo.setPno(Integer.parseInt(pno));
+		return "redirect:/customer/tourlandProductDetail?pno="+pno+"&price="+pvo.getPprice(); 
 	}
 	
 	//마이 페이지 - 내 쿠폰
@@ -978,6 +982,7 @@ public class CustomerController {
 		model.addAttribute("price",price);
 		return "/user/product/tourlandProductDetail"; 
 	}
+	
 	@ResponseBody
 	@RequestMapping(value="tourlandProductDetail/reserv", method=RequestMethod.GET)
 	public ResponseEntity<String> tourlandProductReservation(SearchCriteria cri, Model model, int uno, int pno, int price, int[] ano, int[] acapacity, int[] hno, int[] hcapacity, int[] tno, int tcapacity, int[] rno, int rcapacity) throws Exception {
@@ -1102,13 +1107,13 @@ public class CustomerController {
 		}
 		for(int i=0; i<acapacity.length; i++) {
 			
-			airList.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i+1));
-			airList.get(i+i).setCapacity(Integer.parseInt(acapacity[i]));
-			airList.get(i+i).setPdiv(1);
-			//도착편
-			airList.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			airList.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1));
 			airList.get(i+i+1).setCapacity(Integer.parseInt(acapacity[i]));
 			airList.get(i+i+1).setPdiv(1);
+			//도착편
+			airList.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			airList.get(i+i).setCapacity(Integer.parseInt(acapacity[i]));
+			airList.get(i+i).setPdiv(1);
 			
 		}
 		for(AirplaneVO air : airList) {

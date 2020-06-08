@@ -33,7 +33,8 @@
 	.blue button { width: 80px; height: 25px; border: none; margin-top: 10px; color: #fff; }
 	#btns{ width: 100px;}
 	.reservBtns { background: goldenrod;  }
-	.delBtns { background: steelblue;  }		    
+	.delBtns { background: steelblue;  }	
+	.clickPoint{cursor:pointer; }	    
 </style>
 <body>   
 	<%@ include file="../../include/userHeader.jsp"%>
@@ -58,11 +59,11 @@
 							<td class="pno">P${cart.product.pno}</td>
 							<td><fmt:formatDate value="${cart.product.pexpire}" pattern="yyyy-MM-dd"/></td>
 							<td><img src="displayFile/product?filename=${cart.product.pic}"></td>
-							<td>${cart.product.pname}</td>
-							<c:forEach var="f" items="${cart.product.air}" begin="1" end="1">
+							<td class="clickPoint">${cart.product.pname}</td>
+							<c:forEach var="f" items="${cart.product.air}" begin="0" end="0">
 								<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
 							</c:forEach>
-							<c:forEach var="f" items="${cart.product.air}" begin="0" end="0">
+							<c:forEach var="f" items="${cart.product.air}" begin="1" end="1">
 								<fmt:formatDate var="enddate" value="${f.rdate}" pattern="yyyy-MM-dd"/>
 							</c:forEach>
 							<td>${startdate}</td>
@@ -80,6 +81,7 @@
 				</div>
 		</section>
 		<script>
+			
 			$(".delBtns").click(function(){
 				var pnoStr = $(this).parent().parent().find(".pno").html();
 				var pno = Number(pnoStr.substring(1));
@@ -91,10 +93,25 @@
 			})
 			
 			$(".reservBtns").click(function(){
+				var pnoStr = $(this).parent().parent().find(".pno").html();
+				var pno = pnoStr.substring(1);
+				var status = "${cart.rstatus}";
+				alert(status);
+				var rno = "${cart.reserv.no}";
+				alert(rno);
 				var res = confirm("예약하시겠습니까?");
-				if(res){
+				if(res && status ==0){
+					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesRes?pno="+pno+"&status="+status;
+				}else if(status !=0){
+					alert("이미 예약완료하신 상품입니다. 예약 현황에서 확인해주세요.");
 				}
 				
+			})
+			
+			$(".clickPoint").click(function(){
+				var pno = $(".wishesList").attr("data-no");
+				
+				location.href="${pageContext.request.contextPath}/customer/tourlandMyWishesDetail?pno="+pno;
 			})
 		</script>
 		<%@ include file="../../include/userFooter.jsp"%>

@@ -49,7 +49,6 @@
 			if(cf){
 				location.href="tourlandMyReservPayNow?rno="+rno;
 			}
-			
 		})
 	})
 </script>	
