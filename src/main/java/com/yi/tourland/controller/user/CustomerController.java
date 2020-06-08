@@ -561,7 +561,6 @@ public class CustomerController {
 	//상품 리스트   (제주 패키지)
 	@RequestMapping(value="tourlandProductKRList", method=RequestMethod.GET)
 	public String tourlandProductKRList(Model model,SearchCriteria cri) throws SQLException {
-
 		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
 		model.addAttribute("jejucount",jejulistCount);
 		String keyword = cri.getKeyword();
