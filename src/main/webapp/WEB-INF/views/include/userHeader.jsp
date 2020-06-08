@@ -338,10 +338,10 @@ window.onload = function() {
 						</div>
 						<div id="search" class="ls">
 						    <c:if test="${searchkeyword !=null }">
-							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword" value="${searchkeyword }"><i class="fas fa-search" id="mainSearchIcon"></i>
+							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword" value="${searchkeyword }"><i class="fas fa-search" style="font-size:25px; margin-left:10px;" id="mainSearchIcon"></i>
 							</c:if>
 							<c:if test="${searchkeyword ==null }">
-							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword"><i class="fas fa-search" style="font-size:25px;" id="mainSearchIcon"></i>
+							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword"><i class="fas fa-search" style="font-size:25px; margin-left:10px;" id="mainSearchIcon"></i>
 							</c:if>
 							<!-- <button>찾기</button> -->
 						</div>

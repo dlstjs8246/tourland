@@ -38,7 +38,7 @@
 				</div>
 				<div class="box-body">
 				    <button id="twowayBtn">${btnName }</button>
-					<button id="btnRegister" style="background:mistyrose; margin-left:10px; ${btnName =='탈퇴회원 조회'?'visibility:visible;':'visibility:hidden;'}" >추가-테스트용</button>
+					<!-- <button id="btnRegister" style="background:mistyrose; margin-left:10px; ${btnName =='탈퇴회원 조회'?'visibility:visible;':'visibility:hidden;'}" >추가-테스트용</button> -->
                     
 				</div>
 				<div class="box-body">
