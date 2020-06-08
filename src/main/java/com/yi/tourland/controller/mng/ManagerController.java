@@ -53,6 +53,7 @@ import com.yi.tourland.domain.mng.PlanBoardVO;
 import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
@@ -68,6 +69,7 @@ import com.yi.tourland.service.mng.PlanBoardService;
 import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
+import com.yi.tourland.service.mng.ReservationService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 import com.yi.tourland.util.UploadFileUtils;
@@ -129,12 +131,10 @@ public class ManagerController {
 
 	@Autowired
 	PlanBoardService planBoardService;
+	
+	@Autowired
+	private ReservationService reservationService;
 
-	// 예약관리
-	@RequestMapping(value = "reservMngList", method = RequestMethod.GET)
-	public String reservMngList(SearchCriteria cri, Model model) {
-		return "/manager/reservation/reservationMngList";
-	}
 
 	// 항공 관리
 	@RequestMapping(value = "flightMngList", method = RequestMethod.GET)
@@ -602,9 +602,82 @@ public class ManagerController {
 
 	// 예약관리
 	@RequestMapping(value = "reservationMgnList", method = RequestMethod.GET)
-	public String reservationMgnList() {
-		return "/manager/reservation/reservationMngList";
+	public String reservationMgnList(SearchCriteria cri,Model model, String confirmSuccess) throws Exception {
+	
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
+		List<ReservationVO> list = reservationService.listReservationForMng(cri);
+		if(list.size()==0) {
+			model.addAttribute("noList", "noList");
+			return "/manager/reservation/reservationMngList";
+		}else {
+			for(int i =0; i<list.size(); i++) {
+				System.out.println(list.get(i).getProduct().getAir());
+				UserVO user = userService.readByNoUser(list.get(i).getUserno().getUserno());
+				list.get(i).getUserno().setUsername(user.getUsername());
+				list.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
+				list.get(i).getUserno().setUserpassport(user.getUserpassport());
+			}  
+			
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
+			model.addAttribute("yesList", "yesList");
+			model.addAttribute("list",list);
+			model.addAttribute("pageMaker",pageMaker);
+			model.addAttribute("confirmSuccess", confirmSuccess);
+			return "/manager/reservation/reservationMngList";
+		}
+	
+	
 	}
+	
+	//예약 상세 모달 Ajax
+	@ResponseBody
+	@RequestMapping(value = "reservationDetail", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> reservationDetail(String userno, String pno,SearchCriteria cri,Model model) throws Exception {
+		
+		ResponseEntity<Map<String,Object>> entity = null;
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			UserVO vo = new UserVO();
+			vo.setUserno(Integer.parseInt(userno));
+			List<ReservationVO> rs = reservationService.listReservationForModal(userno, pno);
+			 
+			for(int i =0; i<rs.size(); i++) {
+				UserVO user = userService.readByNoUser(Integer.parseInt(userno));
+				rs.get(i).getUserno().setUserno(Integer.parseInt(userno));
+				rs.get(i).getUserno().setUsername(user.getUsername());
+				rs.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
+				rs.get(i).getUserno().setUserpassport(user.getUserpassport());
+				rs.get(i).getUserno().setUserid(user.getUserid());
+			
+			}
+			
+			Map<String,Object> map = new HashMap<>();
+			map.put("list", rs);
+			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
+		}catch(Exception e) {
+			e.printStackTrace();
+			Map<String, Object> map = new HashMap<>();
+			map.put("null", null);
+			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.BAD_REQUEST);
+		}
+		
+		return entity;
+	}
+	//예약 확정
+	@RequestMapping(value="reservationConfirm", method = RequestMethod.GET)
+	public String reservationConfirm(String rno, Model model) throws Exception { 
+		ReservationVO rs = new ReservationVO();
+		rs.setNo(Integer.parseInt(rno));
+		rs.setRstatus("3");
+		reservationService.updateReservation(rs);
+		
+		model.addAttribute("confirmSuccess", "confirmSuccess");
+		
+		return "redirect:/manager/reservationMgnList";
+	}
+	
 
 	// 상품관리
 	@RequestMapping(value = "addProductForm", method = RequestMethod.GET)
@@ -2047,10 +2120,7 @@ public class ManagerController {
 			return "/manager/board/planBoardDetail";
 		}
 
-		//달려져있는 답변내용 수정,삭제 하는 페이지
-
 		//답변내용 달기
-
 		@RequestMapping(value = "planBoardModify", produces = "application/text; charset=utf8", method = RequestMethod.GET)
 		public String planBoardModify(PlanBoardVO vo, SearchCriteria cri, Model model,int no, String respond) throws Exception {
 			vo = planBoardService.readByNoPlanBoard(no);
@@ -2089,24 +2159,21 @@ public class ManagerController {
 			planBoardService.deletePlanBoard(vo);
 			return "redirect:/planBoardList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 					+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
-		}
-
-		
+		}		
 		
 		//결제 관리
-		
 		@RequestMapping(value = "paymentList", method = RequestMethod.GET)
 		public String paymentList(SearchCriteria cri, Model model) throws Exception {
-			List<UserVO> list = userService.listSearchCriteriaPaymentUser(cri);
+			List<ReservationVO> list = userService.listSearchCriteriaPaymentUser(cri);
+			for(ReservationVO vo : list) System.out.println(vo);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
-			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri));
+			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri));	
 			model.addAttribute("list", list);
 			model.addAttribute("cri", cri);
 			model.addAttribute("pageMaker", pageMaker);
 			return "/manager/payment/paymentList";
 		}
-		
 		
 	//ckEditor 이미지 업로드용
 		@ResponseBody
@@ -2144,6 +2211,4 @@ public class ManagerController {
 			}
           return null;
 		}
-
-	
 }

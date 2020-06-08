@@ -438,7 +438,7 @@ public class CustomerController {
 	
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
-	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model) throws SQLException {
+	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow) throws SQLException {
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
 		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
@@ -447,8 +447,23 @@ public class CustomerController {
 		pageMaker.setTotalCount(reservationService.totalSearchReservationCountByUserNo(cri, vo));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
+		if(payNow != null) {
+			model.addAttribute("paySuccess", "paySuccess");
+		}
 		return "/user/mypage/tourlandMyReserv"; 
 	}
+	//마이 페이지 - 내 예약 현황 - 결제
+	@RequestMapping(value="tourlandMyReservPayNow", method=RequestMethod.GET)
+	public String tourlandMyReservPayNowSearch(String rno, Model model) throws SQLException {
+		ReservationVO rs = new ReservationVO();
+		rs.setNo(Integer.parseInt(rno));
+		rs.setRstatus("2");
+		reservationService.updateReservation(rs);
+		model.addAttribute("payNow", "payNow");
+		return "redirect:/customer/tourlandMyReserv"; 
+	}
+	
+	
 	//상품 리뷰    
 	@RequestMapping(value="tourlandMyReview", method=RequestMethod.GET)
 	public String tourlandMyReview() throws SQLException {
@@ -457,7 +472,7 @@ public class CustomerController {
 	}
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
-	public String tourlandMyWishes(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model) throws SQLException { 
+	public String tourlandMyWishes(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,ProductVO pvo,String suc) throws SQLException { 
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
 		List<ReservationVO> list = reservationService.ReadCartByUserNo(vo, cri);
@@ -466,8 +481,41 @@ public class CustomerController {
 		pageMaker.setTotalCount(reservationService.totalSearchCartCountByUserNo(cri, vo));
 		model.addAttribute("list",list);
 		model.addAttribute("pageMaker",pageMaker);
+		if(suc != null) {
+			model.addAttribute("success", "success");
+		}
 		return "/user/mypage/tourlandMyWishes"; 
 	}
+	//마이 페이지 - 장바구니에서 들어온 상품 삭제
+	@RequestMapping(value="tourlandMyWishesDelete", method=RequestMethod.GET)
+	public String tourlandMyWishesDelete(int pno,int rno,Model model,ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception { 
+		pvo.setPno(pno);
+		pvo.setPdiv(true);
+		rvo.setNo(rno);
+		productService.deleteProductInUserCart(pvo,rvo,cri);
+		model.addAttribute("suc", "suc");
+		return "redirect:/customer/tourlandMyWishes"; 
+	}
+	
+	//마이 페이지 - 장바구니 - 예약하기
+	@RequestMapping(value="tourlandMyWishesRes", method=RequestMethod.GET)
+	public String tourlandMyWishesRes(String pno,Model model,ProductVO pvo,ReservationVO rvo,String status) throws Exception { 
+		ReservationVO rs = new ReservationVO();
+		rs.setRstatus("1");
+		reservationService.updateReservation(rs);
+		return "redirect:/customer/tourlandMyWishes";
+	}
+	
+	//마이 페이지 - 장바구니 - 클릭으로 상세보기
+	@RequestMapping(value="tourlandMyWishesDetail", method=RequestMethod.GET)
+	public String tourlandMyWishesDetail(int userno,UserVO vo,SearchCriteria cri,Model model) throws Exception {
+		vo.setUserno(userno);
+		List<ReservationVO> rvo = reservationService.ReadCartByUserNo(vo, cri);
+		ProductVO pvo = rvo.get(0).getProduct();
+		model.addAttribute("vo",pvo);
+		return "/user/mypage/tourlandCartDetail"; 
+	}
+	
 	//마이 페이지 - 내 쿠폰
 	@RequestMapping(value="tourlandMyCoupon", method=RequestMethod.GET)
 	public String tourlandMyCoupon(SearchCriteria cri, Model model, HttpSession session) throws Exception { 
@@ -518,7 +566,6 @@ public class CustomerController {
 	//상품 리스트   (제주 패키지)
 	@RequestMapping(value="tourlandProductKRList", method=RequestMethod.GET)
 	public String tourlandProductKRList(Model model,SearchCriteria cri) throws SQLException {
-
 		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
 		model.addAttribute("jejucount",jejulistCount);
 		String keyword = cri.getKeyword();
@@ -938,6 +985,7 @@ public class CustomerController {
 		model.addAttribute("price",price);
 		return "/user/product/tourlandProductDetail"; 
 	}
+	
 	@ResponseBody
 	@RequestMapping(value="tourlandProductDetail/reserv", method=RequestMethod.GET)
 	public ResponseEntity<String> tourlandProductReservation(SearchCriteria cri, Model model, int uno, int pno, int price, int[] ano, int[] acapacity, int[] hno, int[] hcapacity, int[] tno, int tcapacity, int[] rno, int rcapacity) throws Exception {
@@ -1062,13 +1110,13 @@ public class CustomerController {
 		}
 		for(int i=0; i<acapacity.length; i++) {
 			
-			airList.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i+1));
-			airList.get(i+i).setCapacity(Integer.parseInt(acapacity[i]));
-			airList.get(i+i).setPdiv(1);
-			//도착편
-			airList.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			airList.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1));
 			airList.get(i+i+1).setCapacity(Integer.parseInt(acapacity[i]));
 			airList.get(i+i+1).setPdiv(1);
+			//도착편
+			airList.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			airList.get(i+i).setCapacity(Integer.parseInt(acapacity[i]));
+			airList.get(i+i).setPdiv(1);
 			
 		}
 		for(AirplaneVO air : airList) {
@@ -1189,6 +1237,7 @@ public class CustomerController {
 			productService.insertProductInUserCart(product, user, cri);
 			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
 		}
+		
 		catch(Exception e) {
 			if(e.getMessage().equals("중복")) {
 				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
@@ -1213,8 +1262,7 @@ public class CustomerController {
 		  model.addAttribute("price",price);
 		return "/user/product/tourlandProductReview"; 
 	}
-	
-	
+
 	//이벤트 --------------------------------------------------------------------------------------
 	@RequestMapping(value="tourlandEventList/{times}", method=RequestMethod.GET)
 	public String tourlandEventList(@PathVariable("times") String times, Model model) { 
@@ -1253,6 +1301,15 @@ public class CustomerController {
 			return "/user/event/eventDetailPage";
 		}
 	
+	 
+	 
+	 //쿠폰 ---------------------------------------------------------------------------------------
+	 @RequestMapping(value="userpageCoupon", method = RequestMethod.GET)
+	 public String userpageCoupon() throws Exception {
+		 
+		 return "/user/coupon/tourlandCoupon";
+	 }
+	 
 	
 	//게시판 ---------------------------------------------------------------------------------------
 	
@@ -1404,7 +1461,6 @@ public class CustomerController {
 		model.addAttribute("cri", cri);
 		return "/user/board/tourlandPlanBoardDetail";
 	}
-
 	
 	//Footer
 	//찾아 오시는 길

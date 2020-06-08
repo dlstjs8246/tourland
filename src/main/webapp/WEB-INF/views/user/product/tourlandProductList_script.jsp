@@ -93,7 +93,7 @@ function getSearchResult(locale){
 			 $("#pkgListBoxWrap").empty();
 			 $(".pagination").empty();
 			 $("#totalCount").html(rs.list.length);
-			 appendAjaxData(rs,"tourlandProductChinaSearchList","");
+			 appendAjaxData(rs,"tourlandProduct"+locale+"SearchList","");
 		}
 	})
 }
@@ -108,7 +108,7 @@ function getList(page,locale){
 			 $("#pkgListBoxWrap").empty();
 			 $(".pagination").empty();
 			 $("#totalCount").html(rs.count);
-			 appendAjaxData(rs,"tourlandProductChinaListAll","listAll");
+			 appendAjaxData(rs,"tourlandProduct"+locale+"ListAll","listAll");
 		}
 	})
 }
@@ -122,7 +122,7 @@ function getLowPriceList(page,locale){
 			 $("#pkgListBoxWrap").empty();
 			 $(".pagination").empty();
 			 $("#totalCount").html(rs.count);
-			 appendAjaxData(rs,"tourlandProductChinaSearchLowPirceList","lowPriceListPage");
+			 appendAjaxData(rs,"tourlandProduct"+locale+"SearchLowPirceList","lowPriceListPage");
 		}
 	})
 }

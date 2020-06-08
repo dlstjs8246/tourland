@@ -197,6 +197,12 @@ div.pkgInfoBox .pkgTitle {
  .whereLi{
     cursor:pointer; 
  }
+ .eventBox:hover{
+  cursor: pointer;
+  background-color: lightyellow; 
+  height:60px;
+ }
+ 
 </style>
 <body>   
 	<%@ include file="../include/userHeader.jsp"%>

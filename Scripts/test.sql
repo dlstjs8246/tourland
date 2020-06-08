@@ -130,8 +130,7 @@ delete from product;
 delete from airplane;
 delete from hotel;
 delete from tour;
-delete from rentcar;
-						 
+delete from rentcar;			
 select * from product where substring(pname,2,3) = '제주' order by pno desc limit 0,10;	
 select * from product where substring(pname,2,4) = '베이징' order by pno desc limit 0,10;
 select * from product where substring(pname,2,3) = '도쿄' order by pno desc limit 0,10;
@@ -196,6 +195,23 @@ select * from reservation;
 desc tour;
 select * from user;
 select * from airplane order by no desc;
+select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
+	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
+	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
+	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
+		from (select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + tsum) as 'defaultPrice'
+		from (select p2.*,sum(t2.tprice) as 'tsum' from product p2 join ptourstatus t on p2.pno = t.pno join tour t2 on t.tno = t2.no group by p2.pno) p 
+		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no and a2.seat = 'E'
+		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no and h2.roomtype = 'N' and h2.checkin = date(a2.ddate)
+		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pdiv = 0 and substring(p.pname,2,3) = '제주' group by p.pno order by defaultPrice limit 10,10) p  
+		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
+		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
+		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
+		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
+		where p.pdiv = 0;
 -- 태원 --------------------------------------------------------------------------------------------
 SELECT *
 FROM hotel; 
@@ -248,25 +264,116 @@ from reservation;
 
 insert into reservation values(1, 2, '2020-05-20',2);
 
+select * from userpstatus;
 
+insert into userpstatus values(1,2,270);
 
-select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
-	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity,a2.seat,a2.price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity,h2.price,h2.roomtype,h2.roomcapacity,h2.ldiv,h2.bookedup,h2.pdiv,
-	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity,t2.tprice,t2.ldiv,t2.pdiv,
-	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price,r2.capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from product p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-					   join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-					   join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-					   join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-		where p.pno = 2;
+select u.username, p.pname, a.ano, a.ddate, a.rdate, r.rstatus
+from user u join reservation r on u.userno = r.userno 
+			join userpstatus up on up.userno = u.userno and up.no = r.no
+			join product p on p.pno = up.pno
+			join pairstatus ps on ps.pno = p.pno 
+			join airplane a on ps.ano = a.no
+where r.rstatus=2 order by u.userno desc limit 5, 5;
+
+select * from user;
+
+select * from reservation;
+
+select count(userno) from reservations
+
+select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate, r.rdate, r.rstatus
+	from user u join reservation r on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno 
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no 
+	where r.rstatus=2
+	order by u.username desc limit 1,9;
+select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+	from (select * from reservation where rstatus = '2' limit 0,10) r join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+				order by userno desc; 
 	
-select * from usercoupon uc join user u on uc.userno = u.userno join coupon c on uc.cno = c.cno where u.userno = 2 order by edate asc;
 	
+select count(userno) from reservation 
+WHERE r.rstatus=2;
+
+select count(u.userno) from user u join reservation r on u.userno = r.userno 
+								  join userpstatus up on up.userno = u.userno and up.no = r.no
+								  join product p on p.pno = up.pno
+								  join pairstatus ps on ps.pno = p.pno 
+							      join airplane a on ps.ano = a.no
+where r.rstatus=2 and a.ddate =  '2020-04-30' and a.rdate = '2020-05-06'; 
 
 
-select u.username, u.userno, 
-where r.rstatus =2;
+select count(r.userno)
+	from (select * from reservation where rstatus = '2' limit 0,10) r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no  
+	where rstatus = '2' and u.username = '정아름'
+	order by u.userno desc;
+
+
+select * from reservation;
+select * from airplane;
+
+select count(no) from airplane;
+
+select r.no, r.userno, u.username, p.pno, p.pname, a.ano, date_format(a.ddate, '%Y-%m-%d'), a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+	from (select * from reservation where rstatus = '2' limit 0, 10) r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+	where rstatus = '2'
+	order by userno desc;
+
+select r.no, r.userno, u.username, p.pno, p.pname,a.no, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+	from (select * from reservation where rstatus = '2' limit 0, 10) r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+	where rstatus = '2'
+	order by a.no asc;
+select * from airplane order by no desc;
+select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+from (select * from reservation where rstatus = '2') r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+where rstatus = '2' and DATE(a.ddate) = '2020-04-30'
+union 
+select r.no, r.userno, u.username, p.pno, p.pname, a.ano, a.ddate, a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
+from (select * from reservation where rstatus = '2') r 
+				join user u on u.userno = r.userno 
+				join userpstatus up on up.userno = u.userno and up.no = r.no
+				join product p on p.pno = up.pno
+				join pairstatus ps on ps.pno = p.pno 
+				join airplane a on ps.ano = a.no
+	where rstatus = '2' and date(a.ddate) = date_add(str_to_date('2020-04-30','%Y-%m-%d'), interval (trim(substring(substring_index(p.pname,'일]',1),5))-1) day);
+select trim(substring(substring_index(pname,'일]',1),5)) from product p; 
+select date_add(str_to_date('2020-04-30','%Y-%m-%d'), interval (trim(substring(substring_index(pname,'일]',1),5))-1) day) from product;
+
+select * from reservation;
+select * from userpstatus;
+
+select * from product;
+
+delete 
+from userpstatus u join reservation r on u.no=r.no
+where no=10;
 
 -- 하나 --------------------------------------------------------------------------------------------
 select * from reservation;

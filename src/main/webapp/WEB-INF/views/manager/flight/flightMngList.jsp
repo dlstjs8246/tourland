@@ -44,11 +44,7 @@ function getDomList(page){
 		type : "get", 
 		dataType : "json",
 		data : {searchType : searchType, keyword : keyword},
-		success: function(rs){                  
-			console.log(rs);
-			$(rs.list).each(function(i, obj){
-				console.log(obj);
-			})
+		success: function(rs){ 
 			 $(".forEachTr").remove();
 			 $(rs.list).each(function(i, obj) {
 				 var date1 = new Date(obj.ddate);

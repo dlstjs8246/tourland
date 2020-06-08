@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.persistance.mng.dao.UserDAO;
 @Repository
@@ -29,7 +30,6 @@ public class UserDAOImpl implements UserDAO{
 
 	@Override
 	public UserVO readByNoUser(int userno) throws Exception {
-		// TODO Auto-generated method stub
 		return sqlSession.selectOne(namespace+"readByNoUser", userno);
 	}
 
@@ -93,7 +93,7 @@ public class UserDAOImpl implements UserDAO{
 	
 	//결제관리에 쓰일 리스트
 	@Override
-	public List<UserVO> listSearchCriteriaPaymentUser(SearchCriteria cri) throws Exception {
+	public List<ReservationVO> listSearchCriteriaPaymentUser(SearchCriteria cri) throws Exception {
 		return sqlSession.selectList(namespace+"listSearchCriteriaPaymentUser",cri);
 	}
 	@Override

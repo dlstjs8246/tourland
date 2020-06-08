@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.UserVO;
@@ -73,5 +74,18 @@ public class ReservationDaoImpl implements ReservationDao {
 		map.put("u", vo);
 		map.put("cri", cri);
 		return sqlSession.selectOne(namespace + "totalSearchCartCountByUserNo",map);
+	}
+
+	@Override
+	public List<ReservationVO> listReservationForMng(SearchCriteria cri) throws SQLException {
+		return sqlSession.selectList(namespace + "listReservationForMng", cri);
+	}
+
+	@Override
+	public List<ReservationVO> listReservationForModal(String userno, String pno) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("userno", userno);
+		map.put("pno", pno);
+		return sqlSession.selectList(namespace + "listReservationForModal",map );
 	}
 }

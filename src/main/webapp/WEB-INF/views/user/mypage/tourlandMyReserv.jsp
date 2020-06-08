@@ -31,6 +31,8 @@
 	.red { font-weight: bold;  color: maroon; }
 	.blue button { width: 80px; height: 25px; border: none; background: steelblue; color: #fff;   }		
 	.grey button { width: 80px; height: 25px; border: none; background: #828282; color: #fff; }
+	.yellow  { font-weight: bold;  color: goldenrod; }
+	.blue { font-weight: bold;  color: steelblue;}
 </style>
 <body>   
 	<%@ include file="../../include/userHeader.jsp"%>
@@ -39,8 +41,22 @@
 		$(".goReview").click(function(){
 			location.href= "tourlandMyReview";
 		})
+		$(".payNow").click(function(){
+			var rnoString = $(this).parent().parent().find(".rno").html();
+			var rno = rnoString.substring(4); 
+			var cf = confirm(rno + " 번 상품을 결제하시겠습니까? ");
+			
+			if(cf){
+				location.href="tourlandMyReservPayNow?rno="+rno;
+			}
+		})
 	})
 </script>	
+<c:if test="${paySuccess!=null }">
+	<script>
+		alert("결제가 완료 되었습니다.");
+	</script>
+</c:if>
 		<section>
 		<%@ include file="../../include/userMyPageMenu.jsp"%>   
 				<div id="myreserv">
@@ -60,7 +76,7 @@
 						</tr>
 						<c:forEach var="reserv" items="${list}">
 						<tr>
-							<td>RERV${reserv.no}</td>
+							<td class="rno">RERV${reserv.no}</td>
 							<td><fmt:formatDate value="${reserv.rdate}" pattern="yyyy-MM-dd"/></td>
 							<td>${reserv.product.pname}</td>
 							<td><img src="displayFile/product?filename=${reserv.product.pic}"></td>
@@ -72,9 +88,18 @@
 							</c:forEach>
 							<td>${startdate}</td>
 							<td>${enddate}</td>
-							<td class="${reserv.rstatus=='1'?'red':''}">${reserv.rstatus=='1'?'결제가능':'결제됨'}</td>
-							<td class="blue"><button>결제하기</button></td> 
-							<td class="grey"><button>리뷰쓰기</button></td>
+							<c:if test="${reserv.rstatus=='1' }">
+								<td class="red">결제 가능</td>	
+							</c:if>
+							<c:if test="${reserv.rstatus=='2' }">
+								<td class="blue">결제 완료</td>	
+							</c:if>
+							<c:if test="${reserv.rstatus=='3' }">
+								<td class="yellow">예약 확정</td>	
+							</c:if>
+							
+							<td class="blue"><button class="payNow">결제하기</button></td> 
+							<td class="grey"><button class="writeReview">리뷰쓰기</button></td>
 						</tr>
 						</c:forEach>
 					</table>
