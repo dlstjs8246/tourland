@@ -21,9 +21,9 @@ insert into user values
 -- 고객의 소리
 desc custboard ;
 insert into custboard values
-(1,'홈페이지 이용이 너무 어려워요','좀더 편했으면 좋겠음','장초코',now(),password(111)),
+(1,'홈페이지가 예쁘네요','칭찬해요','장초코',now(),password(111)),
 (2,'상품이 다양하면 좋겠어요','좀더 많았으면..','장도롱',now(),password(111)),
-(3,'차은우 가이드님 칭찬합니다','존잘!!','박열무',now(),password(111));
+(3,'김남길 가이드님 칭찬합니다','목소리가 너무 좋아요!!','박열무',now(),password(111));
 
 
 -- 배너
