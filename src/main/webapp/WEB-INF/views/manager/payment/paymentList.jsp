@@ -83,8 +83,8 @@ h4 {
 									
 									<%-- <fmt:formatDate var="ddate" value="${calDate}" pattern="yyyyMMdd"/> --%>
 									<%-- <td><fmt:formatDate value="${payment.product.air[1].ddate==''?ddate:payment.product.air[1].ddate}" pattern="yyyy-MM-dd"/></td>--%>	
- 									<td class="start"><fmt:formatDate value="${payment.product.air[1].ddate}" pattern="yyyy-MM-dd"/></td>
- 									<td class="end"><fmt:formatDate value="${payment.product.air[0].rdate}" pattern="yyyy-MM-dd"/></td>
+ 									<td class="start"><fmt:formatDate value="${payment.product.air[0].ddate}" pattern="yyyy-MM-dd"/></td>
+ 									<td class="end"><fmt:formatDate value="${payment.product.air[1].rdate}" pattern="yyyy-MM-dd"/></td>
 									<td><fmt:formatDate value="${payment.rdate}" pattern="yyyy-MM-dd"/></td>
 									<c:choose>
 										<c:when test="${payment.rstatus ==2}">

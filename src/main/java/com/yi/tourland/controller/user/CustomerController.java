@@ -499,10 +499,10 @@ public class CustomerController {
 	
 	//마이 페이지 - 장바구니 - 예약하기
 	@RequestMapping(value="tourlandMyWishesRes", method=RequestMethod.GET)
-	public String tourlandMyWishesRes(String pno,Model model,ProductVO pvo,ReservationVO rvo,String status) throws Exception { 
-		ReservationVO rs = new ReservationVO();
-		rs.setRstatus("1");
-		reservationService.updateReservation(rs);
+	public String tourlandMyWishesRes(int rno,ReservationVO rvo) throws Exception {
+		rvo.setNo(rno);
+		rvo.setRstatus("1");
+		reservationService.updateReservation(rvo);
 		return "redirect:/customer/tourlandMyWishes";
 	}
 	

@@ -59,7 +59,7 @@
 							<td class="pno">P${cart.product.pno}</td>
 							<td><fmt:formatDate value="${cart.product.pexpire}" pattern="yyyy-MM-dd"/></td>
 							<td><img src="displayFile/product?filename=${cart.product.pic}"></td>
-							<td>${cart.product.pname}</td>
+							<td class="clickPoint">${cart.product.pname}</td>
 							<c:forEach var="f" items="${cart.product.air}" begin="0" end="0">
 								<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
 							</c:forEach>
@@ -93,21 +93,12 @@
 			})
 			
 			$(".reservBtns").click(function(){
-				var pnoStr = $(this).parent().parent().find(".pno").html();
-				var pno = pnoStr.substring(1);
-				var status = "${cart.rstatus}";
-				alert(status);
-				var rno = "${cart.reserv.no}";
-				alert(rno);
+				var rno = Number($(this).parent().parent().attr("data-rno"));
 				var res = confirm("예약하시겠습니까?");
-				if(res && status ==0){
-					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesRes?pno="+pno+"&status="+status;
-				}else if(status !=0){
-					alert("이미 예약완료하신 상품입니다. 예약 현황에서 확인해주세요.");
+				if(res){
+					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesRes?rno="+rno;
 				}
-				
 			})
-			
 			$(".cart").click(function(){
 				var userno = $(this).attr("data-userno");
 				var rno = $(this).attr("data-rno");
