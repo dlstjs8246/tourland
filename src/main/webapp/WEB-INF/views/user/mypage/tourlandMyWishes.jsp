@@ -54,7 +54,7 @@
 							<th id="btns">관리</th>
 						</tr>
 						<c:forEach var="cart" items="${list}">
-						<tr>
+						<tr class="cart" data-rno="${cart.no}">
 							<td class="pno">P${cart.product.pno}</td>
 							<td><fmt:formatDate value="${cart.product.pexpire}" pattern="yyyy-MM-dd"/></td>
 							<td><img src="displayFile/product?filename=${cart.product.pic}"></td>
@@ -82,10 +82,11 @@
 		<script>
 			$(".delBtns").click(function(){
 				var pnoStr = $(this).parent().parent().find(".pno").html();
-				var pno = pnoStr.substring(1);
+				var pno = Number(pnoStr.substring(1));
+				var rno = Number($(".cart").attr("data-rno"));
 				var del = confirm("삭제하시겠습니까?");
 				if(del){
-					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDelete?pno="+pno;
+					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDelete?rno="+rno+"&pno="+pno;
 				}
 			})
 			

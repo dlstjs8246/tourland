@@ -473,7 +473,6 @@ public class CustomerController {
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
 	public String tourlandMyWishes(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,ProductVO pvo,String suc) throws SQLException { 
-		System.out.println(pvo);
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
 		List<ReservationVO> list = reservationService.ReadCartByUserNo(vo, cri);
@@ -489,12 +488,11 @@ public class CustomerController {
 	}
 	//마이 페이지 - 장바구니에서 들어온 상품 삭제
 	@RequestMapping(value="tourlandMyWishesDelete", method=RequestMethod.GET)
-	public String tourlandMyWishesDelete(String pno,Model model,ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception { 
-		System.out.println("================="+rvo);
-		System.out.println(rvo.getNo());
-		pvo.setPno(Integer.parseInt(pno));
-		pvo.setPdiv(false);
-		productService.deleteProductInUserCart(pvo, rvo,cri);
+	public String tourlandMyWishesDelete(int pno,int rno,Model model,ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception { 
+		pvo.setPno(pno);
+		pvo.setPdiv(true);
+		rvo.setNo(rno);
+		productService.deleteProductInUserCart(pvo,rvo,cri);
 		model.addAttribute("suc", "suc");
 		return "redirect:/customer/tourlandMyWishes"; 
 	}
