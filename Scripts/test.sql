@@ -274,6 +274,8 @@ where username='황태원' and userbirth='1991-12-18' and usertel='010-4245-3825
 select *
 from reservation;
 
+select * from hotel;
+
 insert into reservation values(1, 2, '2020-05-20',2);
 
 select * from userpstatus;
