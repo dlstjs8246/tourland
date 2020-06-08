@@ -1107,13 +1107,13 @@ public class CustomerController {
 		}
 		for(int i=0; i<acapacity.length; i++) {
 			
-			airList.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i+1));
-			airList.get(i+i).setCapacity(Integer.parseInt(acapacity[i]));
-			airList.get(i+i).setPdiv(1);
-			//도착편
-			airList.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			airList.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1));
 			airList.get(i+i+1).setCapacity(Integer.parseInt(acapacity[i]));
 			airList.get(i+i+1).setPdiv(1);
+			//도착편
+			airList.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			airList.get(i+i).setCapacity(Integer.parseInt(acapacity[i]));
+			airList.get(i+i).setPdiv(1);
 			
 		}
 		for(AirplaneVO air : airList) {

@@ -60,10 +60,10 @@
 							<td><fmt:formatDate value="${cart.product.pexpire}" pattern="yyyy-MM-dd"/></td>
 							<td><img src="displayFile/product?filename=${cart.product.pic}"></td>
 							<td class="clickPoint">${cart.product.pname}</td>
-							<c:forEach var="f" items="${cart.product.air}" begin="1" end="1">
+							<c:forEach var="f" items="${cart.product.air}" begin="0" end="0">
 								<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
 							</c:forEach>
-							<c:forEach var="f" items="${cart.product.air}" begin="0" end="0">
+							<c:forEach var="f" items="${cart.product.air}" begin="1" end="1">
 								<fmt:formatDate var="enddate" value="${f.rdate}" pattern="yyyy-MM-dd"/>
 							</c:forEach>
 							<td>${startdate}</td>

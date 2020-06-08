@@ -308,6 +308,8 @@ select count(r.userno)
 select * from reservation;
 select * from airplane;
 
+select count(no) from airplane;
+
 select r.no, r.userno, u.username, p.pno, p.pname, a.ano, date_format(a.ddate, '%Y-%m-%d'), a.rdate as 'returndate', r.rdate as 'reservdate', r.rstatus
 	from (select * from reservation where rstatus = '2' limit 0, 10) r 
 				join user u on u.userno = r.userno 
