@@ -473,7 +473,6 @@ public class CustomerController {
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
 	public String tourlandMyWishes(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,ProductVO pvo,String suc) throws SQLException { 
-		System.out.println(pvo);
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
 		List<ReservationVO> list = reservationService.ReadCartByUserNo(vo, cri);
@@ -490,8 +489,6 @@ public class CustomerController {
 	//마이 페이지 - 장바구니에서 들어온 상품 삭제
 	@RequestMapping(value="tourlandMyWishesDelete", method=RequestMethod.GET)
 	public String tourlandMyWishesDelete(String pno,Model model,ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception { 
-		System.out.println("================="+rvo);
-		System.out.println(rvo.getNo());
 		pvo.setPno(Integer.parseInt(pno));
 		pvo.setPdiv(false);
 		productService.deleteProductInUserCart(pvo, rvo,cri);
@@ -501,14 +498,18 @@ public class CustomerController {
 	
 	//마이 페이지 - 장바구니 - 예약하기
 	@RequestMapping(value="tourlandMyWishesRes", method=RequestMethod.GET)
-	public String tourlandMyWishesRes(String pno,Model model,ProductVO pvo) throws Exception { 
-		return "redirect:/customer/tourlandMyWishes"; 
+	public String tourlandMyWishesRes(String pno,Model model,ProductVO pvo,ReservationVO rvo,String status) throws Exception { 
+		ReservationVO rs = new ReservationVO();
+		rs.setRstatus("1");
+		reservationService.updateReservation(rs);
+		return "redirect:/customer/tourlandMyWishes";
 	}
 	
 	//마이 페이지 - 장바구니 - 클릭으로 상세보기
 	@RequestMapping(value="tourlandMyWishesDetail", method=RequestMethod.GET)
-	public String tourlandMyWishesDetail(String pno,Model model,ProductVO pvo) throws Exception { 
-		return "redirect:/customer/tourlandMyWishes"; 
+	public String tourlandMyWishesDetail(String pno,Model model,ProductVO pvo) throws Exception {
+		pvo.setPno(Integer.parseInt(pno));
+		return "redirect:/customer/tourlandProductDetail?pno="+pno+"&price="+pvo.getPprice(); 
 	}
 	
 	//마이 페이지 - 내 쿠폰
@@ -981,6 +982,7 @@ public class CustomerController {
 		model.addAttribute("price",price);
 		return "/user/product/tourlandProductDetail"; 
 	}
+	
 	@ResponseBody
 	@RequestMapping(value="tourlandProductDetail/reserv", method=RequestMethod.GET)
 	public ResponseEntity<String> tourlandProductReservation(SearchCriteria cri, Model model, int uno, int pno, int price, int[] ano, int[] acapacity, int[] hno, int[] hcapacity, int[] tno, int tcapacity, int[] rno, int rcapacity) throws Exception {
