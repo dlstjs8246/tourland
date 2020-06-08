@@ -130,8 +130,7 @@ delete from product;
 delete from airplane;
 delete from hotel;
 delete from tour;
-delete from rentcar;
-						 
+delete from rentcar;			
 select * from product where substring(pname,2,3) = '제주' order by pno desc limit 0,10;	
 select * from product where substring(pname,2,4) = '베이징' order by pno desc limit 0,10;
 select * from product where substring(pname,2,3) = '도쿄' order by pno desc limit 0,10;

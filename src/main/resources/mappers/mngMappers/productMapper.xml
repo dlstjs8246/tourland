@@ -97,6 +97,9 @@
 		<if test='searchType=="expire"'>
 			and pexpire like concat('%',#{keyword},'%')
 		</if>
+		<if test='searchType=="userCart"'>
+			and pname = #{keyword}
+		</if>
 		<if test='searchType=="location"'>
 			<if test='keyword=="한국"'>
 				and pname like '%제주%'
@@ -117,7 +120,7 @@
 					    and pname like CONCAT('%',#{keyword2},'%')
 				    </if>
 				</if>
-		</if>
+			</if>
 		</if>
 	</sql>
 	<sql id="searchBoxKR">
@@ -177,7 +180,6 @@
 							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
 	</select>
-	
 	<select id="productListPageByDomestic" resultMap="product">
 	  <if test="searchType != null">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
@@ -316,7 +318,7 @@
 		delete from prentstatus where pno = #{pno}
 	</delete>
 	<delete id="deleteUserpStatus">
-		delete from userpstatus where pno = #{pno}
+		delete from userpstatus where pno = #{p.pno} and no = #{r.no}
 	</delete>
 	<delete id="deleteProduct">
 		delete from product where pno = #{pno} 

@@ -136,7 +136,7 @@
 	</set>
 	where no = #{no}
 </update>
-<delete id="deleteReservation">
+<delete id="deleteReservation" parameterType="ReservationVO">
 	delete from reservation where no = #{no} 
 </delete>
 

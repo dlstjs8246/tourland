@@ -508,9 +508,12 @@ public class CustomerController {
 	
 	//마이 페이지 - 장바구니 - 클릭으로 상세보기
 	@RequestMapping(value="tourlandMyWishesDetail", method=RequestMethod.GET)
-	public String tourlandMyWishesDetail(String pno,Model model,ProductVO pvo) throws Exception {
-		pvo.setPno(Integer.parseInt(pno));
-		return "redirect:/customer/tourlandProductDetail?pno="+pno+"&price="+pvo.getPprice(); 
+	public String tourlandMyWishesDetail(int userno,UserVO vo,SearchCriteria cri,Model model) throws Exception {
+		vo.setUserno(userno);
+		List<ReservationVO> rvo = reservationService.ReadCartByUserNo(vo, cri);
+		ProductVO pvo = rvo.get(0).getProduct();
+		model.addAttribute("vo",pvo);
+		return "/user/mypage/tourlandCartDetail"; 
 	}
 	
 	//마이 페이지 - 내 쿠폰

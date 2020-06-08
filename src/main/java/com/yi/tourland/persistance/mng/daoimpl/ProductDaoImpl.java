@@ -148,8 +148,11 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	@Override
-	public void deleteUserpStatus(ProductVO pvo) throws SQLException {
-		sqlSession.delete(namespace + "deleteUserpStatus",pvo);
+	public void deleteUserpStatus(ProductVO pvo, ReservationVO rvo) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("p", pvo);
+		map.put("r", rvo);
+		sqlSession.delete(namespace + "deleteUserpStatus",map);
 		
 	}
 	

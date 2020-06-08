@@ -55,11 +55,11 @@
 							<th id="btns">관리</th>
 						</tr>
 						<c:forEach var="cart" items="${list}">
-						<tr class="cart" data-rno="${cart.no}">
+						<tr class="cart" data-rno="${cart.no}" data-userno="${cart.userno.userno}">
 							<td class="pno">P${cart.product.pno}</td>
 							<td><fmt:formatDate value="${cart.product.pexpire}" pattern="yyyy-MM-dd"/></td>
 							<td><img src="displayFile/product?filename=${cart.product.pic}"></td>
-							<td class="clickPoint">${cart.product.pname}</td>
+							<td>${cart.product.pname}</td>
 							<c:forEach var="f" items="${cart.product.air}" begin="0" end="0">
 								<fmt:formatDate var="startdate" value="${f.ddate}" pattern="yyyy-MM-dd"/>
 							</c:forEach>
@@ -85,7 +85,7 @@
 			$(".delBtns").click(function(){
 				var pnoStr = $(this).parent().parent().find(".pno").html();
 				var pno = Number(pnoStr.substring(1));
-				var rno = Number($(".cart").attr("data-rno"));
+				var rno = Number($(this).parent().parent().attr("data-rno"));
 				var del = confirm("삭제하시겠습니까?");
 				if(del){
 					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDelete?rno="+rno+"&pno="+pno;
@@ -108,10 +108,9 @@
 				
 			})
 			
-			$(".clickPoint").click(function(){
-				var pno = $(".wishesList").attr("data-no");
-				
-				location.href="${pageContext.request.contextPath}/customer/tourlandMyWishesDetail?pno="+pno;
+			$(".cart").click(function(){
+				var userno = $(this).attr("data-userno");
+				location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDetail?userno="+userno;
 			})
 		</script>
 		<%@ include file="../../include/userFooter.jsp"%>

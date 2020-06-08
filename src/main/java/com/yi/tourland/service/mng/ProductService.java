@@ -88,21 +88,20 @@ public class ProductService {
 	}
 	@Transactional
 	public void deleteProduct(ProductVO pvo) throws SQLException {
-		if(pvo.isPdiv()) {
-			dao.deleteUserpStatus(pvo);
-			dao.deletepAirStatus(pvo);
-			dao.deletepHotelStatus(pvo);
-			dao.deletepTourStatus(pvo);
-			dao.deletepRentStatus(pvo);
-			dao.deleteProduct(pvo);
-		}
-		else {
-			dao.deletepAirStatus(pvo);
-			dao.deletepHotelStatus(pvo);
-			dao.deletepTourStatus(pvo);
-			dao.deletepRentStatus(pvo);
-			dao.deleteProduct(pvo);
-		}		
+		dao.deletepAirStatus(pvo);
+		dao.deletepHotelStatus(pvo);
+		dao.deletepTourStatus(pvo);
+		dao.deletepRentStatus(pvo);
+		dao.deleteProduct(pvo);		
+	}
+	@Transactional
+	public void deleteUserProduct(ProductVO pvo, ReservationVO rvo) throws SQLException {
+		dao.deleteUserpStatus(pvo,rvo);
+		dao.deletepAirStatus(pvo);
+		dao.deletepHotelStatus(pvo);
+		dao.deletepTourStatus(pvo);
+		dao.deletepRentStatus(pvo);
+		dao.deleteProduct(pvo);
 	}
 	public int totalCountBySearchProduct(SearchCriteria cri) throws SQLException {
 		return dao.totalCountBySearchProduct(cri);
@@ -264,7 +263,7 @@ public class ProductService {
 	}
 	@Transactional
 	public void deleteProductInUserCart(ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception {
-		deleteProduct(pvo);
+		deleteUserProduct(pvo,rvo);
 		reservDao.deleteReservation(rvo);
 	}
 }

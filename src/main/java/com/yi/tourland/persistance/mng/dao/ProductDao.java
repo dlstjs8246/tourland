@@ -29,7 +29,7 @@ public interface ProductDao {
 	public void updatepHotelStatus(ProductVO pvo, HotelVO hvo) throws SQLException;
 	public void updatepTourStatus(ProductVO pvo, TourVO tvo) throws SQLException;
 	public void updatepRentStatus(ProductVO pvo, RentcarVO rvo) throws SQLException;
-	public void deleteUserpStatus(ProductVO pvo) throws SQLException;
+	public void deleteUserpStatus(ProductVO pvo, ReservationVO rvo) throws SQLException;
 	public void deletepAirStatus(ProductVO pvo) throws SQLException;
 	public void deletepHotelStatus(ProductVO pvo) throws SQLException;
 	public void deletepTourStatus(ProductVO pvo) throws SQLException;
