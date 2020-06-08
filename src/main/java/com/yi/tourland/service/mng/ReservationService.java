@@ -50,4 +50,7 @@ public class ReservationService {
 	public List<ReservationVO> listReservationForModal(String userno, String pno) throws SQLException {
 		return dao.listReservationForModal(userno, pno);
 	}
+	public ReservationVO ReadCartByNoAndUserNo(int rno, int userno) throws SQLException {
+		return dao.ReadCartByNoAndUserNo(rno,userno);
+	}
 }

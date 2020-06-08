@@ -508,10 +508,27 @@ public class CustomerController {
 	
 	//마이 페이지 - 장바구니 - 클릭으로 상세보기
 	@RequestMapping(value="tourlandMyWishesDetail", method=RequestMethod.GET)
-	public String tourlandMyWishesDetail(int userno,UserVO vo,SearchCriteria cri,Model model) throws Exception {
-		vo.setUserno(userno);
-		List<ReservationVO> rvo = reservationService.ReadCartByUserNo(vo, cri);
-		ProductVO pvo = rvo.get(0).getProduct();
+	public String tourlandMyWishesDetail(int userno,int rno,SearchCriteria cri,Model model) throws Exception {
+		ReservationVO rvo = reservationService.ReadCartByNoAndUserNo(rno,userno);
+		ProductVO upvo = rvo.getProduct();
+		cri.setSearchType("userCart");
+		cri.setKeyword(upvo.getPname());
+		List<ProductVO> list = productService.listPage(cri);
+		ProductVO pvo = null;
+		Date uddate = upvo.getAir().get(0).getDdate();
+		Date urdate = upvo.getAir().get(1).getRdate();
+		if(list.size()>1) {
+			for(ProductVO vo : list) {
+				if(uddate.equals(vo.getAir().get(0).getDdate()) && urdate.equals(vo.getAir().get(1).getRdate())) {
+					pvo = vo;
+					break;
+				}
+			}
+		}
+		else {
+			pvo = list.get(0);
+		}
+		model.addAttribute("uvo",upvo);
 		model.addAttribute("vo",pvo);
 		return "/user/mypage/tourlandCartDetail"; 
 	}

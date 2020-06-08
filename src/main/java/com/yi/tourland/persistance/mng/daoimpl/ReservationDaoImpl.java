@@ -36,6 +36,13 @@ public class ReservationDaoImpl implements ReservationDao {
 		map.put("cri", cri);
 		return sqlSession.selectList(namespace + "ReadCartByUserNo",map); 
 	}
+	@Override
+	public ReservationVO ReadCartByNoAndUserNo(int rno, int userno) throws SQLException {
+		Map<String,Integer> map = new HashMap<>();
+		map.put("no", rno);
+		map.put("userno", userno);
+		return sqlSession.selectOne(namespace + "ReadCartByNoAndUserNo",map);
+	}
 
 	@Override
 	public List<ReservationVO> ReadReservationByUserNo(UserVO vo, SearchCriteria cri) throws SQLException {

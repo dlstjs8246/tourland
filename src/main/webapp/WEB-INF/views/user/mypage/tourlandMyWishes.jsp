@@ -110,7 +110,8 @@
 			
 			$(".cart").click(function(){
 				var userno = $(this).attr("data-userno");
-				location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDetail?userno="+userno;
+				var rno = $(this).attr("data-rno");
+				location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDetail?userno="+userno+"&rno="+rno;
 			})
 		</script>
 		<%@ include file="../../include/userFooter.jsp"%>
