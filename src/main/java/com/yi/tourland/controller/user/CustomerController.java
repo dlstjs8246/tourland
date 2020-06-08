@@ -1295,6 +1295,15 @@ public class CustomerController {
 			return "/user/event/eventDetailPage";
 		}
 	
+	 
+	 
+	 //쿠폰 ---------------------------------------------------------------------------------------
+	 @RequestMapping(value="userpageCoupon", method = RequestMethod.GET)
+	 public String userpageCoupon() throws Exception {
+		 
+		 return "/user/coupon/tourlandCoupon";
+	 }
+	 
 	
 	//게시판 ---------------------------------------------------------------------------------------
 	
