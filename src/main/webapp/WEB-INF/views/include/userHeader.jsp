@@ -355,6 +355,7 @@ window.onload = function() {
 							<li><a href="${pageContext.request.contextPath }/customer/tourlandProductJPList">일본 패키지</a></li>
 							<li><a href="${pageContext.request.contextPath }/customer/tourlandProductChinaList">중국 패키지</a></li>
 							<li class="short"><a href="${pageContext.request.contextPath }/customer/tourlandEventList/ingEvent">이벤트</a></li>
+							<li class="short"><a href="${pageContext.request.contextPath }/customer/userpageCoupon">쿠폰</a></li>
 						</ul>
 					</div>
 			</header>
