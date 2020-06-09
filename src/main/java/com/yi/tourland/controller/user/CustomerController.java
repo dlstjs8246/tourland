@@ -1333,7 +1333,25 @@ public class CustomerController {
 	//공지사항
 	@RequestMapping(value="tourlandBoardNotice", method=RequestMethod.GET)
 	public String tourlandBoardNotice(SearchCriteria cri, Model model) throws Exception { 
-		List<NoticeVO> noticeList = noticeService.noticeList(cri);
+		List<NoticeVO> noticeList =  noticeService.noticeList(cri);
+		
+		if(noticeList.size()!=0) {
+			List<NoticeVO> noticeNoFixedList = new ArrayList<>();
+			List<NoticeVO> noticeFixedList = new ArrayList<>();
+			
+			for(int i=0; i<noticeList.size(); i++) {
+				if(noticeList.get(i).getFixed()==0) {
+					noticeNoFixedList.add(noticeList.get(i));
+				}else {
+					noticeFixedList.add(noticeList.get(i));
+				}
+			}
+			
+			model.addAttribute("noticeNoFixedList", noticeNoFixedList);
+			model.addAttribute("noticeFixedList", noticeFixedList);
+		}else {
+			model.addAttribute("noticeList", noticeList);
+		}
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(noticeService.totalCountNotice(cri));

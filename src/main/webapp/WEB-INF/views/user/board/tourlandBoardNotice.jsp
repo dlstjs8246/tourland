@@ -11,6 +11,7 @@
   section nav ul li:first-child {
 	background: mistyrose;
 }
+.fixedTop { display:block;  height: 20px; background: maroon; color: #fff; }
 </style>
 </head>
 
@@ -31,19 +32,30 @@
 				</div>
 					<table id="reserv">
 						<tr>
+							<th></th>
 							<th class="nono">번호</th>
 							<th class="thTitle">제목</th>
 							<th>작성자</th>
 							<th class="lastTh">작성일자</th>
 						</tr>  
-						<c:forEach items="${noticeList}" var="n">   
+						<c:forEach items="${noticeFixedList}" var="n">   
 							<tr>
+								<td><span class="fixedTop">공지</span></td>
 								<td class="nono">${n.no }</td>
 								<td class="thTitle"><a href="${pageContext.request.contextPath }/customer/tourlandBoardNoticeDetail?no=${n.no}&page=${cri.page}" style="text-decoration: none;">${n.title }</a></td>
 								<td>${n.writer }</td>
 								<td><fmt:formatDate value="${n.regdate }" pattern ="yyyy-MM-dd"/></td>
 							</tr>
-						</c:forEach>   
+						</c:forEach>  
+						<c:forEach items="${noticeNoFixedList}" var="n">   
+							<tr>
+								<td></td>
+								<td class="nono">${n.no }</td>
+								<td class="thTitle"><a href="${pageContext.request.contextPath }/customer/tourlandBoardNoticeDetail?no=${n.no}&page=${cri.page}" style="text-decoration: none;">${n.title }</a></td>
+								<td>${n.writer }</td>
+								<td><fmt:formatDate value="${n.regdate }" pattern ="yyyy-MM-dd"/></td>
+							</tr>
+						</c:forEach>  
 					</table>
 					<div class='text-center'>
 	                   <ul class="pagination">
