@@ -34,6 +34,9 @@ select * from photelstatus;
 select * from prentstatus;
 select * from pairstatus;
 select * from ptourstatus;
+desc ptourstatus ;
+
+select * from tour;
 
 -- 최근본 상품 쿠키 생성 위함
 select * from product where pno = 180;
