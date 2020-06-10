@@ -34,6 +34,9 @@ select * from photelstatus;
 select * from prentstatus;
 select * from pairstatus;
 select * from ptourstatus;
+desc ptourstatus ;
+
+select * from tour;
 
 -- 최근본 상품 쿠키 생성 위함
 select * from product where pno = 180;
@@ -273,6 +276,8 @@ where username='황태원' and userbirth='1991-12-18' and usertel='010-4245-3825
 
 select *
 from reservation;
+
+select * from hotel;
 
 insert into reservation values(1, 2, '2020-05-20',2);
 

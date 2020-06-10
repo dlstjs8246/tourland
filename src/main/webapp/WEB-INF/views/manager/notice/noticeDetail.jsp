@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../include/header.jsp"%>
+<style>
+	.red { color: maroon; font-weight: bold;}
+	.blue { color: steelblue; font-weight: bold;}
+</style>
 <script>
 	$(function(){
 		$("#mod").click(function(){
@@ -44,6 +48,19 @@
 					<div class="form-group">
 						<label>번호</label>
 						<input type="text" name="no" class="form-control" value="${notice.no}" readonly="readonly">
+					</div>
+					<div class="form-group">
+						<label>상단 고정여부</label>
+						<c:if test="${notice.fixed==1 }">
+							<p class="blue">
+								상단 고정됨
+							</p>
+						</c:if>
+						<c:if test="${notice.fixed==0 }">
+							<p class="red">
+								상단 고정 안됨
+							</p>
+						</c:if>
 					</div>
 					<div class="form-group">
 						<label>제목</label>

@@ -52,7 +52,8 @@ CREATE TABLE tour.notice (
 	title   varchar(255) NULL     COMMENT '제목', -- 제목
 	writer  varchar(5)   NULL     COMMENT '작성자', -- 작성자
 	content LONGTEXT     NULL     COMMENT '내용', -- 내용
-	regdate TIMESTAMP    NULL     DEFAULT now() COMMENT '작성일자' -- 작성일자
+	regdate TIMESTAMP    NULL     DEFAULT now() COMMENT '작성일자', -- 작성일자
+	fixed   TINYINT(1)   NULL     DEFAULT 0 COMMENT '상단고정' -- 상단고정
 )
 COMMENT '공지사항';
 

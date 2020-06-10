@@ -1833,11 +1833,30 @@ public class ManagerController {
 
 	@RequestMapping(value = "noticeMngList", method = RequestMethod.GET)
 	public String noticeMngList(SearchCriteria cri, Model model) throws Exception {
-		List<NoticeVO> noticeList = noticeService.noticeList(cri);
+		List<NoticeVO> noticeList =  noticeService.noticeList(cri);
+		
+		if(noticeList.size()!=0) {
+			List<NoticeVO> noticeNoFixedList = new ArrayList<>();
+			List<NoticeVO> noticeFixedList = new ArrayList<>();
+			
+			for(int i=0; i<noticeList.size(); i++) {
+				if(noticeList.get(i).getFixed()==0) {
+					noticeNoFixedList.add(noticeList.get(i));
+				}else {
+					noticeFixedList.add(noticeList.get(i));
+				}
+			}
+			
+			model.addAttribute("noticeNoFixedList", noticeNoFixedList);
+			model.addAttribute("noticeFixedList", noticeFixedList);
+		}else {
+			model.addAttribute("noticeList", noticeList);
+		}
+		
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(noticeService.totalCountNotice(cri));
-		model.addAttribute("noticeList", noticeList);
+		
 		model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("cri", cri);
 		return "/manager/notice/noticeMngList";
@@ -1856,7 +1875,7 @@ public class ManagerController {
 	// 공지사항 추가
 	@RequestMapping(value = "addNoticeForm", method = RequestMethod.POST)
 	public String addNoticeResult(NoticeVO notice, Model model) throws Exception {
-		System.out.println(notice);
+		System.out.println(notice.getFixed());
 		noticeService.addNotice(notice);
 		return "redirect:/manager/noticeMngList";
 	}

@@ -203,6 +203,10 @@ div.pkgInfoBox .pkgTitle {
   height:60px;
  }
  
+ .toProductList{
+   margin-top:30px;
+ }
+ 
 </style>
 <body>   
 	<%@ include file="../include/userHeader.jsp"%>
@@ -269,14 +273,14 @@ div.pkgInfoBox .pkgTitle {
 						<p class="pkgPrice">${price}원 부터~</p>
 						<p class="pkgDate">~ ${expire}까지</p>
 						<p class="pkgReserv">
-							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
+							<%-- <button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button> --%>
 						</p>
 						
 					</div>
 					</c:forEach> 
 					
-				  <c:if test="${listCount ==3 }"> <!-- 3개만 일단 불러오도록 했기 때문에  -->
-				  <a href="#" style="text-decoration: none;" class="toProductList">더 보기</a>
+				  <c:if test="${listCount >= 1 }"> <!-- 3개만 일단 불러오도록 했기 때문에  -->
+				  <a href="#" style="text-decoration: none; margin-top:30px; padding:5px; border-bottom: 2px solid blue; " class="toProductList">검색상품 리스트로 바로가기</a>
 				  </c:if>
 				  <c:if test="${listCount ==0 }">
 				     <p style="margin-left:20px; margin-top:200px;">여행 상품에 해당 검색어가 포함된 게시물이 없습니다.</p>
