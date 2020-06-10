@@ -155,14 +155,14 @@ select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + tsu
 							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no and h2.roomtype = 'N' and h2.checkin = date(a2.ddate)
 							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0 and substring(p.pname,2,3) = '도쿄' group by p.pno order by defaultPrice;
+							 	where p.pdiv = 0 and substring(p.pname,2,3) = '제주' group by p.pno order by defaultPrice;
 select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + t2.tprice) as 'defaultPrice'
 		from product p 
 		join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no and a2.seat = 'E'
 		join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no and h2.roomtype = 'N' and h2.checkin = date(a2.ddate)
 		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-		where p.pdiv = 0 and substring(p.pname,2,3) = '도쿄' group by p.pno order by defaultPrice;
+		where p.pdiv = 0 and substring(p.pname,2,3) = '제주' group by p.pno order by defaultPrice;
 select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
 	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
@@ -192,7 +192,7 @@ select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no;
 select * from userpstatus;
 select * from cart;
-select * from hotel;
+select * from hotel order by no desc;
 select distinct no,r.userno,rdate,rstatus,pno from reservation r join userpstatus u on r.userno = u.userno;
 select * from reservation;
 desc tour;

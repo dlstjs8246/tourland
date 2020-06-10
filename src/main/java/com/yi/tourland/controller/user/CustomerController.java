@@ -528,15 +528,85 @@ public class CustomerController {
 		else {
 			pvo = list.get(0);
 		}
+		if(upvo.getTour().size()>0) {
+			for(int i=0;i<upvo.getTour().size();i++) {
+				upvo.getTour().get(i).setNo(pvo.getTour().get(i).getNo());
+			}
+		}
+		if(upvo.getRentcar().size()>0) {
+			for(int i=0;i<1;i++) {
+				upvo.getRentcar().get(i).setNo(pvo.getRentcar().get(i).getNo());
+			} 
+		} 
 		model.addAttribute("uvo",upvo);
 		model.addAttribute("vo",pvo);
+		model.addAttribute("userno",userno);
+		model.addAttribute("rno",rno);
 		return "/user/mypage/tourlandCartDetail"; 
+	}
+	@ResponseBody
+	@RequestMapping(value="tourlandMyWishesDetail/update", method=RequestMethod.GET)
+	public ResponseEntity<String> tourlandMyWishesDetail(SearchCriteria cri, Model model,int userno,int rno, int upno, int price, int[] ano, int[] acapacity, int[] hno, int[] hcapacity, int[] tno, int tcapacity, int[] rentno, int rcapacity) throws Exception {
+		ResponseEntity<String> entity = null;
+		ProductVO pvo = new ProductVO();
+		ReservationVO rvo = new ReservationVO();
+		rvo.setNo(rno);
+		List<AirplaneVO> air = new ArrayList<>();
+		List<HotelVO> hotel = new ArrayList<>();
+		List<TourVO> tour = new ArrayList<>();
+		List<RentcarVO> rentcar = new ArrayList<>();
+		for(int i : ano) {
+			air.add(flightService.airplaneByNo(new AirplaneVO(i)));
+			air.add(flightService.airplaneByNo(new AirplaneVO(i+1)));
+		}
+		if(hno!=null) for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
+		if(tno!=null) for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
+		if(rentno!=null) for(int i : rentno) rentcar.add(rentcarService.readByNo(i));
+		for(int i=0;i<acapacity.length;i++) {
+			air.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i)+1);
+			air.get(i+i).setCapacity(acapacity[i+i]);
+			air.get(i+i).setPdiv(1);
+			air.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			air.get(i+i+1).setCapacity(acapacity[i+i+1]);
+			air.get(i+i+1).setPdiv(1);
+		}
+		for(int i=0;i<hcapacity.length;i++) {
+			hotel.get(i).setNo(hotelService.totalCountHotel()+(i+1));
+			hotel.get(i).setTotalcapacity(hcapacity[i]);
+			hotel.get(i).setPdiv(true);
+		}
+		for(int i=0;i<tour.size();i++) {
+			tour.get(i).setNo(tourService.totalCount()+(i+1));
+			tour.get(i).setCapacity(tcapacity);
+			tour.get(i).setPdiv(true);
+		}
+		for(int i=0;i<rentcar.size();i++) {
+			rentcar.get(i).setNo(rentcarService.totalCountRentcar()+(i+1));
+			rentcar.get(i).setCapacity(rcapacity);
+			rentcar.get(i).setPdiv(1);
+		}
+		UserVO uvo = userService.readByNoUser(userno);
+		try {
+			rvo = reservationService.ReadCartByNoAndUserNo(rno, userno);
+			pvo = rvo.getProduct();
+			pvo.setAir(air);
+			pvo.setHotel(hotel);
+			pvo.setTour(tour);
+			pvo.setRentcar(rentcar);
+			productService.updateProductInUserCart(pvo,uvo,rvo, cri);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+		}
+		return entity;
 	}
 	
 	//마이 페이지 - 내 쿠폰
 	@RequestMapping(value="tourlandMyCoupon", method=RequestMethod.GET)
 	public String tourlandMyCoupon(SearchCriteria cri, Model model, HttpSession session) throws Exception { 
-		//Auth 키가 있을 때 
+		//Auth 키가 있을 때  
 		if(session.getAttribute("Auth")!=null) {
 			if(session.getAttribute("Auth") instanceof UserVO) { //세션 객체가 UserVO 일 경우 = 회원 일 경우
 				//세션에 로그인 정보가 있으면 해당 고객 불러오기

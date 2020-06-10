@@ -65,15 +65,15 @@
 			$(".selAir").each(function(i,obj){
 				switch($(obj).find("option:selected").val()) {
 				case "F":
-					var airprice = ${vo.air[0].price} * 2;
+					var airprice = ${vo.air[0].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity")); 
 					price += airprice;
 					break;
 				case "B":
-					var airprice = ${vo.air[2].price} * 2;
+					var airprice = ${vo.air[2].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity"));
 					price += airprice;
 					break;
 				case "E":
-					var airprice = ${vo.air[4].price} * 2;
+					var airprice = ${vo.air[4].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity"));
 					price += airprice;
 					break;
 				}
@@ -83,29 +83,28 @@
 				case "S":
 					var hotelPrice = ${vo.hotel[0].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[0].checkin}","${vo.hotel[0].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity"))); 
 					break;
 				case "D":
 					var hotelPrice = ${vo.hotel[1].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[1].checkin}","${vo.hotel[1].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity")));
 					break;
 				case "N":
 					var hotelPrice = ${vo.hotel[2].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[2].checkin}","${vo.hotel[2].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity")));
 					break;
 				}
 			})
 			$(".selTour:checked").each(function(i,obj){
-				var tourprice = Number($(this).attr("data-price"));
+				var tourprice = Number($(this).attr("data-price")) * bookCapacity;
 				price += tourprice; 
 			})
 			if($("#selRentcar option:selected").val()=='S') {
-				price += Math.ceil(${vo.rentcar[0].price}/45); 
+				price += Math.ceil(${vo.rentcar[0].price/vo.rentcar[0].capacity}*bookCapacity); 
 			}
-			var totalPrice = price * bookCapacity; 
-			$("#price").text(totalPrice.toLocaleString());
+			$("#price").text(price.toLocaleString());
 		}
 		function replaceAll(str, searchStr, replaceStr) {
 		   return str.split(searchStr).join(replaceStr);
@@ -117,24 +116,10 @@
 			$(document).on("click","#smallImgBox li img",function(){
 				$("#bigImgBox img").attr("src",$(this).attr("src"));
 			})
-			$("#review").click(function() {
-				location.href = "tourlandProductReview?pno=${vo.pno}&price=${price}";
-			})
 			for(var i=1;i<=45;i++) {
 				var option = $("<option>").html(i+"명");
 				$("#capacity").append(option);
 			}
-			$("#capacity").change(function(){
-				$(".selAir").val("");
-				$(".selAir").eq(0).val("E");
-				$(".selAir").change();
-				$(".selHotel").val("");
-				$(".selHotel").eq(0).val("N");
-				$(".selHotel").change();
-				$(".selTour").prop("checked",true); 
-				$("#selRentcar").eq(0).val("DS"); 
-				calPrice();
-			})
 			$(".selAir").change(function(){
 				if($(".selAir").eq(0).find("option:selected").val()=="" && ($(".selAir").index($(this))==1 || $(".selAir").index($(this))==2)) {
 					alert("항공옵션1을 먼저 채워주세요"); 
@@ -196,13 +181,13 @@
 				calPrice();
 			})
 			$(".selHotel").change(function(){
-				$(this).parent().next().remove();
 				if($(".selHotel").eq(0).find("option:selected").val()=="" && ($(".selHotel").index($(this))==1 || $(".selHotel").index($(this))==2)) {
 					alert("호텔옵션1을 먼저 채워주세요"); 
 					$(this).find("option").eq(0).prop("selected",true);
 					return false;
 				}
 				var selOption = $(this).find("option:selected").val();
+				$(this).parent().next().remove(); 
 				var hotelSelect = $("<select class='hotelSelect'>").html(" ");
 				var p = $("<p>").html("투숙인원 ");
 				switch(selOption) {
@@ -260,13 +245,259 @@
 			$("#selRentcar").change(function(){
 				calPrice();
 			})
-		});
+			//선택된 장바구니 상품의 옵션에 따라 미리 선택되어 있게 함
+			var uacapacity = [];
+			var calacapacity = 0;
+			$(".selAir").each(function(i,obj){
+				if($(obj).find("option").eq(0).attr("data-capacity")!="") {
+					uacapacity[i] = Number($(obj).find("option").eq(0).attr("data-capacity"));
+					calacapacity += Number($(obj).find("option").eq(0).attr("data-capacity"));
+				}
+			})
+			$("#capacity option").each(function(i,obj){
+				if($(obj).val().substring(0,$(obj).val().length-1)==calacapacity) { 
+					$(obj).prop("selected",true);
+					$(obj).change();
+				}
+			}) 
+			var useat = [];
+			$(".selAir").each(function(i,obj){
+				if($(obj).find("option").eq(0).attr("data-seat")!="") {
+					useat[i] = $(obj).find("option").eq(0).attr("data-seat");
+				}
+			})
+			switch(useat.length-1) { 
+			case 0:
+				$(".selAir").eq(0).find("option").each(function(i,obj){
+					if($(obj).val()==useat[0]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".airSelect").eq(0).find("option").eq(uacapacity[0]-1).prop("selected",true);
+						$(".airSelect").change();
+					}
+				})
+				break;
+			case 1:
+				$(".selAir").eq(0).find("option").each(function(i,obj){
+					if($(obj).val()==useat[0]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".airSelect").eq(0).find("option").eq(uacapacity[0]-1).prop("selected",true);
+						$(".airSelect").change();
+					}
+				})
+				$(".selAir").eq(1).find("option").each(function(i,obj){
+					if($(obj).val()==useat[1]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".airSelect").eq(1).find("option").eq(uacapacity[1]-1).prop("selected",true);
+						$(".airSelect").change();
+					}
+				})
+				break;
+			case 2:
+				$(".selAir").eq(0).find("option").each(function(i,obj){
+					if($(obj).val()==useat[0]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".airSelect").eq(0).find("option").eq(uacapacity[0]-1).prop("selected",true);
+						$(".airSelect").change();
+					}
+				})
+				$(".selAir").eq(1).find("option").each(function(i,obj){
+					if($(obj).val()==useat[1]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".airSelect").eq(1).find("option").eq(uacapacity[1]-1).prop("selected",true);
+						$(".airSelect").change();
+					}
+				})
+				$(".selAir").eq(2).find("option").each(function(i,obj){
+					if($(obj).val()==useat[2]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".airSelect").eq(2).find("option").eq(uacapacity[2]-1).prop("selected",true);
+						$(".airSelect").change();
+					}
+				})
+				break;
+			}
+			var uhcapacity = [];
+			$(".selHotel").each(function(i,obj){
+				if($(obj).find("option").eq(0).attr("data-capacity")!="") {
+					uhcapacity[i] = Number($(obj).find("option").eq(0).attr("data-capacity"));
+				}
+			})
+			var uroomtype = [];
+			$(".selHotel").each(function(i,obj){
+				if($(obj).find("option").eq(0).attr("data-roomtype")!="") {
+					uroomtype[i] = $(obj).find("option").eq(0).attr("data-roomtype");
+				}
+			})
+			switch(uroomtype.length-1) { 
+			case 0:
+				$(".selHotel").eq(0).find("option").each(function(i,obj){
+					if($(obj).val()==uroomtype[0]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".hotelSelect").eq(0).find("option").eq(uhcapacity[0]-1).prop("selected",true);
+						$(".hotelSelect").change();
+					}
+				})
+				break;
+			case 1:
+				$(".selHotel").eq(0).find("option").each(function(i,obj){
+					if($(obj).val()==uroomtype[0]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".hotelSelect").eq(0).find("option").eq(uhcapacity[0]-1).prop("selected",true);
+						$(".hotelSelect").change();
+					}
+				})
+				$(".selHotel").eq(1).find("option").each(function(i,obj){
+					if($(obj).val()==uroomtype[1]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".hotelSelect").eq(1).find("option").eq(uhcapacity[1]-1).prop("selected",true);
+						$(".hotelSelect").change();
+					}
+				})
+				break;
+			case 2:
+				$(".selHotel").eq(0).find("option").each(function(i,obj){
+					if($(obj).val()==uroomtype[0]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+					}
+				})
+				$(".selHotel").eq(1).find("option").each(function(i,obj){
+					if($(obj).val()==uroomtype[1]) {
+						$(obj).prop("selected",true);
+						$(obj).change();
+						$(".hotelSelect").eq(1).find("option").eq(uhcapacity[1]-1).prop("selected",true);
+						$(".hotelSelect").change();
+					}
+				})
+				$(".selHotel").eq(2).find("option").each(function(i,obj){
+					if($(obj).val()==uroomtype[2]) {
+						$(obj).prop("selected",true);
+						$(obj).change(); 
+						$(".hotelSelect").eq(2).find("option").eq(uhcapacity[2]-1).prop("selected",true);
+						$(".hotelSelect").change();
+					}
+				})
+				break;
+			}
+			var utno = [];
+			$(".utour").each(function(i,obj){
+				utno[i] = $(obj).val();
+			})
+			$(".selTour").each(function(i,obj){
+				if($(obj).val()==utno[i]) {
+					$(obj).prop("checked",true);
+					$(obj).change();
+				}
+			})
+			var rno = $("#selRentcar").find("option").eq(0).attr("data-rno");
+			if($("#selRentcar").find("option").eq(1).attr("data-rentno")==rno) {   
+				$("#selRentcar").find("option").eq(1).prop("selected",true);
+				$("#selRentcar").change();
+			}
+			$("#capacity").change(function(){
+				bookCapacity = Number($("#capacity option:selected").val().substring(0,$("#capacity option:selected").val().indexOf("명")));
+				$(".selAir").eq(0).val("E");
+				$(".selAir").eq(1).val("");
+				$(".selAir").eq(2).val("");
+				$(".airSelect").eq(0).find("option").eq(bookCapacity-1).prop("selected",true);
+				$(".airOption").eq(1).next().remove();
+				$(".airOption").eq(2).next().remove();
+				$(".selAir").eq(1).change();
+				$(".selAir").eq(2).change();
+				$(".selHotel").eq(0).val("N");
+				$(".selHotel").eq(1).val("");
+				$(".selHotel").eq(2).val("");
+				$(".hotelSelect").eq(0).find("option").eq(bookCapacity-1).prop("selected",true);
+				$(".hotelOption").eq(1).next().remove();
+				$(".hotelOption").eq(2).next().remove();
+				$(".selHotel").eq(1).change();
+				$(".selHotel").eq(2).change();
+				$(".selTour").prop("checked",true);
+				$(".selTour").change();
+				$("#selRentcar").change();
+				calPrice();
+			})
+			$("#return").click(function(){
+				location.href = "tourlandMyWishes";
+			})
+			$("#update").click(function(){
+				if(confirm("수정하시겠습니까?")) {
+					var userno = ${userno};
+					var rno = ${rno};
+					var upno = ${uvo.pno};
+					var price = replaceAll($("#price").text(),",","");
+					var ano = [];
+					var acapacity = [];
+					var hno = [];
+					var hcapacity = [];
+					var tno = [];
+					var tcapacity = bookCapacity;
+					var rentno = [];
+					var rcapacity = bookCapacity;
+					$(".selAir option:selected").each(function(i,obj){
+						if($(this).val()!="") {
+							var dno = $(this).attr("data-dano");
+							ano[i] = dno;
+						}
+					})
+					$(".airSelect option:selected").each(function(i,obj){
+						acapacity[i] = $(this).attr("data-capacity"); 
+					})
+					$(".selHotel option:selected").each(function(i,obj){
+						if($(this).val()!="" || $(this).val=="DS") {
+							var no = $(this).attr("data-hno");
+							hno[i] = no;
+						}
+					})
+					$(".hotelSelect option:selected").each(function(i,obj){
+						hcapacity[i] = $(this).attr("data-capacity"); 
+					})
+					$(".selTour:checked").each(function(i,obj){
+						tno[i] = $(this).val();
+					})
+					if($("#selRentcar option:selected").val()=="S") {
+						rentno[0] = $(this).attr("data-rentno");
+					}
+					$.ajax({
+						url : "tourlandMyWishesDetail/update", 
+						method : "get",
+						traditional : true,
+						data : {
+							userno:userno,
+							rno:rno,
+							upno:upno,
+							price:price,
+							ano:ano,
+							acapacity:acapacity,
+							hno:hno,
+							hcapacity:hcapacity,
+							tno:tno,
+							tcapacity:tcapacity,
+							rno:rno,
+							rcapacity:rcapacity
+						},
+						dataType : "text", 
+						success : function(res) {
+							alert("수정이 완료되었습니다");
+							location.href = "tourlandMyWishes";
+						},
+						error : function(res) {
+							console.log(res);
+						}
+					})
+				}
+			})
+		}); 
 </script>
-	<c:if test="${Auth!=null && login=='user'}">
-		<script>
-			uno = ${Auth.userno};
-		</script>
-	</c:if>
 		<section>
 				<div id="proBox">
 					<h1>${vo.pname}</h1>
@@ -340,8 +571,8 @@
 								<p class="airOption">
 									항공기옵션1
 									<select class="selAir">
-										<option value="">선택</option>
-										<option value="F" data-dano="${vo.air[0].no}" data-rano="${vo.air[1].no}">First-Class</option>
+										<option value="" data-seat="${uvo.air[0].seat}" data-capacity="${uvo.air[0].capacity}">선택</option>
+										<option value="F" data-dano="${vo.air[0].no}" data-rano="${vo.air[1].no}" >First-Class</option>
 										<option value="B" data-dano="${vo.air[2].no}" data-rano="${vo.air[3].no}">Business</option>
 										<option value="E" data-dano="${vo.air[4].no}" data-rano="${vo.air[5].no}">Economy</option>   
 									</select>
@@ -351,7 +582,7 @@
 								<p class="airOption">
 									항공기옵션2
 									<select class="selAir">
-										<option value="">선택</option>
+										<option value="" data-seat="${uvo.air[2].seat}" data-capacity="${uvo.air[2].capacity}">선택</option>
 										<option value="F" data-dano="${vo.air[0].no}" data-rano="${vo.air[1].no}">First-Class</option>
 										<option value="B" data-dano="${vo.air[2].no}" data-rano="${vo.air[3].no}">Business</option>
 										<option value="E" data-dano="${vo.air[4].no}" data-rano="${vo.air[5].no}">Economy</option>   
@@ -359,10 +590,10 @@
 								</p>
 							</li>
 							<li class="selOption">
-								<p class="airOption">
+								<p class="airOption"> 
 									항공기옵션3 
-									<select class="selAir">
-										<option value="">선택</option>
+									<select class="selAir"> 
+										<option value="" data-seat="${uvo.air[4].seat}" data-capacity="${uvo.air[4].capacity}">선택</option>
 										<option value="F" data-dano="${vo.air[0].no}" data-rano="${vo.air[1].no}">First-Class</option>
 										<option value="B" data-dano="${vo.air[2].no}" data-rano="${vo.air[3].no}">Business</option>
 										<option value="E" data-dano="${vo.air[4].no}" data-rano="${vo.air[5].no}">Economy</option>   
@@ -373,7 +604,7 @@
 								<p class="hotelOption">
 									호텔옵션1 
 									<select class="selHotel">
-										<option value="">선택</option>
+										<option value="" data-roomtype="${uvo.hotel[0].roomtype}" data-capacity="${uvo.hotel[0].totalcapacity}">선택</option>
 										<option value="S" data-hno="${vo.hotel[0].no}">스위트룸</option>
 										<option value="D" data-hno="${vo.hotel[1].no}">디럭스룸</option>
 										<option value="N" data-hno="${vo.hotel[2].no}">일반룸</option>
@@ -385,7 +616,7 @@
 								<p class="hotelOption">
 									호텔옵션2 
 									<select class="selHotel">
-										<option value="">선택</option>
+										<option value="" data-roomtype="${uvo.hotel[1].roomtype}" data-capacity="${uvo.hotel[1].totalcapacity}">선택</option>
 										<option value="S" data-hno="${vo.hotel[0].no}">스위트룸</option>
 										<option value="D" data-hno="${vo.hotel[1].no}">디럭스룸</option>
 										<option value="N" data-hno="${vo.hotel[2].no}">일반룸</option>
@@ -397,7 +628,7 @@
 								<p class="hotelOption">
 									호텔옵션3
 									<select class="selHotel">
-										<option value="">선택</option>
+										<option value="" data-roomtype="${uvo.hotel[2].roomtype}" data-capacity="${uvo.hotel[2].totalcapacity}">선택</option>
 										<option value="S" data-hno="${vo.hotel[0].no}">스위트룸</option>
 										<option value="D" data-hno="${vo.hotel[1].no}">디럭스룸</option>
 										<option value="N" data-hno="${vo.hotel[2].no}">일반룸</option>
@@ -411,19 +642,22 @@
 									<c:forEach var="tour" items="${vo.tour}">
 										<input type="checkbox" name="tourChk" value="${tour.no}" class="selTour" data-price="${tour.tprice}"> <span>${tour.tname}</span><br>
 									</c:forEach>
+									<c:forEach var="utour" items="${uvo.tour}">
+										<input type="hidden" value="${utour.no}" class="utour">
+									</c:forEach>
 								</p>
 							</li>
 							<li class="selOption">
 								<p>
 									렌터카옵션
 									<select id="selRentcar">
-										<option value="">선택</option>
+										<option value="" data-rno="${uvo.rentcar[0].no}">선택</option>
 										<option value="S" data-rentno="${vo.rentcar[0].no}">선택함</option>
 										<option value="DS">선택안함</option>
 									</select>    
 								</p>
 							</li>
-							<li id="infoPrice" style="clear : both;">가격 : <span id="price"><fmt:formatNumber value="${uvo.pprice}" pattern="###,###"/></span>원</li>
+							<li id="infoPrice" style="clear : both;">가격 : <span id="price"><fmt:formatNumber value="0" pattern="###,###"/></span>원</li>
 						</ul>
 						<div id="btnsBox">
 						<button id="update">수정하기</button>
