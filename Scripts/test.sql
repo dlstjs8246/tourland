@@ -236,7 +236,7 @@ FROM hotel;
 where no = 811;
 select count(no) from hotel;
 select * from hotel order by no desc limit 10, 3;
-
+select * from user;
 select * from hotel
 where hname like CONCAT('%','hidden','%');
 select * from user;

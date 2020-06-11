@@ -513,6 +513,7 @@ public class CustomerController {
 		ProductVO upvo = rvo.getProduct();
 		cri.setSearchType("userCart");
 		cri.setKeyword(upvo.getPname());
+		cri.setPerPageNum(productService.totalCountBySearchProduct(cri));
 		List<ProductVO> list = productService.listPage(cri);
 		ProductVO pvo = null;
 		Date uddate = upvo.getAir().get(0).getDdate();
@@ -556,6 +557,7 @@ public class CustomerController {
 		List<TourVO> tour = new ArrayList<>();
 		List<RentcarVO> rentcar = new ArrayList<>();
 		for(int i : ano) {
+			System.out.println(i);
 			air.add(flightService.airplaneByNo(new AirplaneVO(i)));
 			air.add(flightService.airplaneByNo(new AirplaneVO(i+1)));
 		}
@@ -564,10 +566,10 @@ public class CustomerController {
 		if(rentno!=null) for(int i : rentno) rentcar.add(rentcarService.readByNo(i));
 		for(int i=0;i<acapacity.length;i++) {
 			air.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i)+1);
-			air.get(i+i).setCapacity(acapacity[i+i]);
+			air.get(i+i).setCapacity(acapacity[i]);
 			air.get(i+i).setPdiv(1);
 			air.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
-			air.get(i+i+1).setCapacity(acapacity[i+i+1]);
+			air.get(i+i+1).setCapacity(acapacity[i]);
 			air.get(i+i+1).setPdiv(1);
 		}
 		for(int i=0;i<hcapacity.length;i++) {
@@ -1226,6 +1228,7 @@ public class CustomerController {
 			HotelVO hotel = new HotelVO();//객체에 불러온 호텔 번호 세팅
 			hotel.setNo(Integer.parseInt(hno[i]));
 			HotelVO newHotel = hotelService.readHotel(new HotelVO(hotel.getNo()));
+			newHotel.setTotalcapacity(Integer.parseInt(hcapacity[i]));
 			System.out.println("호텔 : "+newHotel);
 			hotelList.add(newHotel);
 			
