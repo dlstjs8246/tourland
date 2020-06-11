@@ -1133,12 +1133,21 @@ public class CustomerController {
 					}
 				}	
 			}
-			productService.insertUserProduct(product, userProduct, user, cri);
-			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+			int res = productService.insertUserProduct(product, userProduct, user, cri);
+			if(res==0) {
+				entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+			}
+			else {
+				throw new Exception("인원부족");
+			}
+			
 		}
 		catch(Exception e) {
 			if(e.getMessage().equals("중복")) {
 				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
+			}
+			else if(e.getMessage().equals("인원부족")) {
+				entity = new ResponseEntity<String>("CAPACITYFAIL",HttpStatus.BAD_REQUEST);
 			}
 			else {
 				e.printStackTrace();
