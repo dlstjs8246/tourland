@@ -56,7 +56,7 @@
 			var checkoutDate = new Date(Date.parse(checkout));  
 			var date = new Date();
 			date.setDate(checkoutDate.getDate() - checkinDate.getDate());
-			return date.getDate();
+			return date.getDate()-1;
 		}
 		function calPrice() {
 			price = 0;
@@ -64,15 +64,15 @@
 			$(".selAir").each(function(i,obj){
 				switch($(obj).find("option:selected").val()) {
 				case "F":
-					var airprice = ${vo.air[0].price} * 2;
+					var airprice = ${vo.air[0].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity")); 
 					price += airprice;
 					break;
 				case "B":
-					var airprice = ${vo.air[2].price} * 2;
+					var airprice = ${vo.air[2].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity"));
 					price += airprice;
 					break;
 				case "E":
-					var airprice = ${vo.air[4].price} * 2;
+					var airprice = ${vo.air[4].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity"));
 					price += airprice;
 					break;
 				}
@@ -82,29 +82,28 @@
 				case "S":
 					var hotelPrice = ${vo.hotel[0].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[0].checkin}","${vo.hotel[0].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity"))); 
 					break;
 				case "D":
 					var hotelPrice = ${vo.hotel[1].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[1].checkin}","${vo.hotel[1].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity")));
 					break;
 				case "N":
 					var hotelPrice = ${vo.hotel[2].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[2].checkin}","${vo.hotel[2].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity")));
 					break;
 				}
 			})
 			$(".selTour:checked").each(function(i,obj){
-				var tourprice = Number($(this).attr("data-price"));
+				var tourprice = Number($(this).attr("data-price")) * bookCapacity;
 				price += tourprice; 
 			})
 			if($("#selRentcar option:selected").val()=='S') {
-				price += Math.ceil(${vo.rentcar[0].price}/45); 
+				price += Math.ceil(${vo.rentcar[0].price/vo.rentcar[0].capacity}*bookCapacity); 
 			}
-			var totalPrice = price * bookCapacity; 
-			$("#price").text(totalPrice.toLocaleString());
+			$("#price").text(price.toLocaleString());
 		}
 		function replaceAll(str, searchStr, replaceStr) {
 		   return str.split(searchStr).join(replaceStr);
@@ -124,14 +123,19 @@
 				$("#capacity").append(option);
 			}
 			$("#capacity").change(function(){
-				$(".selAir").val("");
 				$(".selAir").eq(0).val("E");
+				$(".selAir").eq(1).val("");
+				$(".selAir").eq(2).val("");
 				$(".selAir").change();
-				$(".selHotel").val("");
+				$(".airSelect").eq(0).find("option").eq(bookCapacity-1).prop("selected",true);  
 				$(".selHotel").eq(0).val("N");
+				$(".selHotel").eq(1).val("");
+				$(".selHotel").eq(2).val("");
 				$(".selHotel").change();
-				$(".selTour").prop("checked",true); 
-				$("#selRentcar").eq(0).val("DS"); 
+				$(".hotelSelect").eq(0).find("option").eq(bookCapacity-1).prop("selected",true);
+				$(".selTour").prop("checked",true);
+				$(".selTour").change();
+				$("#selRentcar").change();
 				calPrice();
 			})
 			$(".selAir").change(function(){
@@ -185,7 +189,7 @@
 			$(document).on("change",".airSelect",function(){
 				var airCapacity = 0;
 				$(".airSelect").each(function(i,obj){
-					airCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
+					airCapacity += Number($(this).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
 				})
 				if(bookCapacity<airCapacity) {
 					alert("현재 예약인원보다 항공기 탑승인원이 더 많을 수 없습니다");
@@ -229,8 +233,7 @@
 					p.append(hotelSelect);  
 					$(this).parent().after(p); 
 					break;
-				}
-				calPrice();
+				} 
 				var hotelCapacity = 0; 
 				$(".hotelSelect").each(function(i,obj){
 					hotelCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
@@ -239,8 +242,8 @@
 					alert("현재 예약인원보다 호텔 투숙 인원이 더 많을 수 없습니다");
 					$(this).find("option").eq(0).prop("selected",true);
 					$(this).parent().next().remove();
-					calPrice();
 				}
+				calPrice();
 			}) 
 			$(document).on("change",".hotelSelect",function(){
 				var hotelCapacity = 0;
@@ -264,8 +267,7 @@
 			$(".selHotel").eq(0).val("N");
 			$(".selHotel").eq(0).change();
 			$(".selTour").prop("checked",true);
-			$("#selRentcar").eq(0).val("DS");
-			calPrice();
+			$(".selTour").change(); 
 			$("#doReserv").click(function(){
 				if(${Auth==null}) {
 					alert("로그인부터 먼저해주세요");
@@ -436,7 +438,7 @@
 							}
 						}
 					}) 
-				}); 
+				});
 		});
 </script>
 	<c:if test="${Auth!=null && login=='user'}">

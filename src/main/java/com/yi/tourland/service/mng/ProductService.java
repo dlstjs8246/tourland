@@ -241,10 +241,8 @@ public class ProductService {
 	
 	@Transactional
 	public void insertProductInUserCart(ProductVO product, UserVO uvo, SearchCriteria cri) throws Exception {
-		System.out.println("들어옴");
 		//선택한 상품 옵션들 insert
 		for (int i=0; i<product.getAir().size(); i++) {
-			System.out.println("번호 " + product.getAir().get(i).getNo());
 			adao.addAirplane(product.getAir().get(i));
 		}
 		for (int i=0; i<product.getHotel().size(); i++) {
@@ -265,5 +263,10 @@ public class ProductService {
 	public void deleteProductInUserCart(ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception {
 		deleteUserProduct(pvo,rvo);
 		reservDao.deleteReservation(rvo);
+	}
+	@Transactional
+	public void updateProductInUserCart(ProductVO pvo, UserVO uvo,ReservationVO rvo, SearchCriteria cri) throws Exception {
+		deleteProductInUserCart(pvo, rvo, cri);
+		insertProductInUserCart(pvo, uvo, cri);
 	}
 }
