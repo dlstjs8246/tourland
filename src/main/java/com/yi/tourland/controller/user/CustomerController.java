@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
+import javax.mail.Session;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1403,12 +1404,72 @@ public class CustomerController {
 	 
 	 
 	 //쿠폰 ---------------------------------------------------------------------------------------
+	 //쿠폰 페이지
 	 @RequestMapping(value="userpageCoupon", method = RequestMethod.GET)
-	 public String userpageCoupon() throws Exception {
-		 
+	 public String userpageCoupon(SearchCriteria cri, Model model, String success, String fail, String hasCoupon) throws Exception {
+		 List<CouponVO> couponList = couponService.couponList(cri);
+			//포맷 
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			//오늘 날짜 생성
+			Date date = new Date();
+			//형식 변경
+			String today = dateFormat.format(date);
+			
+			List<CouponVO> available = new ArrayList<>(); //아직 만료되지 않은 쿠폰
+			
+			for(int i=0; i<couponList.size(); i++) {
+				//오늘 날짜와 해당 고객의 쿠폰의 만료일을 하나씩 비교 후 만료 안된 거 & 쿠폰번호1(가입축하쿠폰)이 아닌 것만 리스트에 넣기  
+				long rs = date.getTime() - couponList.get(i).getEdate().getTime(); 
+				if(rs < 0 && couponList.get(i).getCno()!=1) {
+					available.add(couponList.get(i));
+				}  
+			}
+			
+			model.addAttribute("availableList", available);
+			if(success != null) {
+				model.addAttribute("success", "successs");
+			}
+			if(fail != null) {
+				model.addAttribute("fail", "fail");
+			}
+			if(hasCoupon != null) {
+				model.addAttribute("hasCoupon", "hasCoupon");
+			}
+			
+			
 		 return "/user/coupon/tourlandCoupon";
 	 }
 	 
+	 //쿠폰 다운 받기 클릭했을 때 
+	 @RequestMapping(value="getCoupon", method = RequestMethod.GET)
+	 public String getCoupon(String cno, Model model, HttpSession session) throws Exception {
+		
+		 if(session.getAttribute("Auth")!=null) {
+				//세션에 로그인 정보가 있으면 해당 고객 불러오기
+				UserVO vo = (UserVO) session.getAttribute("Auth");
+				
+				List<Integer> couponCheck = couponService.userHasACouponOrNot(vo.getUserno(), Integer.parseInt(cno));
+				//가지고 있으면 반려
+				if(couponCheck.size()>0) {
+					
+					model.addAttribute("hasCoupon", "hasCoupon");
+					 return "redirect:/customer/userpageCoupon";
+				}
+				//안 가지고 있으면 insert 후 리스트로 돌아가기
+				else {
+					couponService.addCouponToUser(vo.getUserno(), Integer.parseInt(cno));
+					model.addAttribute("success", "success");
+					 return "redirect:/customer/userpageCoupon";
+				}
+				
+				
+		 }else {
+			 model.addAttribute("fail", "fail");
+			 return "redirect:/customer/userpageCoupon";
+		 }
+			
+		
+	 }
 	
 	//게시판 ---------------------------------------------------------------------------------------
 	
