@@ -146,13 +146,13 @@ public class ProductService {
 		return dao.tourlandProductKRSearchLowPriceList(cri);
 	};
 	@Transactional
-	public void insertUserProduct(ProductVO pvo,ProductVO upvo, UserVO uvo, SearchCriteria cri) throws Exception {
+	public int insertUserProduct(ProductVO pvo,ProductVO upvo, UserVO uvo, SearchCriteria cri) throws Exception {
 		//선택한 상품 옵션들의 인원수에 따라 전체 상품 옵션들 update
 		for(int i=0;i<pvo.getAir().size();i++) {
 			for(int j=0;j<upvo.getAir().size();j++) {
 				if(pvo.getAir().get(i).getNo()==upvo.getAir().get(j).getNo()) {
 					if(pvo.getAir().get(i).getCapacity()<=0) {
-						return;
+						return -1;
 					}
 					pvo.getAir().get(i).setCapacity(pvo.getAir().get(i).getCapacity() - upvo.getAir().get(j).getCapacity());
 					adao.editAirplane(pvo.getAir().get(i));
@@ -167,8 +167,7 @@ public class ProductService {
 				if(pvo.getHotel().get(i).getNo()==upvo.getHotel().get(j).getNo()) {
 					if(pvo.getHotel().get(i).getTotalcapacity()<=0) {
 						pvo.getHotel().get(i).setBookedup(1);
-						hdao.updateHotel(pvo.getHotel().get(i));
-						return;
+						return -1;
 					}
 					pvo.getHotel().get(i).setTotalcapacity(pvo.getHotel().get(i).getTotalcapacity() - upvo.getHotel().get(j).getTotalcapacity());
 					hdao.updateHotel(pvo.getHotel().get(i));
@@ -182,10 +181,11 @@ public class ProductService {
 			for(int j=0;j<upvo.getTour().size();j++) {
 				if(pvo.getTour().get(i).getNo()==upvo.getTour().get(j).getNo()) {
 					if(pvo.getTour().get(i).getCapacity()<=0) {
-						return;
+						return -1;
 					}
 					pvo.getTour().get(i).setCapacity(pvo.getTour().get(i).getCapacity() - upvo.getTour().get(j).getCapacity());
 					tdao.updateTour(pvo.getTour().get(i));
+					System.out.println("투어 update 실행");
 				}
 				else {
 					continue;
@@ -196,10 +196,11 @@ public class ProductService {
 			for(int j=0;j<upvo.getRentcar().size();j++) {
 				if(pvo.getRentcar().get(i).getNo()==upvo.getRentcar().get(j).getNo()) {
 					if(pvo.getRentcar().get(i).getCapacity()<=0) {
-						return;
+						return -1;
 					}
 					pvo.getRentcar().get(i).setCapacity(pvo.getRentcar().get(i).getCapacity() - upvo.getRentcar().get(j).getCapacity());
 					rdao.updateRentcar(pvo.getRentcar().get(i));
+					System.out.println("렌트카 update 실행");
 				}
 				else {
 					continue;
@@ -212,7 +213,6 @@ public class ProductService {
 		int insertRno = rdao.totalCountRentcar()+1;
 		//선택한 상품 옵션들 insert
 		for(AirplaneVO vo : upvo.getAir()) {
-			System.out.println(vo);
 			vo.setNo(insertAno);
 			adao.addAirplane(vo);
 			insertAno++;
@@ -237,6 +237,7 @@ public class ProductService {
 		ReservationVO vo = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo, "1"); 
 		reservDao.insertReservation(vo);
 		dao.insertpUserStatus(vo,uvo,upvo);
+		return 0;
 	}
 	
 	@Transactional

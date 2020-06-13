@@ -91,7 +91,7 @@ select * from faq where lcate = 'D' and mcate = 'J' and title like concat ('%','
 desc tour;
 select * from tour where no = 3001 order by no desc;
 delete from tour;
-select * from product;
+select * from product order by pno desc;
 desc airplane;
 select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	   a2.no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity,a2.seat,a2.price,a2.pdiv, 
@@ -192,9 +192,10 @@ select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no;
 select * from userpstatus;
 select * from cart;
-select * from hotel order by no desc;
+select * from hotel order by no asc;
 select distinct no,r.userno,rdate,rstatus,pno from reservation r join userpstatus u on r.userno = u.userno;
 select * from reservation;
+select * from product order by pno desc;
 desc tour;
 select * from user;
 select * from airplane order by no desc;
@@ -215,13 +216,14 @@ select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 		join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
 		where p.pdiv = 0;
+select * from reservation;
 select rv.*,
 		p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate as 'a2rdate',a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
 	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from reservation where no = 2 and userno = 6 and rstatus = '0' order by no desc) rv 
+		from (select * from reservation where no = 1 and userno = 6 and rstatus = '1' order by no desc) rv 
 		join userpstatus u on rv.userno = u.userno and rv.no = u.no join product p on u.pno = p.pno
 		left join pairstatus a on p.pno = a.pno left join airplane a2 on a.ano = a2.no
 		left join photelstatus h on p.pno = h.pno left join hotel h2 on h.hno = h2.no
@@ -234,7 +236,7 @@ FROM hotel;
 where no = 811;
 select count(no) from hotel;
 select * from hotel order by no desc limit 10, 3;
-
+select * from user;
 select * from hotel
 where hname like CONCAT('%','hidden','%');
 select * from user;
