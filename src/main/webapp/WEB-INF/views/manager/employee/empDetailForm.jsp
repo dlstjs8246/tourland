@@ -192,9 +192,9 @@
 							<span class="errorMsg">중복되는 아이디 입니다. 다른 아이디를 입력해주세요.</span>
 						</div>
 						<div class="form-group">
-							<label>비밀번호</label>
+							<!-- <label>비밀번호</label>
 							<input type="text" name="emppass" placeholder="기존 비밀번호 입력 필요" >
-							<span class="errorMsg">비밀번호가 일치하지 않습니다.</span> <!-- 관리자일 경우 프리패스로 만들 것  -->
+							<span class="errorMsg">비밀번호가 일치하지 않습니다.</span> 관리자일 경우 프리패스로 만들 것  -->
 						</div>
 						<c:if test="${Auth.empauth==1}">
 							<div class="box-footer">

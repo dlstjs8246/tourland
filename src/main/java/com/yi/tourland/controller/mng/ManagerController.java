@@ -517,10 +517,12 @@ public class ManagerController {
 	public String employeeDelete(SearchCriteria cri, Model model, @PathVariable("empretired") int empretired,
 			@PathVariable("empno") int empno) throws Exception {
 		EmployeeVO vo = employeeService.readByNoEmployee(empno);
+		System.out.println(vo);
 		// System.out.println(vo);
-		if (empretired == 0) { // 근무사원이라면
+		if (vo.getEmpretired() == 0) { // 근무사원이라면
 			vo.setEmpretired(1); // 퇴사 사원 처리
 			employeeService.updateEmployee(vo);
+
 		} else {
 			employeeService.deleteEmployee(vo.getEmpno()); // 완전 삭제
 		}
@@ -1097,12 +1099,8 @@ public class ManagerController {
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(rentcarService.totalSearchCountRentcar(cri));
-		
-	//	System.out.println(rentcarService.totalSearchCountRentcar(cri));
-		System.out.println("리스트 사이즈"+rentcarList.size());
+
 		for(RentcarVO rentcar: rentcarList) {
-			  System.out.println("렌트"+rentcar.getRentddate());
-			  System.out.println("리턴"+rentcar.getReturndate());
 			  
 		}
 		model.addAttribute("cri", cri);
@@ -1155,7 +1153,7 @@ public class ManagerController {
 	//렌트카 정보 수정
 	@RequestMapping(value = "rentcarDetailFormUpdate", method = RequestMethod.POST)
 	public String rentcarDetailFormUpdate(RentcarVO vo, SearchCriteria cri, Model model) throws Exception {
-		System.out.println(vo);
+
 		rentcarService.updateRentcar(vo);
 
 		model.addAttribute("rentcarVO", vo);
@@ -2199,7 +2197,6 @@ public class ManagerController {
 		@RequestMapping(value = "imageUpload", method = RequestMethod.POST)
 		public String imageUpload(HttpServletRequest req, HttpServletResponse resp, 
                 MultipartHttpServletRequest multiFile, Model model,String ckEditorFuncNum) throws Exception {
-			
 			JsonObject json = new JsonObject();
 			PrintWriter printWriter = null;
 			OutputStream out = null;
@@ -2210,6 +2207,7 @@ public class ManagerController {
 			printWriter = resp.getWriter();
 			resp.setContentType("text/html");
 			String serverPath =req.getContextPath()+"/displayFile/practice?filename=";
+			//String serverPath ="localhost:8080/tourland/displayFile/practice?filename=";
 			String serverPath2 =req.getContextPath()+"/resources/images/practice";
 			String savedName = UploadFileUtils.uploadFile(serverPath2, file.getOriginalFilename().replaceAll(" ", "_"),
 			file.getBytes());
