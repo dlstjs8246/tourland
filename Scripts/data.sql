@@ -189,3 +189,11 @@ create trigger tri_after_insert_user
      	 insert into usercoupon values(new.userno,1);
    end $
 delimiter ;
+
+-- 통계를 위한 view table
+create view preferenceProduct as select p.pname,count(p.pno) as 'count' from reservation r 
+join userpstatus u on u.no = r.no and u.userno = r.userno
+join product p on u.pno = p.pno where r.rstatus = '3' group by p.pname order by count desc limit 0,5;
+create view totalpricebymonth as select substring(pname,2,3) as 'location',year(rdate),month(rdate),ifnull(sum(p.pprice),0) as 'totalprice' from reservation r 
+join userpstatus u on u.no = r.no and u.userno = r.userno
+join product p on u.pno = p.pno where r.rstatus in (2,3) group by substring(pname,2,3),month(rdate);
