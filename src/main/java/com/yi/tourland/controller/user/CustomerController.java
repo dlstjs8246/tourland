@@ -417,19 +417,18 @@ public class CustomerController {
 	}
 	//마이 페이지 - 내정보수정에서 수정 후 수정버튼을 눌릴때 받을곳
 	@RequestMapping(value="editProfile", method=RequestMethod.POST) 
-	public String tourlandEditProfile(UserVO userVo, EmployeeVO empVo) throws Exception { 						
-		if(userVo.getUserno()!=0) {
-			userService.updateUser(userVo);
-		}else if(empVo.getEmpno()!=0){
-			employeeService.updateEmployee(empVo);
-		}
-		return "redirect:/"; 
+	public String tourlandEditProfile(UserVO userVo, Model model, HttpSession session) throws Exception { 		
+		userService.updateUser(userVo);
+		model.addAttribute("success", "수정이 완료되었습니다.");
+		//model.addAttribute("Auth", userVo);
+		session.setAttribute("Auth", userVo);
+		return "/user/mypage/tourlandMyInfoEdit"; 
 	}
 	
 	//마이 페이지 - 탈퇴버튼 눌리는 경우
 	@RequestMapping(value="logoutWithdrawal",method = RequestMethod.GET)
-	public String logoutWithdrawal(String id,UserVO vo,HttpSession session) throws Exception{
-		vo = userService.readByIdUser(id);
+	public String logoutWithdrawal(int no, UserVO vo,HttpSession session) throws Exception{
+		vo = userService.readByNoUser(no);
 		vo.setUsersecess(1);
 		userService.updateUser(vo);
 		session.invalidate();
@@ -1556,15 +1555,15 @@ public class CustomerController {
 			model.addAttribute("custBoardVO", vo);
 			model.addAttribute("cri", cri);
 			model.addAttribute("pageMaker", pageMaker);
-
 		  }
 	  if(where.contentEquals("planBoard")) {
-		 List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
+		  PlanBoardVO vo = planBoardService.readByNoPlanBoard(no);
+		 //List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
 			pageMaker.setTotalCount(planBoardService.totalSearchCountPlanBoard(cri) < 10 ? 10 : planBoardService.totalSearchCountPlanBoard(cri));
 			model.addAttribute("no",no);
-			model.addAttribute("list", list);
+			model.addAttribute("planBoardVO", vo);
 			model.addAttribute("pageMaker", pageMaker);
 			model.addAttribute("cri", cri); 
 	      }

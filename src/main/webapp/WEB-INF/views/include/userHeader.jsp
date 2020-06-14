@@ -284,7 +284,7 @@ window.onload = function() {
 						<li><a href="${pageContext.request.contextPath }/customer/EditPassword">마이페이지</a></li>
 					</c:if>
 					<c:if test="${login=='user'}">
-						<p id="userAuth">[ ${User} ]님! 반갑습니다.</p>
+						<p id="userAuth">[ ${Auth.username} ]님! 반갑습니다.</p>
 					</c:if>
 						<li id="manager" style="margin-left: -15px;"><a href="${pageContext.request.contextPath}/manager/statistics">관리자</a></li>
 						<p id="managerAuth">[ ${Manager.name} ]님! 반갑습니다.</p>
