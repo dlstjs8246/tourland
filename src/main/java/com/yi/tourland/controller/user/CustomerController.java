@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
+import javax.mail.Session;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -513,6 +514,7 @@ public class CustomerController {
 		ProductVO upvo = rvo.getProduct();
 		cri.setSearchType("userCart");
 		cri.setKeyword(upvo.getPname());
+		cri.setPerPageNum(productService.totalCountBySearchProduct(cri));
 		List<ProductVO> list = productService.listPage(cri);
 		ProductVO pvo = null;
 		Date uddate = upvo.getAir().get(0).getDdate();
@@ -528,15 +530,86 @@ public class CustomerController {
 		else {
 			pvo = list.get(0);
 		}
+		if(upvo.getTour().size()>0) {
+			for(int i=0;i<upvo.getTour().size();i++) {
+				upvo.getTour().get(i).setNo(pvo.getTour().get(i).getNo());
+			}
+		}
+		if(upvo.getRentcar().size()>0) {
+			for(int i=0;i<1;i++) {
+				upvo.getRentcar().get(i).setNo(pvo.getRentcar().get(i).getNo());
+			} 
+		} 
 		model.addAttribute("uvo",upvo);
 		model.addAttribute("vo",pvo);
+		model.addAttribute("userno",userno);
+		model.addAttribute("rno",rno);
 		return "/user/mypage/tourlandCartDetail"; 
+	}
+	@ResponseBody
+	@RequestMapping(value="tourlandMyWishesDetail/update", method=RequestMethod.GET)
+	public ResponseEntity<String> tourlandMyWishesDetail(SearchCriteria cri, Model model,int userno,int rno, int upno, int price, int[] ano, int[] acapacity, int[] hno, int[] hcapacity, int[] tno, int tcapacity, int[] rentno, int rcapacity) throws Exception {
+		ResponseEntity<String> entity = null;
+		ProductVO pvo = new ProductVO();
+		ReservationVO rvo = new ReservationVO();
+		rvo.setNo(rno);
+		List<AirplaneVO> air = new ArrayList<>();
+		List<HotelVO> hotel = new ArrayList<>();
+		List<TourVO> tour = new ArrayList<>();
+		List<RentcarVO> rentcar = new ArrayList<>();
+		for(int i : ano) {
+			System.out.println(i);
+			air.add(flightService.airplaneByNo(new AirplaneVO(i)));
+			air.add(flightService.airplaneByNo(new AirplaneVO(i+1)));
+		}
+		if(hno!=null) for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
+		if(tno!=null) for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
+		if(rentno!=null) for(int i : rentno) rentcar.add(rentcarService.readByNo(i));
+		for(int i=0;i<acapacity.length;i++) {
+			air.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i)+1);
+			air.get(i+i).setCapacity(acapacity[i]);
+			air.get(i+i).setPdiv(1);
+			air.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			air.get(i+i+1).setCapacity(acapacity[i]);
+			air.get(i+i+1).setPdiv(1);
+		}
+		for(int i=0;i<hcapacity.length;i++) {
+			hotel.get(i).setNo(hotelService.totalCountHotel()+(i+1));
+			hotel.get(i).setTotalcapacity(hcapacity[i]);
+			hotel.get(i).setPdiv(true);
+		}
+		for(int i=0;i<tour.size();i++) {
+			tour.get(i).setNo(tourService.totalCount()+(i+1));
+			tour.get(i).setCapacity(tcapacity);
+			tour.get(i).setPdiv(true);
+		}
+		for(int i=0;i<rentcar.size();i++) {
+			rentcar.get(i).setNo(rentcarService.totalCountRentcar()+(i+1));
+			rentcar.get(i).setCapacity(rcapacity);
+			rentcar.get(i).setPdiv(1);
+		}
+		UserVO uvo = userService.readByNoUser(userno);
+		try {
+			rvo = reservationService.ReadCartByNoAndUserNo(rno, userno);
+			pvo = rvo.getProduct();
+			pvo.setAir(air);
+			pvo.setHotel(hotel);
+			pvo.setTour(tour);
+			pvo.setRentcar(rentcar);
+			productService.updateProductInUserCart(pvo,uvo,rvo, cri);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+		}
+		return entity;
 	}
 	
 	//마이 페이지 - 내 쿠폰
 	@RequestMapping(value="tourlandMyCoupon", method=RequestMethod.GET)
 	public String tourlandMyCoupon(SearchCriteria cri, Model model, HttpSession session) throws Exception { 
-		//Auth 키가 있을 때 
+		//Auth 키가 있을 때  
 		if(session.getAttribute("Auth")!=null) {
 			if(session.getAttribute("Auth") instanceof UserVO) { //세션 객체가 UserVO 일 경우 = 회원 일 경우
 				//세션에 로그인 정보가 있으면 해당 고객 불러오기
@@ -1063,12 +1136,21 @@ public class CustomerController {
 					}
 				}	
 			}
-			productService.insertUserProduct(product, userProduct, user, cri);
-			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+			int res = productService.insertUserProduct(product, userProduct, user, cri);
+			if(res==0) {
+				entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+			}
+			else {
+				throw new Exception("인원부족");
+			}
+			
 		}
 		catch(Exception e) {
 			if(e.getMessage().equals("중복")) {
 				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
+			}
+			else if(e.getMessage().equals("인원부족")) {
+				entity = new ResponseEntity<String>("CAPACITYFAIL",HttpStatus.BAD_REQUEST);
 			}
 			else {
 				e.printStackTrace();
@@ -1147,6 +1229,7 @@ public class CustomerController {
 			HotelVO hotel = new HotelVO();//객체에 불러온 호텔 번호 세팅
 			hotel.setNo(Integer.parseInt(hno[i]));
 			HotelVO newHotel = hotelService.readHotel(new HotelVO(hotel.getNo()));
+			newHotel.setTotalcapacity(Integer.parseInt(hcapacity[i]));
 			System.out.println("호텔 : "+newHotel);
 			hotelList.add(newHotel);
 			
@@ -1321,19 +1404,97 @@ public class CustomerController {
 	 
 	 
 	 //쿠폰 ---------------------------------------------------------------------------------------
+	 //쿠폰 페이지
 	 @RequestMapping(value="userpageCoupon", method = RequestMethod.GET)
-	 public String userpageCoupon() throws Exception {
-		 
+	 public String userpageCoupon(SearchCriteria cri, Model model, String success, String fail, String hasCoupon) throws Exception {
+		 List<CouponVO> couponList = couponService.couponList(cri);
+			//포맷 
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			//오늘 날짜 생성
+			Date date = new Date();
+			//형식 변경
+			String today = dateFormat.format(date);
+			
+			List<CouponVO> available = new ArrayList<>(); //아직 만료되지 않은 쿠폰
+			
+			for(int i=0; i<couponList.size(); i++) {
+				//오늘 날짜와 해당 고객의 쿠폰의 만료일을 하나씩 비교 후 만료 안된 거 & 쿠폰번호1(가입축하쿠폰)이 아닌 것만 리스트에 넣기  
+				long rs = date.getTime() - couponList.get(i).getEdate().getTime(); 
+				if(rs < 0 && couponList.get(i).getCno()!=1) {
+					available.add(couponList.get(i));
+				}  
+			}
+			
+			model.addAttribute("availableList", available);
+			if(success != null) {
+				model.addAttribute("success", "successs");
+			}
+			if(fail != null) {
+				model.addAttribute("fail", "fail");
+			}
+			if(hasCoupon != null) {
+				model.addAttribute("hasCoupon", "hasCoupon");
+			}
+			
+			
 		 return "/user/coupon/tourlandCoupon";
 	 }
 	 
+	 //쿠폰 다운 받기 클릭했을 때 
+	 @RequestMapping(value="getCoupon", method = RequestMethod.GET)
+	 public String getCoupon(String cno, Model model, HttpSession session) throws Exception {
+		
+		 if(session.getAttribute("Auth")!=null) {
+				//세션에 로그인 정보가 있으면 해당 고객 불러오기
+				UserVO vo = (UserVO) session.getAttribute("Auth");
+				
+				List<Integer> couponCheck = couponService.userHasACouponOrNot(vo.getUserno(), Integer.parseInt(cno));
+				//가지고 있으면 반려
+				if(couponCheck.size()>0) {
+					
+					model.addAttribute("hasCoupon", "hasCoupon");
+					 return "redirect:/customer/userpageCoupon";
+				}
+				//안 가지고 있으면 insert 후 리스트로 돌아가기
+				else {
+					couponService.addCouponToUser(vo.getUserno(), Integer.parseInt(cno));
+					model.addAttribute("success", "success");
+					 return "redirect:/customer/userpageCoupon";
+				}
+				
+				
+		 }else {
+			 model.addAttribute("fail", "fail");
+			 return "redirect:/customer/userpageCoupon";
+		 }
+			
+		
+	 }
 	
 	//게시판 ---------------------------------------------------------------------------------------
 	
 	//공지사항
 	@RequestMapping(value="tourlandBoardNotice", method=RequestMethod.GET)
 	public String tourlandBoardNotice(SearchCriteria cri, Model model) throws Exception { 
-		List<NoticeVO> noticeList = noticeService.noticeList(cri);
+		List<NoticeVO> noticeList =  noticeService.noticeList(cri);
+		
+		if(noticeList.size()!=0) {
+			List<NoticeVO> noticeNoFixedList = new ArrayList<>();
+			List<NoticeVO> noticeFixedList = new ArrayList<>();
+			
+			for(int i=0; i<noticeList.size(); i++) {
+				if(noticeList.get(i).getFixed()==0) {
+					noticeNoFixedList.add(noticeList.get(i));
+				}else {
+					noticeFixedList.add(noticeList.get(i));
+				}
+			}
+			
+			model.addAttribute("noticeNoFixedList", noticeNoFixedList);
+			model.addAttribute("noticeFixedList", noticeFixedList);
+		}else {
+			model.addAttribute("noticeList", noticeList);
+		}
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(noticeService.totalCountNotice(cri));

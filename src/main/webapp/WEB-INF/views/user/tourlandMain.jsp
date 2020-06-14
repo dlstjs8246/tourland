@@ -293,10 +293,10 @@ section#section5 div#shortcutBtns a {
 
 /*팝업스타일 */
 #popup1 {
-	margin-left: 100px;
+	margin-left: 120px;
 	float: left;
 	text-align: center;
-	width: 560px;
+	width: 400px;
 	height: 600px;
 	position: relative;
 	position: absolute;

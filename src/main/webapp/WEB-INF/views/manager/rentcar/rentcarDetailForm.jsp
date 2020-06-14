@@ -79,6 +79,10 @@ $(function(){
 		$("#btnReturnToList").click(function(){
 			location.href="${pageContext.request.contextPath}/manager/rentcarMngList";
 		})
+		
+		$("form").submit(function(){
+			alert("수정 되었습니다");
+		})
 
   // alert("${rentcarVO.rentddate }");
 })

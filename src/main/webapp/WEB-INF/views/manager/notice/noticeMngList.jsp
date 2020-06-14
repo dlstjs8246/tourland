@@ -3,6 +3,8 @@
 <%@ include file="../../include/header.jsp"%>
 <style>
 	table th, td { text-align: center;}
+	.red { color : maroon; font-weight: bold; }
+	.blue { color : steelblue; font-weight: bold;}
 </style>
 <script>
 $(function(){
@@ -44,15 +46,26 @@ $(function(){
 							<th>제목</th>
 							<th>작성자</th>
 							<th>작성일자</th>
+							<th>상단 고정 여부</th>
 						</tr>  
-						<c:forEach items="${noticeList}" var="n">   
+						<c:forEach items="${noticeFixedList}" var="n">   
 							<tr>
 								<td>${n.no }</td>
 								<td><a href="${pageContext.request.contextPath }/manager/noticeDetail?no=${n.no}&page=${cri.page}">${n.title }</a></td>
 								<td>${n.writer }</td>
 								<td><fmt:formatDate value="${n.regdate }" pattern ="yyyy-MM-dd"/></td>
+								<td class="blue">상단 고정</td>
 							</tr>
-						</c:forEach>   
+						</c:forEach>  
+						<c:forEach items="${noticeNoFixedList}" var="n">   
+							<tr>
+								<td>${n.no }</td>
+								<td><a href="${pageContext.request.contextPath }/manager/noticeDetail?no=${n.no}&page=${cri.page}">${n.title }</a></td>
+								<td>${n.writer }</td>
+								<td><fmt:formatDate value="${n.regdate }" pattern ="yyyy-MM-dd"/></td>
+								<td class="red">상단 고정 안함</td>
+							</tr>
+						</c:forEach>  
 					</table>      
 				</div>  
 			<div class="box-footer">

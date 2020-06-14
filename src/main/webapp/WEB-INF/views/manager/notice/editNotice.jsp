@@ -3,6 +3,12 @@
 <%@ include file="../../include/header.jsp"%>
 <script>
 	$(function(){
+		$("#fixed").change(function(){
+			if($(this).is(":checked")){
+				$("#hiddenInfo").val("1");
+			}
+		})
+		
 		$("#mod").click(function(){
 			var no = "${notice.no}";
 			var page =	"${cri.page}";
@@ -12,6 +18,7 @@
 			/* location.href = "editNotice?no="+no+"&page="+page+"&searchType="+searchType+"&searchType2="+searchType2+"&keyword="+keyword; */
 			location.href = "editNotice?no="+no;
 		})
+		
 	})
 </script>
 <div class="content">
@@ -28,7 +35,20 @@
 						<label>번호</label>
 						<input type="text" name="no" class="form-control" value="${notice.no}" readonly="readonly">
 					</div>
-					<div class="form-group">
+						<div class="group">
+							<div class="form-group">
+								<label>상단 고정 여부</label>
+								<c:if test="${notice.fixed==1 }">
+									<p>	<input type="checkbox" class="form-check-input" id="fixed" checked="checked"> 상단 고정하기</p>
+								</c:if>
+								 <c:if test="${notice.fixed==0 }">
+									<p>	<input type="checkbox" class="form-check-input" id="fixed"> 상단 고정하기</p>
+								</c:if>
+									<input type="hidden" id="hiddenInfo" name="fixed" value="0">
+								
+							</div>
+						</div>
+						<div class="form-group">
 						<label>제목</label>
 						<input type="text" name="title" class="form-control" value="${notice.title}">
 					</div>

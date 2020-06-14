@@ -77,7 +77,8 @@
 					   line-height: 50px;
 					   color: #fff;}
 	div#nav2 ul li#orange { width: 50px; background: #ff7f00;}
-	div#nav2 ul li.short { width: 50px;} 
+	div#nav2 ul li.short { width: 50px; margin-left:20px; } 
+	div#nav2 ul li.c { margin-left: 30px;}
  	#userAuth, #managerAuth{
    	 width: 250px; line-height: 50px;
 	}
@@ -338,10 +339,10 @@ window.onload = function() {
 						</div>
 						<div id="search" class="ls">
 						    <c:if test="${searchkeyword !=null }">
-							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword" value="${searchkeyword }"><i class="fas fa-search" id="mainSearchIcon"></i>
+							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword" value="${searchkeyword }"><i class="fas fa-search" style="font-size:25px; margin-left:10px;" id="mainSearchIcon"></i>
 							</c:if>
 							<c:if test="${searchkeyword ==null }">
-							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword"><i class="fas fa-search" style="font-size:25px;" id="mainSearchIcon"></i>
+							<input type="text" placeholder="검색어를 입력하세요." id="mainSearchKeyword"><i class="fas fa-search" style="font-size:25px; margin-left:10px;" id="mainSearchIcon"></i>
 							</c:if>
 							<!-- <button>찾기</button> -->
 						</div>
@@ -353,7 +354,7 @@ window.onload = function() {
 							<li><a href="${pageContext.request.contextPath }/customer/tourlandProductJPList">일본 패키지</a></li>
 							<li><a href="${pageContext.request.contextPath }/customer/tourlandProductChinaList">중국 패키지</a></li>
 							<li class="short"><a href="${pageContext.request.contextPath }/customer/tourlandEventList/ingEvent">이벤트</a></li>
-							<li class="short"><a href="${pageContext.request.contextPath }/customer/userpageCoupon">쿠폰</a></li>
+							<li class="short c"><a href="${pageContext.request.contextPath }/customer/userpageCoupon">쿠폰</a></li>
 						</ul>
 					</div>
 			</header>

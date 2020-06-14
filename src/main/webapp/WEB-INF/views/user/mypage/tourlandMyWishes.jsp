@@ -81,7 +81,6 @@
 				</div>
 		</section>
 		<script>
-			
 			$(".delBtns").click(function(){
 				var pnoStr = $(this).parent().parent().find(".pno").html();
 				var pno = Number(pnoStr.substring(1));
@@ -89,6 +88,7 @@
 				var del = confirm("삭제하시겠습니까?");
 				if(del){
 					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesDelete?rno="+rno+"&pno="+pno;
+					return false;
 				}
 			})
 			
@@ -97,6 +97,7 @@
 				var res = confirm("예약하시겠습니까?");
 				if(res){
 					location.href = "${pageContext.request.contextPath}/customer/tourlandMyWishesRes?rno="+rno;
+					return false;
 				}
 			})
 			$(".cart").click(function(){

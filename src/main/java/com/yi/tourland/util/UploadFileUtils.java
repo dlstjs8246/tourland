@@ -67,7 +67,6 @@ public class UploadFileUtils {
     		
     		//원본 이미지 데이터를 컴퓨터 상의 가상 도화지에 옮겨온다.
     		BufferedImage sourceImg = ImageIO.read(new File(uploadPath+path+"/"+fileName));
-    		
     		//가상 도화지에 옮겨진 원본을 기준으로 작은 이미지를 가상 공간에 만든다.
     		BufferedImage destImg = Scalr.resize(sourceImg,                //원본데이터
     				                             Scalr.Method.AUTOMATIC,   //크기는 automatic
@@ -83,7 +82,6 @@ public class UploadFileUtils {
     		
     		//가상 작은 이미지 데이터를 원하는 경로에 저장을 함
     		ImageIO.write(destImg, formatName.toUpperCase(), newFile);
-    		
     		// 작은 이미지 경로는 c:/zzz/upload/2020... 인데 여기서 root빼고 가져가자 
     		return thumbnailName.substring(uploadPath.length());  // 2020/04/29/s_Image.jpg
     		

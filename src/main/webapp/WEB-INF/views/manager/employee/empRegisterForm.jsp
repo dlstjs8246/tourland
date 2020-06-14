@@ -91,6 +91,7 @@
 		})
 		
 		$("#btnCheck").click(function(){
+			$(".errorMsg").css("display","none");
 			var empid = $("input[name='empid']").val();
 			 //아이디 중복 ajax로 처리하기
 			 $.ajax({
@@ -106,6 +107,8 @@
 						validId = false;
 						
 
+					}else{
+						alert("사용할 수 있는 아이디입니다. 등록을 진행해주세요");
 					}
 				}
 				 
