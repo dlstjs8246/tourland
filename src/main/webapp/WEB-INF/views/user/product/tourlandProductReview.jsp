@@ -51,30 +51,12 @@
 <body>
 	<%@ include file="../../include/userHeader.jsp"%>
 	<script>
-	
-	function getReviews(){
-		var pno = "${vo.pno}";
-		$.ajax({
-			url : "tourlandProductReview",
-			type : "get",
-			dataType : "json",
-			data : {pno : pno},
-			success : function(rs){
-				 console.log(rs);
-			}
-		})
-	}
-	
 		$(function(){
 			$("#smallImgBox li").each(function(i,obj){
 				$(this).find("img").attr("src",$("#content img").eq(i).attr("src"));
 			})
 			$("#detail").click(function() {
-				location.href = "tourlandProductDetail?pno=90&price=${price}"; 
-			})
-			$("#review").click(function(){
-				alert("!");
-				//getReviews();
+				location.href = "tourlandProductDetail?pno=${vo.pno}&price=${price}"; 
 			})
 		})
 	</script>
@@ -118,43 +100,60 @@
 							<a href="#" id="review">리뷰</a>
 						</div>
     
-					<h2>상품 리뷰 <span id="reviewCnt">(13)</span></h2>
+					<h2>상품 리뷰 <span id="reviewCnt">${fn:length(list)}</span></h2>
 					<div id="reviewWrap">
 						<ul>
-							<li class="realReview"><span class="reviewNo">2</span>
-								<span class="reviewTitle">가족여행으로 잘 다녀왔어요!</span>
-								<span class="reviewDate">2020.05.15</span>
-								<span class="userId">hn****</span>
+							<c:forEach var="review" items="${list}" varStatus="s">
+							<li class="realReview"><span class="reviewNo">${s.index+1}</span>
+								<span class="reviewTitle">${review.reviewTitle}</span>
+								<span class="reviewDate"><fmt:formatDate value="${review.regdate}" pattern="yyyy-MM-dd"/></span>
+								<span class="userId">${users[s.index].userid}</span>
 								<span class="userStar">
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="far fa-star"></i>
+									<c:if test="${review.starpoint==0}">
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+									</c:if>
+									<c:if test="${review.starpoint==1}">
+										<i class="fas fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+									</c:if>
+									<c:if test="${review.starpoint==2}">
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+									</c:if>
+									<c:if test="${review.starpoint==3}">
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="far fa-star"></i>
+										<i class="far fa-star"></i>
+									</c:if>
+									<c:if test="${review.starpoint==4}">
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="far fa-star"></i>
+									</c:if>
+									<c:if test="${review.starpoint==5}">
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>  
+									</c:if>
 								</span>
-							</li>
-							<li class="innerReview"><span class="reviewContent">처음
-									가는 곳이라 좀 걱정 했는데, 즐겁게 잘 다녀왔습니다. 저가 항공도 처음 이용해봤는데, 단거리는 괜찮았어요.
-									온천호텔로 예약하려다가 짧은 일정이라 이 호텔로 예약했는데 대만족이었습니다. 담당자님이 주신 쿠폰도 알차게 썼고,
-									여러모로 신경써주셔서 감사했습니다. 투어랜드 다음에도 또 이용할게요!</span>
-							</li>
-														<li class="realReview"><span class="reviewNo">1</span>
-								<span class="reviewTitle">가족여행으로 잘 다녀왔어요!</span>
-								<span class="reviewDate">2020.05.15</span>
-								<span class="userId">hn****</span>
-								<span class="userStar">
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="fas fa-star"></i>
-									<i class="far fa-star"></i>
-								</span>
-							</li>
-							<li class="innerReview"><span class="reviewContent">처음
-									가는 곳이라 좀 걱정 했는데, 즐겁게 잘 다녀왔습니다. 저가 항공도 처음 이용해봤는데, 단거리는 괜찮았어요.
-									온천호텔로 예약하려다가 짧은 일정이라 이 호텔로 예약했는데 대만족이었습니다. 담당자님이 주신 쿠폰도 알차게 썼고,
-									여러모로 신경써주셔서 감사했습니다. 투어랜드 다음에도 또 이용할게요!</span>
-							</li>
+								<li class="innerReview"><span class="reviewContent">${review.reviewContent}</span></li> 
+							</c:forEach>
 						</ul>
 					</div>
 				</div>

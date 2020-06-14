@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mappers.mngMappers.ReviewMapper">
-	
 <insert id="addReview">
 	insert into review values(#{no}, #{rno},#{pno}, #{userno}, #{regdate}, #{starpoint}, #{reviewTitle}, #{reviewContent})
 </insert>
@@ -14,5 +13,4 @@
 <select id="readReviewByUserno" resultType="ReviewVO">
 	select * from review where userno = #{userno}
 </select>
-
 </mapper>

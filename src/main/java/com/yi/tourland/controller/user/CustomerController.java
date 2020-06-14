@@ -445,6 +445,7 @@ public class CustomerController {
 	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow, String cancel, String addReview) throws SQLException {
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
+		System.out.println(vo.getUserno());
 		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
@@ -1414,52 +1415,43 @@ public class CustomerController {
 	
 	//상품 리뷰    
 	@RequestMapping(value="tourlandProductReview", method=RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> tourlandProductReview(SearchCriteria cri,HttpSession session,Model model, String pno) throws SQLException {
-			ResponseEntity<Map<String,Object>> entity = null;
-			Map<String,Object> map = new HashMap<>();
-		
-		 UserVO user = (UserVO) session.getAttribute("Auth");
-		 System.out.println("=----------" + user);
-		 if(user!=null) {
-			 List<ReviewVO> rListByUserNo = reviewService.readReviewByUserno(user.getUserno());
-			 List<ReviewVO> rList = new ArrayList<>();
-			 ProductVO pvo = null;
-			 for(ReviewVO r : rListByUserNo) {
-				 ReservationVO rvo = reservationService.ReadCartByNoAndUserNo(r.getRno(),user.getUserno());
-					ProductVO upvo = rvo.getProduct();
-					cri.setSearchType("userCart");  
-					cri.setKeyword(upvo.getPname());
-					cri.setPerPageNum(productService.totalCountBySearchProduct(cri));
-					List<ProductVO> list = productService.listPage(cri);
-					
-					Date uddate = upvo.getAir().get(0).getDdate();
-					Date urdate = upvo.getAir().get(1).getRdate();
-					if(list.size()>1) {
-						for(ProductVO vo : list) {
-							if(uddate.equals(vo.getAir().get(0).getDdate()) && urdate.equals(vo.getAir().get(1).getRdate())) {
-								pvo = vo;
-								
-								break;
-							}
-						}
-					}
-					else {
-						pvo = list.get(0);
-					}
-					
-					if(pvo.getPno()==Integer.parseInt(pno)) {
-						rList.add(r);
-					}
-					
-			 }
-			 
-			 for(ReviewVO r : rList) {
-				 map.put("review", r);
-			 }
-			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
-		 }
-		
-		return entity; 
+	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model,int price) throws Exception {
+		vo = productService.productByNo(vo);
+		Date ddate = vo.getAir().get(0).getDdate();
+		Date rdate = vo.getAir().get(1).getRdate();
+		cri.setPerPageNum(reservationService.totalSearchReservationCount(cri));
+		List<ReservationVO> reservlist = reservationService.listReservation(cri);
+		List<ProductVO> productList = new ArrayList<ProductVO>(); 
+		List<ReviewVO> chkReviewList = new ArrayList<ReviewVO>(); 
+		List<UserVO> users = new ArrayList<UserVO>(); 
+		List<ProductVO> chkProduct = new ArrayList<ProductVO>();
+		for(ReservationVO rvo : reservlist) {
+			if(rvo.getRstatus().equals("3") && rvo.getProduct().getPname().equals(vo.getPname())) {
+				productList.add(rvo.getProduct());
+			}
+		}
+		for(ProductVO pvo : productList) {
+			Date cddate = pvo.getAir().get(0).getDdate();
+			Date crdate = pvo.getAir().get(1).getRdate();
+			if(cddate.equals(ddate) && crdate.equals(rdate)) {
+				chkProduct.add(pvo);
+			}
+		}
+		List<ReviewVO> reviewList = reviewService.checkReviewExists();
+		for(ReviewVO rvo : reviewList) {
+			for(ProductVO pvo : chkProduct) {
+				if(rvo.getPno()==pvo.getPno()) {
+					chkReviewList.add(rvo);
+					users.add(userService.readByNoUser(rvo.getUserno()));
+				}
+			}
+		} 
+		model.addAttribute("cri",cri);
+		model.addAttribute("vo",vo);
+		model.addAttribute("price",price);
+		model.addAttribute("list",chkReviewList);
+		model.addAttribute("users",users);
+		return "/user/product/tourlandProductReview"; 
 	}
 
 	//이벤트 --------------------------------------------------------------------------------------
