@@ -159,7 +159,7 @@ public class CustomerController {
 	        }
 	        
 	        if(choice.equals("practice")) {
-	        	path= "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
+	        	path= "/tourland/resources/images/practice";
 	        }
 			// System.out.println("displayFile-----------"+ filename);
 			InputStream in = null;
