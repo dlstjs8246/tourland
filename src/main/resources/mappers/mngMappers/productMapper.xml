@@ -429,4 +429,9 @@
 		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
 		where p.pdiv = 0
 	</select>
+	<!-- 마이페이지 - 리뷰쓰기 - 들어갈 때 해당 상품 이름과 사진 가져가기 -->
+	<select id="selectNamePic" resultMap="product">
+		select * from (select * from reservation where rstatus = 3) r join userpstatus up on r.no = up.no join product p on up.pno = p.pno where r.no = #{no}
+	</select>
+	
 </mapper>
