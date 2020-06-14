@@ -439,18 +439,27 @@ public class CustomerController {
 	
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
-	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow) throws SQLException {
+	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow, String cancel) throws SQLException {
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
 		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(reservationService.totalSearchReservationCountByUserNo(cri, vo));
-		model.addAttribute("list",list);
-		model.addAttribute("pageMaker",pageMaker);
+		if(list.size()==0) {
+			model.addAttribute("noList", "noList");
+		}else {
+			model.addAttribute("list",list);
+			model.addAttribute("pageMaker",pageMaker);
+			
+		}
 		if(payNow != null) {
 			model.addAttribute("paySuccess", "paySuccess");
 		}
+		if(cancel != null) {
+			model.addAttribute("cancel", "cancel");
+		}
+		
 		return "/user/mypage/tourlandMyReserv"; 
 	}
 	//마이 페이지 - 내 예약 현황 - 결제
@@ -463,6 +472,16 @@ public class CustomerController {
 		model.addAttribute("payNow", "payNow");
 		return "redirect:/customer/tourlandMyReserv"; 
 	}
+	//마이 페이지 - 내 예약 현황 - 예약 취소
+		@RequestMapping(value="tourlandMyReservCancel", method=RequestMethod.GET)
+		public String tourlandMyReservCancel(String rno, Model model) throws SQLException {
+			ReservationVO rs = new ReservationVO();
+			rs.setNo(Integer.parseInt(rno));
+			rs.setRstatus("4");
+			reservationService.updateReservation(rs);
+			model.addAttribute("cancel", "cancel");
+			return "redirect:/customer/tourlandMyReserv"; 
+		}
 	
 	
 	//상품 리뷰    
