@@ -51,12 +51,29 @@
 <body>
 	<%@ include file="../../include/userHeader.jsp"%>
 	<script>
+	
+	function getReviews(){
+		var pno = "${vo.pno}";
+		$.ajax({
+			url : "tourlandProductReview",
+			type : "get",
+			dataType : "json",
+			data : {pno : pno},
+			success : function(rs){
+				 console.log(rs);
+			}
+		})
+	}
+	
 		$(function(){
 			$("#smallImgBox li").each(function(i,obj){
 				$(this).find("img").attr("src",$("#content img").eq(i).attr("src"));
 			})
 			$("#detail").click(function() {
 				location.href = "tourlandProductDetail?pno=90&price=${price}"; 
+			})
+			$("#review").click(function(){
+				getReviews();
 			})
 		})
 	</script>
