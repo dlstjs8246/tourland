@@ -54,6 +54,7 @@ import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
 import com.yi.tourland.domain.mng.ReservationVO;
+import com.yi.tourland.domain.mng.StatisticVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
@@ -70,6 +71,7 @@ import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
 import com.yi.tourland.service.mng.ReservationService;
+import com.yi.tourland.service.mng.StatisticService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 import com.yi.tourland.util.UploadFileUtils;
@@ -134,6 +136,9 @@ public class ManagerController {
 	
 	@Autowired
 	private ReservationService reservationService;
+	
+	@Autowired
+	private StatisticService statisticService;
 
 
 	// 항공 관리
@@ -2228,7 +2233,15 @@ public class ManagerController {
 		
 		//관리자 메인화면에 나올 통계
 		@RequestMapping(value="statistics", method=RequestMethod.GET)
-		public String mainStatistics() throws Exception { 
+		public String mainStatistics(Model model) throws Exception { 
+			List<StatisticVO> jejuList = statisticService.searchTotalPriceJejuByMonth();
+			List<StatisticVO> dokyoList = statisticService.searchTotalPriceDokyoByMonth();
+			List<StatisticVO> beijingList = statisticService.searchTotalPriceBeijingByMonth();
+			List<StatisticVO> list2 = statisticService.searchTotalCountByLocation();
+			model.addAttribute("jeju",jejuList);
+			model.addAttribute("dokyo",dokyoList);
+			model.addAttribute("beijing",beijingList);
+			model.addAttribute("list2",list2);
 			return "/manager/main/statistics";
 		}
 		
