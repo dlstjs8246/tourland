@@ -33,9 +33,6 @@
 	.grey button { width: 80px; height: 25px; border: none; background: #828282; color: #fff; }
 	.yellow  { font-weight: bold;  color: goldenrod; }
 	.blue { font-weight: bold;  color: steelblue;}
-	.pagination {list-style : none; margin-left : 500px; margin-top : 10px;}
-	.pagination li { width: 30px; height: 30px; text-align: center; float : left; border : 1px solid lightgrey;}
-	.pagination .active { background-color : grey;}   
 </style>
 <body>   
 	<%@ include file="../../include/userHeader.jsp"%>
@@ -106,17 +103,6 @@
 						</tr>
 						</c:forEach>
 					</table>
-					<ul class="pagination">
-						<c:if test="${pageMaker.prev == true}">
-							<li><a href="${pageContext.request.contextPath}/customer/tourlandMyReserv?&page=${pageMaker.startPage-1}">&laquo;</a></li>
-						</c:if>
-						<c:forEach begin="${pageMaker.startPage}" end="${pageMaker.endPage}" var="idx">
-							<li class="${pageMaker.cri.page==idx?'active':''}"><a href="${pageContext.request.contextPath}/customer/tourlandMyReserv?page=${idx}">${idx}</a></li>
-						</c:forEach>
-						<c:if test="${pageMaker.next == true}">
-							<li><a href="${pageContext.request.contextPath}/customer/tourlandMyReserv?page=${pageMaker.endPage+1}">&raquo;</a></li>
-						</c:if>
-					</ul>
 				</div>
 		
 		</section>

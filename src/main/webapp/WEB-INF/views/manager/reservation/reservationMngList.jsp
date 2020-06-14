@@ -303,14 +303,14 @@
 					<div class="text-center">
 						<ul class="pagination">
 							<c:if test="${pageMaker.prev == true }">
-								<li><a href="reservationMgnList?page=${pageMaker.endPage -1 }&searchType=${cri.searchType}&keyword=${cri.keyword}">&laquo;</a></li>
+								<li><a href="noticeMngList?page=${pageMaker.endPage -1 }&searchType=${cri.searchType}&keyword=${cri.keyword}">&laquo;</a></li>
 							</c:if>
 							<c:forEach begin="${pageMaker.startPage }" end="${pageMaker.endPage }" var="idx">
-								<li class="${pageMaker.cri.page == idx ?'active':''}"><a href="reservationMgnList?page=${idx}&searchType=${cri.searchType}&keyword=${cri.keyword}">${idx }</a></li>
+								<li class="${pageMaker.cri.page == idx ?'active':''}"><a href="noticeMngList?page=${idx}&searchType=${cri.searchType}&keyword=${cri.keyword}">${idx }</a></li>
 								<!-- 주소의 시작이 /로 시작하지 않고 localhost:8080..으로 시작하면 맨 마지막 것만 바꿔주면됨 -->
 							</c:forEach>
 							<c:if test="${pageMaker.next == true }">
-								<li><a href="reservationMgnList?page=${pageMaker.endPage +1 }&searchType=${cri.searchType}&keyword=${cri.keyword}">&raquo;</a></li>
+								<li><a href="noticeMngList?page=${pageMaker.endPage +1 }&searchType=${cri.searchType}&keyword=${cri.keyword}">&raquo;</a></li>
 							</c:if>
 						</ul>
 					</div>
