@@ -11,5 +11,8 @@
 <select id="readReviewByRno" resultType="ReviewVO">
 	select * from review where rno = #{rno}
 </select>
+<select id="readReviewByUserno" resultType="ReviewVO">
+	select * from review where userno = #{userno}
+</select>
 
 </mapper>

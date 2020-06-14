@@ -270,4 +270,5 @@
 		left join ptourstatus t on p.pno = t.pno left join tour t2 on t.tno = t2.no
 		left join userpstatus r on p.pno = r.pno left join rentcar r2 on r.no = r2.no  where p.pno = #{pno}
 </select>
+
 </mapper>

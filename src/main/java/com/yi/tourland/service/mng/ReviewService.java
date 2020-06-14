@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.ReviewVO;
 import com.yi.tourland.persistance.mng.dao.ReviewDao;
 @Service
@@ -24,6 +25,10 @@ public class ReviewService {
 	//상품번호와 같은 리뷰 조회하기
 	public ReviewVO readReviewByRno(ReviewVO vo) throws SQLException {
 		return dao.readReviewByRno(vo);
+	}
+	
+	public List<ReviewVO> readReviewByUserno(int userno) throws SQLException {
+		return dao.readReviewByUserno(userno);
 	}
 	
 }

@@ -1414,32 +1414,51 @@ public class CustomerController {
 	
 	//상품 리뷰    
 	@RequestMapping(value="tourlandProductReview", method=RequestMethod.GET)
-	public ResponseEntity<Map<String,Object>> tourlandProductReview(HttpSession session,Model model, String pno) throws SQLException {
+	public ResponseEntity<Map<String,Object>> tourlandProductReview(SearchCriteria cri,HttpSession session,Model model, String pno) throws SQLException {
 			ResponseEntity<Map<String,Object>> entity = null;
-		 System.out.println("=----------" + pno);
+			Map<String,Object> map = new HashMap<>();
+		
 		 UserVO user = (UserVO) session.getAttribute("Auth");
-//		 ReservationVO rvo = reservationService.ReadCartByNoAndUserNo(rno,userno);
-//			ProductVO upvo = rvo.getProduct();
-//			cri.setSearchType("userCart");
-//			cri.setKeyword(upvo.getPname());
-//			cri.setPerPageNum(productService.totalCountBySearchProduct(cri));
-//			List<ProductVO> list = productService.listPage(cri);
-//			ProductVO pvo = null;
-//			Date uddate = upvo.getAir().get(0).getDdate();
-//			Date urdate = upvo.getAir().get(1).getRdate();
-//			if(list.size()>1) {
-//				for(ProductVO vo : list) {
-//					if(uddate.equals(vo.getAir().get(0).getDdate()) && urdate.equals(vo.getAir().get(1).getRdate())) {
-//						pvo = vo;
-//						break;
-//					}
-//				}
-//			}
-//			else {
-//				pvo = list.get(0);
-//			}
-//			
-			
+		 System.out.println("=----------" + user);
+		 if(user!=null) {
+			 List<ReviewVO> rListByUserNo = reviewService.readReviewByUserno(user.getUserno());
+			 List<ReviewVO> rList = new ArrayList<>();
+			 ProductVO pvo = null;
+			 for(ReviewVO r : rListByUserNo) {
+				 ReservationVO rvo = reservationService.ReadCartByNoAndUserNo(r.getRno(),user.getUserno());
+					ProductVO upvo = rvo.getProduct();
+					cri.setSearchType("userCart");  
+					cri.setKeyword(upvo.getPname());
+					cri.setPerPageNum(productService.totalCountBySearchProduct(cri));
+					List<ProductVO> list = productService.listPage(cri);
+					
+					Date uddate = upvo.getAir().get(0).getDdate();
+					Date urdate = upvo.getAir().get(1).getRdate();
+					if(list.size()>1) {
+						for(ProductVO vo : list) {
+							if(uddate.equals(vo.getAir().get(0).getDdate()) && urdate.equals(vo.getAir().get(1).getRdate())) {
+								pvo = vo;
+								
+								break;
+							}
+						}
+					}
+					else {
+						pvo = list.get(0);
+					}
+					
+					if(pvo.getPno()==Integer.parseInt(pno)) {
+						rList.add(r);
+					}
+					
+			 }
+			 
+			 for(ReviewVO r : rList) {
+				 map.put("review", r);
+			 }
+			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
+		 }
+		
 		return entity; 
 	}
 
