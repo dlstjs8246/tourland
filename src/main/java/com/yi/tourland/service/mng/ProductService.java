@@ -270,4 +270,9 @@ public class ProductService {
 		deleteProductInUserCart(pvo, rvo, cri);
 		insertProductInUserCart(pvo, uvo, cri);
 	}
+	
+	//마이페이지 - 리뷰쓰기 - 들어갈 때 해당 상품 이름과 사진 가져가기 
+	public ProductVO selectNamePic(int no) throws SQLException {
+		return dao.selectNamePic(no);
+	}
 }

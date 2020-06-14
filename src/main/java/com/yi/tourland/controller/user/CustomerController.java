@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
-import javax.mail.Session;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,6 +51,7 @@ import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
 import com.yi.tourland.domain.mng.ReservationVO;
+import com.yi.tourland.domain.mng.ReviewVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
@@ -68,6 +68,7 @@ import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
 import com.yi.tourland.service.mng.ReservationService;
+import com.yi.tourland.service.mng.ReviewService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 
@@ -136,6 +137,9 @@ public class CustomerController {
 	
 	@Autowired
 	private ReservationService reservationService;
+	
+	@Autowired
+	private ReviewService reviewService;
 		
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 		@ResponseBody
@@ -439,7 +443,7 @@ public class CustomerController {
 	
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
-	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow, String cancel) throws SQLException {
+	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow, String cancel, String addReview) throws SQLException {
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
 		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
@@ -458,6 +462,9 @@ public class CustomerController {
 		}
 		if(cancel != null) {
 			model.addAttribute("cancel", "cancel");
+		}
+		if(addReview != null) {
+			model.addAttribute("addReview", "addReview");
 		}
 		
 		return "/user/mypage/tourlandMyReserv"; 
@@ -484,11 +491,34 @@ public class CustomerController {
 		}
 	
 	
-	//상품 리뷰    
+	//마이페이지 - 리뷰    
 	@RequestMapping(value="tourlandMyReview", method=RequestMethod.GET)
-	public String tourlandMyReview() throws SQLException {
+	public String tourlandMyReview(HttpSession session, String rno, Model model) throws SQLException {
+		UserVO vo = (UserVO) session.getAttribute("Auth");
+		ProductVO product = productService.selectNamePic(Integer.parseInt(rno));
 		
+		model.addAttribute("userno", vo.getUserno());
+		model.addAttribute("username", vo.getUsername());
+		model.addAttribute("rno", rno);
+		model.addAttribute("pno", product.getPno());
+		model.addAttribute("pname", product.getPname());
 		return "/user/mypage/tourlandMyReview"; 
+	}
+	//리뷰 등록 
+	@RequestMapping(value="tourlandAddMyReview", method=RequestMethod.POST)
+	public String tourlandAddMyReview(ReviewVO review, Model model) throws SQLException {
+		
+		if(review!=null) {
+			List<ReviewVO> reviewList = reviewService.checkReviewExists();
+			int listSize = reviewList.size();
+			review.setNo(listSize+1);
+			Date today = new Date();
+			review.setRegdate(today);
+			reviewService.addReview(review);
+			model.addAttribute("addReview", "addReview");
+		}
+		
+		return "redirect:/customer/tourlandMyReserv"; 
 	}
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
@@ -1374,12 +1404,33 @@ public class CustomerController {
 	
 	//상품 리뷰    
 	@RequestMapping(value="tourlandProductReview", method=RequestMethod.GET)
-	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model,int price) throws SQLException {
-		  vo = productService.productByNo(vo); 
-		  model.addAttribute("cri",cri);
-		  model.addAttribute("vo",vo);
-		  model.addAttribute("price",price);
-		return "/user/product/tourlandProductReview"; 
+	public ResponseEntity<Map<String,Object>> tourlandProductReview(HttpSession session,Model model, String pno) throws SQLException {
+			ResponseEntity<Map<String,Object>> entity = null;
+		 System.out.println("=----------" + pno);
+		 UserVO user = (UserVO) session.getAttribute("Auth");
+//		 ReservationVO rvo = reservationService.ReadCartByNoAndUserNo(rno,userno);
+//			ProductVO upvo = rvo.getProduct();
+//			cri.setSearchType("userCart");
+//			cri.setKeyword(upvo.getPname());
+//			cri.setPerPageNum(productService.totalCountBySearchProduct(cri));
+//			List<ProductVO> list = productService.listPage(cri);
+//			ProductVO pvo = null;
+//			Date uddate = upvo.getAir().get(0).getDdate();
+//			Date urdate = upvo.getAir().get(1).getRdate();
+//			if(list.size()>1) {
+//				for(ProductVO vo : list) {
+//					if(uddate.equals(vo.getAir().get(0).getDdate()) && urdate.equals(vo.getAir().get(1).getRdate())) {
+//						pvo = vo;
+//						break;
+//					}
+//				}
+//			}
+//			else {
+//				pvo = list.get(0);
+//			}
+//			
+			
+		return entity; 
 	}
 
 	//이벤트 --------------------------------------------------------------------------------------

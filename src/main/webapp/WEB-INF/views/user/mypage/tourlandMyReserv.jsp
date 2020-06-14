@@ -31,6 +31,7 @@
 	.red { font-weight: bold;  color: maroon; }
 	.payNow { width: 80px; height: 25px; border: none; background: steelblue; color: #fff; margin-bottom: 5px; }		
 	.writeReview { width: 80px; height: 25px; border: none; background: #828282; color: #fff; }
+	.seeReview {width: 80px; height: 25px; border: none; background: #828282; color: #fff; }
 	.cancel { width: 80px; height: 25px; border: none; background: maroon; color: #fff; }
 	   
 	.yellow  { font-weight: bold;  color: goldenrod; }
@@ -62,6 +63,12 @@
 			}
 		})
 		
+		$(".writeReview").click(function(){
+			var rnoString = $(this).parent().parent().find(".rno").html();
+			var rno = rnoString.substring(4); 
+			location.href="tourlandMyReview?rno="+rno;
+		})
+		
 	})
 </script>	
 <c:if test="${paySuccess!=null }">
@@ -74,6 +81,12 @@
 		alert("예약이 취소되었습니다.");
 	</script>
 </c:if>
+<c:if test="${addReview!=null }">
+	<script>
+		alert("리뷰가 등록되었습니다.");
+	</script>
+</c:if>
+
 		<section>
 		<%@ include file="../../include/userMyPageMenu.jsp"%>   
 				<div id="myreserv">
@@ -92,6 +105,7 @@
 						</tr>
 						<c:if test="${noList == null }">
 								<c:forEach var="reserv" items="${list}">
+								
 							<tr>
 								<td class="rno">RERV${reserv.no}</td>
 								<td><fmt:formatDate value="${reserv.rdate}" pattern="yyyy-MM-dd"/></td>

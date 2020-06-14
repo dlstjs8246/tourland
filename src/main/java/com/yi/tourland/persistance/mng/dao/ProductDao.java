@@ -52,6 +52,8 @@ public interface ProductDao {
 	public List<ProductVO> tourlandProductJapanSearchLowPriceList(SearchCriteria cri) throws SQLException; 
 	// 상품 리스트 검색 박스 Ajax "낮은 가격 순" (제주) 
 	public List<ProductVO> tourlandProductKRSearchLowPriceList(SearchCriteria cri) throws SQLException;
+	//마이페이지 - 리뷰쓰기 - 들어갈 때 해당 상품 이름과 사진 가져가기 
+	public ProductVO selectNamePic(int no) throws SQLException;
 	
 	
 }
