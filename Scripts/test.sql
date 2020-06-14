@@ -86,12 +86,11 @@ select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 							 	where p.pdiv = 0;
 
 -- 인선 --------------------------------------------------------------------------------------------
-<<<<<<< HEAD
-=======
 select count(no) from faq where title like concat('%','쿠폰','%');
 select * from faq where lcate = 'D' and mcate = 'J' and title like concat ('%','제주','%') order by no desc limit 1,10;
 desc tour;
 select * from tour where no = 3001 order by no desc;
+select * from reservation;
 delete from tour;
 select * from product order by pno desc;
 desc airplane;
@@ -116,10 +115,6 @@ select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 					   join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 					   join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
 		where p.pno = 2;
->>>>>>> branch 'master' of https://github.com/dlstjs8246/tourland.git
-
-<<<<<<< HEAD
-=======
 select * from product p join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no where p.pno = 2;
 desc pairstatus;
 desc prentstatus;
@@ -222,6 +217,8 @@ select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
 		where p.pdiv = 0;
 select * from reservation;
+select * from user;
+select count(*) from reservation where userno = 2 and rstatus != '0';
 select rv.*,
 		p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate as 'a2rdate',a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
@@ -234,7 +231,37 @@ select rv.*,
 		left join photelstatus h on p.pno = h.pno left join hotel h2 on h.hno = h2.no
 		left join ptourstatus t on p.pno = t.pno left join tour t2 on t.tno = t2.no
 		left join prentstatus r on p.pno = r.pno left join rentcar r2 on r.rno = r2.no;
->>>>>>> branch 'master' of https://github.com/dlstjs8246/tourland.git
+select rstatus, rv.*,us.userno, us.username, us.userbirth, us.userpassport,
+		p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
+	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate as 'a2rdate',a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
+	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
+	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
+		from (select * from reservation where rstatus = '1' or rstatus = '2' or rstatus = '3' order by no desc limit 0,10) rv 
+		join userpstatus u on rv.userno = u.userno and rv.no = u.no join user us on us.userno = u.userno join product p on u.pno = p.pno
+		left join pairstatus a on p.pno = a.pno left join airplane a2 on a.ano = a2.no
+		left join photelstatus h on p.pno = h.pno left join hotel h2 on h.hno = h2.no
+		left join ptourstatus t on p.pno = t.pno left join tour t2 on t.tno = t2.no
+		left join prentstatus r on p.pno = r.pno left join rentcar r2 on r.rno = r2.no;
+create view preferenceProduct as select p.pname,count(p.pno) as 'count' from reservation r 
+join userpstatus u on u.no = r.no and u.userno = r.userno
+join product p on u.pno = p.pno where r.rstatus = '3' group by p.pname order by count desc limit 0,5;
+create view totalpricebymonth as select substring(pname,2,3) as 'location',year(rdate),month(rdate),ifnull(sum(p.pprice),0) as 'totalprice' from reservation r 
+join userpstatus u on u.no = r.no and u.userno = r.userno
+join product p on u.pno = p.pno where r.rstatus in (2,3) group by substring(pname,2,3),month(rdate);
+select * from preferenceproduct;
+select * from totalpricebymonth;
+select * from reservation;
+select * from userpstatus;
+select * from product;
+select * from pairstatus;
+select * from photelstatus;
+select * from ptourstatus;
+select * from prentstatus;
+select * from airplane;
+select * from hotel;
+select * from tour;
+select * from rentcar;
 -- 태원 --------------------------------------------------------------------------------------------
 SELECT *
 FROM hotel; 

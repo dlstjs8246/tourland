@@ -25,9 +25,9 @@
 					var beijing = [];
 					var dokyo = [];
 					for (var i = 0; i < 12; i++) {
-						jeju[i] = Math.floor(Math.random() * 5000000000);
-						beijing[i] = Math.floor(Math.random() * 5000000000);
-						dokyo[i] = Math.floor(Math.random() * 5000000000);
+						jeju[i] = Math.floor(Math.random() * 1000000);
+						beijing[i] = Math.floor(Math.random() * 10000000);
+						dokyo[i] = Math.floor(Math.random() * 10000000);
 					}
 					google.charts.load('current', {
 						'packages' : [ 'bar' ]
@@ -42,10 +42,10 @@
 								[ '월', '제주', '베이징', '도쿄' ],
 								[ '1월', jeju[0], beijing[0], dokyo[0] ],
 								[ '2월', jeju[1], beijing[1], dokyo[1] ],
-								[ '3월', jeju[2], beijing[2], dokyo[2] ],
-								[ '4월', jeju[3], beijing[3], dokyo[3] ],
-								[ '5월', jeju[4], beijing[4], dokyo[4] ],
-								[ '6월', jeju[5], beijing[5], dokyo[5] ],
+								[ '3월', ${jeju[0].totalprice!=null?jeju[0].totalprice:0}, ${beijing[0].totalprice!=null?beijing[0].totalprice:0}, ${dokyo[0].totalprice!=null?dokyo[0].totalprice:0} ],
+								[ '4월', ${jeju[1].totalprice!=null?jeju[1].totalprice:0}, ${beijing[1].totalprice!=null?beijing[1].totalprice:0}, ${dokyo[1].totalprice!=null?dokyo[1].totalprice:0} ],
+								[ '5월', ${jeju[2].totalprice!=null?jeju[2].totalprice:0}, ${beijing[2].totalprice!=null?beijing[2].totalprice:0}, ${dokyo[2].totalprice!=null?dokyo[2].totalprice:0} ],
+								[ '6월', ${jeju[3].totalprice!=null?jeju[3].totalprice:0}, ${beijing[3].totalprice!=null?beijing[3].totalprice:0}, ${dokyo[3].totalprice!=null?dokyo[3].totalprice:0} ],
 								[ '7월', jeju[6], beijing[6], dokyo[6] ],
 								[ '8월', jeju[7], beijing[7], dokyo[7] ],
 								[ '9월', jeju[8], beijing[8], dokyo[8] ],
@@ -68,11 +68,11 @@
 					function drawChart2() {
 						var data = google.visualization.arrayToDataTable([
 					          ['상품명', '예약확정건수'],
-					          ['상품1',  20],
-					          ['상품2',  18],
-					          ['상품3',  15],
-					          ['상품4',  13],
-					          ['상품5',  12]
+					          ['${list2[0].pname}',  ${list2[0].count}],
+					          ['${list2[1].pname}',  ${list2[1].count}],
+					          ['${list2[2].pname}',  ${list2[2].count}],
+					          ['${list2[3].pname}',  ${list2[3].count}],
+					          ['${list2[4].pname}',  ${list2[4].count}]
 					        ]);
 
 					        var options = {
@@ -86,6 +86,7 @@
 					}
 				</script>
 			</div>
+
 		</div>
 	</div>
 </div>
