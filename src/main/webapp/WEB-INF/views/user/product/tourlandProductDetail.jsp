@@ -433,6 +433,10 @@
 						},
 						error : function(res) {
 							console.log(res.responseText);
+							if(res.responseText=="CAPACITYFAIL") {
+								alert("상품의 인원이 가득 찼습니다. 다른 상품을 선택해주세요");
+								return;
+							}
 							if(res.responseText=="OVERLAP") {
 								alert("이미 장바구니에 담겨 있는 상품입니다. 다시 확인하시고 장바구니에 추가해주세요");
 								return; 

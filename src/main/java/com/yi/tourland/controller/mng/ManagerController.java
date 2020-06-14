@@ -87,7 +87,7 @@ public class ManagerController {
 	 
 	@Resource(name = "uploadPathProduct")
 	private String uploadPathProduct; // c:/tourland/upload/product
-	 
+
 	@Autowired
 	private TourService tourService;
 	@Autowired
@@ -1643,7 +1643,7 @@ public class ManagerController {
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 	@ResponseBody
 	@RequestMapping(value = "displayFile/{whichOne}", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> displayFile(String filename,@PathVariable("whichOne") String choice) {
+	public ResponseEntity<byte[]> displayFile(String filename,@PathVariable("whichOne") String choice, HttpServletRequest request) {
 		ResponseEntity<byte[]> entity = null;
         String path = null;
         
@@ -1665,7 +1665,7 @@ public class ManagerController {
         if(choice.equals("practice")) {
         	path= "/tourland/resources/images/practice";
         }
-		// System.out.println("displayFile-----------"+ filename);
+//		System.out.println("displayFile-----------"+ filename);
 		InputStream in = null;
 		try {
 			
@@ -2200,7 +2200,6 @@ public class ManagerController {
 			JsonObject json = new JsonObject();
 			PrintWriter printWriter = null;
 			MultipartFile file = multiFile.getFile("upload");
-			
 			if(file !=null && file.getSize() > 0) { 
          try {
 			printWriter = resp.getWriter();
