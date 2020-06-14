@@ -91,14 +91,23 @@ $(function(){
 		var twowayPath = $(this).attr("data-name");
 		
 		var whoWroteThis = "${custBoardVO.writer}";
+		var whoWroteThisPlan = "${planBoardVO.writer}";
         var loginedId = "${Auth.username}";
-       
-        if(whoWroteThis != loginedId){
-        	$(".error").css("display", "inline");
-        	return false;
+        
+        
+        if(whoWroteThis == ""){
+           if(whoWroteThisPlan != loginedId){
+            	$(".error").css("display", "inline");
+            	return false;
+            }
+        }else{
+        	 if(whoWroteThis != loginedId){
+             	$(".error").css("display", "inline");
+             	return false;
+             }
         }
-		// alert($(this).attr("data-name"));
-			 //아이디 중복 ajax로 처리하기
+        
+      
 			 $.ajax({
 				url:"${pageContext.request.contextPath}/customer/EditPasswordCheck/"+userId+"/"+checkPass,
 				type:"get",

@@ -284,7 +284,7 @@ select * from hotel;
 insert into reservation values(1, 2, '2020-05-20',2);
 
 select * from userpstatus;
-
+select * from user;
 insert into userpstatus values(1,2,270);
 
 select u.username, p.pname, a.ano, a.ddate, a.rdate, r.rstatus

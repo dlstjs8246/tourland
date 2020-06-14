@@ -74,30 +74,30 @@ public class LoginController {
 			return "redirect:/customer/tourlandMain";
 			
 		//회원아이디가 있는 경우
-		}else if(dbUserId!=null) {
-			
+		}else if(dbUserId!=null) {	
 			//탈퇴한 회원인 경우
-			if(dbUserId.getUsersecess()==1) {
+			if(dbUserId.getUsersecess() == 1) {
 				model.addAttribute("error", "로그인 권한이 없습니다.");
 				model.addAttribute("UserStay", userVO);
 				return "/user/tourlandLoginForm";
 			}
 			
 			//회원 비밀번호가 맞지 않는 경우. 아이디 비밀번호를 같이 쓴건 비밀번호가 중복되는 회원이 있을까봐
-			if(dbUserIdPw==null){
+			else if(dbUserIdPw==null){
 				model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
 				model.addAttribute("UserStay", userVO); //이거는 비밀번호를 틀린경우에도 아이디 비밀번호를 남기기위해.
 				return "/user/tourlandLoginForm";
 			}
 
 			//전부 다 맞는 경우(회원)
-			
+			model.addAttribute("UserStay", userVO);
 			session.setAttribute("User",dbUserId.getUsername());
 			session.setAttribute("login", "user");
 			session.setAttribute("Auth", dbUserIdPw); //정보 다 가지고 있는거
 			session.setAttribute("pass", pass);
 			session.setAttribute("mypage","mypageuser");
-			return "redirect:/customer/tourlandMain";
+			/* return "redirect:/customer/tourlandMain"; */
+			return "/user/tourlandMain";
 			
 		//아이디가 없는 경우	(직원,회원)
 		}else{
