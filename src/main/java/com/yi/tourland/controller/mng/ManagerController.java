@@ -2202,7 +2202,7 @@ public class ManagerController {
 			OutputStream out = null;
 			MultipartFile file = multiFile.getFile("upload");
 			
-			if(file !=null && file.getSize() > 0) {
+			if(file !=null && file.getSize() > 0) { 
          try {
 			printWriter = resp.getWriter();
 			resp.setContentType("text/html");
