@@ -1663,7 +1663,7 @@ public class ManagerController {
         }
         
         if(choice.equals("practice")) {
-        	path= "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
+        	path= "/tourland/resources/images/practice";
         }
 		// System.out.println("displayFile-----------"+ filename);
 		InputStream in = null;
@@ -2199,14 +2199,13 @@ public class ManagerController {
                 MultipartHttpServletRequest multiFile, Model model,String ckEditorFuncNum) throws Exception {
 			JsonObject json = new JsonObject();
 			PrintWriter printWriter = null;
-			OutputStream out = null;
 			MultipartFile file = multiFile.getFile("upload");
 			
 			if(file !=null && file.getSize() > 0) { 
          try {
 			printWriter = resp.getWriter();
 			resp.setContentType("text/html");
-			String serverPath =req.getContextPath()+"/displayFile/practice?filename=";
+			String serverPath =req.getContextPath()+"/manager/displayFile/practice?filename=";
 			//String serverPath ="localhost:8080/tourland/displayFile/practice?filename=";
 			String serverPath2 =req.getContextPath()+"/resources/images/practice";
 			String savedName = UploadFileUtils.uploadFile(serverPath2, file.getOriginalFilename().replaceAll(" ", "_"),
