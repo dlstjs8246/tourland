@@ -12,6 +12,7 @@ public class ReservationVO {
 	private Date rdate;
 	private String rstatus;
 	private ProductVO product;
+	private ReviewVO review;
 	
 	public ReservationVO() {
 		
@@ -58,11 +59,21 @@ public class ReservationVO {
 	public void setProduct(ProductVO product) {
 		this.product = product;
 	}
+	
+
+	public ReviewVO getReview() {
+		return review;
+	}
+
+	public void setReview(ReviewVO review) {
+		this.review = review;
+	}
 
 	@Override
 	public String toString() {
-		return String.format("ReservationVO [no=%s, userno=%s, rdate=%s, rstatus=%s, products=%s]", no, userno, rdate,
-				rstatus, product);
+		return String.format("ReservationVO [no=%s, userno=%s, rdate=%s, rstatus=%s, product=%s, review=%s]", no,
+				userno, rdate, rstatus, product, review);
 	}
+	
 	
 }

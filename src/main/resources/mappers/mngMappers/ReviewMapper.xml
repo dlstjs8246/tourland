@@ -5,10 +5,11 @@
 <insert id="addReview">
 	insert into review values(#{no}, #{rno},#{pno}, #{userno}, #{regdate}, #{starpoint}, #{reviewTitle}, #{reviewContent})
 </insert>
-
 <select id="checkReviewExists" resultType="ReviewVO">
 	select * from review
 </select>
-
+<select id="readReviewByRno" resultType="ReviewVO">
+	select * from review where rno = #{rno}
+</select>
 
 </mapper>

@@ -24,6 +24,11 @@ public class ReviewDaoImpl implements ReviewDao {
 	public List<ReviewVO> checkReviewExists() throws SQLException {
 		return sqlSession.selectList(namespace + "checkReviewExists");
 	}
+
+	@Override
+	public ReviewVO readReviewByRno(ReviewVO vo) throws SQLException {
+		return sqlSession.selectOne(namespace + "readReviewByRno",vo);
+	}
 	
 	
 }

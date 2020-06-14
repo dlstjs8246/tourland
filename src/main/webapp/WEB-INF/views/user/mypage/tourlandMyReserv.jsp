@@ -68,6 +68,11 @@
 			var rno = rnoString.substring(4); 
 			location.href="tourlandMyReview?rno="+rno;
 		})
+		$(".seeReview").click(function(){
+			var rnoString = $(this).parent().parent().find(".rno").html();
+			var rno = rnoString.substring(4); 
+			location.href="tourlandReadMyReview?rno="+rno;
+		})
 		
 	})
 </script>	
@@ -135,8 +140,11 @@
 										<br>
 									</c:if>
 									
-									<c:if test="${reserv.rstatus=='3' }">
+									<c:if test="${reserv.rstatus=='3' and reserv.review.no==null}">
 										<button class="writeReview">리뷰쓰기</button>
+									</c:if>
+									<c:if test="${reserv.rstatus=='3' and reserv.review.no!=null}">
+										<button class="seeReview">리뷰보기</button>
 									</c:if>
 									<c:if test="${reserv.rstatus=='1' }">
 										<button class="cancel">예약 취소</button>

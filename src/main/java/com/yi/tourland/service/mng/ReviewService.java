@@ -20,6 +20,10 @@ public class ReviewService {
 	//해당 상품이 리뷰가 있는지 확인
 	public List<ReviewVO> checkReviewExists() throws SQLException {
 		return dao.checkReviewExists();
-	}  
+	} 
+	//상품번호와 같은 리뷰 조회하기
+	public ReviewVO readReviewByRno(ReviewVO vo) throws SQLException {
+		return dao.readReviewByRno(vo);
+	}
 	
 }

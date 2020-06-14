@@ -519,6 +519,17 @@ public class CustomerController {
 		
 		return "redirect:/customer/tourlandMyReserv"; 
 	}
+	//리뷰 보기
+	@RequestMapping(value="tourlandReadMyReview", method=RequestMethod.GET)
+	public String tourlandReadMyReview(ReviewVO review, Model model) throws Exception {
+		review = reviewService.readReviewByRno(review);
+		ProductVO product = productService.selectNamePic(review.getRno());
+		UserVO user = userService.readByNoUser(review.getUserno());
+		model.addAttribute("review",review);
+		model.addAttribute("product",product);
+		model.addAttribute("user",user);
+		return "user/mypage/tourlandReadMyReview"; 
+	}
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
 	public String tourlandMyWishes(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,ProductVO pvo,String suc) throws SQLException { 
