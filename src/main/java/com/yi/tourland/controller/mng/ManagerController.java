@@ -87,7 +87,7 @@ public class ManagerController {
 	 
 	@Resource(name = "uploadPathProduct")
 	private String uploadPathProduct; // c:/tourland/upload/product
-	 
+
 	@Autowired
 	private TourService tourService;
 	@Autowired
@@ -1643,7 +1643,7 @@ public class ManagerController {
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 	@ResponseBody
 	@RequestMapping(value = "displayFile/{whichOne}", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> displayFile(String filename,@PathVariable("whichOne") String choice) {
+	public ResponseEntity<byte[]> displayFile(String filename,@PathVariable("whichOne") String choice, HttpServletRequest request) {
 		ResponseEntity<byte[]> entity = null;
         String path = null;
         
@@ -1665,7 +1665,7 @@ public class ManagerController {
         if(choice.equals("practice")) {
         	path= "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
         }
-		// System.out.println("displayFile-----------"+ filename);
+//		System.out.println("displayFile-----------"+ filename);
 		InputStream in = null;
 		try {
 			
@@ -2199,31 +2199,28 @@ public class ManagerController {
                 MultipartHttpServletRequest multiFile, Model model,String ckEditorFuncNum) throws Exception {
 			JsonObject json = new JsonObject();
 			PrintWriter printWriter = null;
-			OutputStream out = null;
 			MultipartFile file = multiFile.getFile("upload");
 			
 			if(file !=null && file.getSize() > 0) {
-         try {
-			printWriter = resp.getWriter();
-			resp.setContentType("text/html");
-			String serverPath =req.getContextPath()+"/displayFile/practice?filename=";
-			//String serverPath ="localhost:8080/tourland/displayFile/practice?filename=";
-			String serverPath2 =req.getContextPath()+"/resources/images/practice";
-			String savedName = UploadFileUtils.uploadFile(serverPath2, file.getOriginalFilename().replaceAll(" ", "_"),
-			file.getBytes());
-			String bigSizePic = savedName.substring(0, 12) + savedName.substring(14);
-			
-			json.addProperty("uploaded", 1);
-            json.addProperty("fileName", file.getOriginalFilename());
-            json.addProperty("url", serverPath+bigSizePic);
-            printWriter.println(json);
-            
-			}catch (Exception e) {
-				e.printStackTrace();
-			}finally {
-			    if(printWriter != null) {
-				    printWriter.close();
-				 }
+	         try {
+				printWriter = resp.getWriter();
+				resp.setContentType("text/html");
+				String serverPath =req.getContextPath()+"/manager/displayFile/practice?filename=";
+				//String serverPath ="localhost:8080/tourland/displayFile/practice?filename=";
+				String serverPath2 = "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
+				String savedName = UploadFileUtils.uploadFile(serverPath2, file.getOriginalFilename(),
+				file.getBytes());
+				String bigSizePic = savedName.substring(0, 12) + savedName.substring(14);
+				json.addProperty("uploaded", 1);
+	            json.addProperty("fileName", file.getOriginalFilename());
+	            json.addProperty("url", serverPath+bigSizePic);
+	            printWriter.println(json);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}finally {
+				    if(printWriter != null) {
+					    printWriter.close();
+					 }
 			   }
 			}
           return null;
