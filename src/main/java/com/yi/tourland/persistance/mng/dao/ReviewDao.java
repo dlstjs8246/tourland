@@ -10,5 +10,6 @@ public interface ReviewDao {
 	//리뷰 추가
 	public void addReview (ReviewVO vo) throws SQLException;
 	//리뷰 있는지 확인
-	public List<ReviewVO> checkReviewExists() throws SQLException; 
+	public List<ReviewVO> checkReviewExists() throws SQLException;
+	public List<ReviewVO> readReviewByUserno(int userno) throws SQLException;
 }

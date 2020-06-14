@@ -95,4 +95,5 @@ public class ReservationDaoImpl implements ReservationDao {
 		map.put("pno", pno);
 		return sqlSession.selectList(namespace + "listReservationForModal",map );
 	}
+
 }

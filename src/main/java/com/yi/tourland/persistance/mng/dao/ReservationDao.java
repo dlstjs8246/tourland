@@ -23,4 +23,5 @@ public interface ReservationDao {
 	//관리자 페이지 - 예약 관리 - 예약 상세 modal 
 	public List<ReservationVO> listReservationForModal(String userno, String pno) throws SQLException;
 	public ReservationVO ReadCartByNoAndUserNo(int rno, int userno) throws SQLException;
+	
 }

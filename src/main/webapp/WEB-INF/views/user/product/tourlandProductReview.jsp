@@ -73,7 +73,8 @@
 				location.href = "tourlandProductDetail?pno=90&price=${price}"; 
 			})
 			$("#review").click(function(){
-				getReviews();
+				alert("!");
+				//getReviews();
 			})
 		})
 	</script>

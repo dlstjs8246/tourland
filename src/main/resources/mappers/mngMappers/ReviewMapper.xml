@@ -10,5 +10,8 @@
 	select * from review
 </select>
 
+<select id="readReviewByUserno" resultType="ReviewVO">
+	select * from review where userno = #{userno}
+</select>
 
 </mapper>
