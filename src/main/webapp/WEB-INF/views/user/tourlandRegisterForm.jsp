@@ -309,7 +309,7 @@
 							<input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" style="background:steelblue; border:inherit; color:white;" class="inputAddr">
 							<input type="text" id="sample6_address" placeholder="주소" class="inputAddr"><br>
 							<input type="text" id="sample6_detailAddress" placeholder="상세주소" class="inputAddr">
-							<!-- <input type="text" id="sample6_extraAddress" placeholder="참고항목" class="inputAddr"> -->
+							<input type="text" id="sample6_extraAddress" placeholder="참고항목" class="inputAddr"> 
 						</p>
 						<p>
 							<label>전화번호</label>
