@@ -72,7 +72,7 @@
 <script>
 	$(function(){
 		
-		$('html, body').animate({ scrollTop : 700 }, 1500); //이벤트 사진 전까지 이동 스르륵
+		$('html, body').animate({ scrollTop : 700 }, 0); //이벤트 사진 전까지 이동 스르륵
 		//보내는 값에 따라 css변경
 		var eventSentence = "${mistyrose}";
 		if(eventSentence == "inging"){
