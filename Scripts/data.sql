@@ -122,19 +122,6 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 lines;
 
-LOAD DATA LOCAL INFILE 'D:/workspace/workspace_spring/tourland/file/CSV/userpstatus.csv'  
-INTO TABLE userpstatus
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 lines;
-
-LOAD DATA LOCAL INFILE 'D:/workspace/workspace_spring/tourland/file/CSV/reservation.csv'  
-INTO TABLE reservation
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 lines;
 #여기까지
 
 -- 태원 ---------------------------------------------------------------------------------------------------

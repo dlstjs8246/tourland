@@ -517,7 +517,7 @@ public class ManagerController {
 	public String employeeDelete(SearchCriteria cri, Model model, @PathVariable("empretired") int empretired,
 			@PathVariable("empno") int empno) throws Exception {
 		EmployeeVO vo = employeeService.readByNoEmployee(empno);
-		System.out.println(vo);
+		
 		// System.out.println(vo);
 		if (vo.getEmpretired() == 0) { // 근무사원이라면
 			vo.setEmpretired(1); // 퇴사 사원 처리

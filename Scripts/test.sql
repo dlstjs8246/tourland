@@ -13,6 +13,7 @@ insert into employee values (6,'장우주','1987-01-01','010-4444-4321','대구 
 desc user;
 select * from `user` u ;
 select * from usercoupon u ;
+select * from usercoupon u ;
 select user.username, coupon.cno, coupon.cname from user left join usercoupon uc on user.userno = uc.userno left join coupon on uc.cno = coupon.cno;
 delete from `user` where userno = 7;
 insert into user values (6,'도라지','1989-12-18','010-4333-3825','대구시 북구 태전동 254-30',null,'customer5',password('customer'),1);
@@ -29,7 +30,7 @@ select * from banner order by no desc limit 1, 3;
 delete from banner where no in(1,3,4,5,6,7,8,9,10,11);
 
 select  count(no) from banner ;
-select * from product;
+select * from product order by pno desc;
 select * from photelstatus;
 select * from prentstatus;
 select * from pairstatus;
