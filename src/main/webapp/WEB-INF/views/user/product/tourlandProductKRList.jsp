@@ -204,15 +204,19 @@ $(function(){
 		 }
 		location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 	})
-	calPrice();
 })
 </script>
 
 <body>
 <!-- 메인 검색 박스에서 검색한 내용을 들고와서 자동 검색 후 페이지 출력 -->
 <c:if test="${tourDays!=null }">
-	<script>
+<<<<<<< HEAD
+	<script> 
 	$(function(){
+=======
+	<script>
+	$(function(){  
+>>>>>>> refs/heads/hana_tour49
 		$(".datepicker").val("${date }");
 		$("#rdate option[value='${tourDays}']").attr("selected", "selected");
 		$("#cnt option[value='${capa}']").attr("selected", "selected");
@@ -223,7 +227,7 @@ $(function(){
 	
 </c:if>
 	<section>
-		<div id="pkgTitleBox">
+		<div id="pkgTitleBox">   
 			<h1>제주</h1>
 			<div id="pkgInfo">
 				<p>식을 줄 모르는 한류 열풍으로 전 세계 소녀팬들의 성지가 된 대한민국! 유구한 5천 년 역사와 찬란한
@@ -238,7 +242,7 @@ $(function(){
 		<div id="pkgContentBox">
 			<div id="pkgSearch">
 				<h3>검색</h3>
-				<p>출발일 선택</p>
+				<p>출발일 선택</p> 
 				<input type="date" class="datepicker" name="ddate">
 				<p>여행일 선택</p>
 				<select id="rdate">

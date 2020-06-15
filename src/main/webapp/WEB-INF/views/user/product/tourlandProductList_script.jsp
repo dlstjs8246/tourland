@@ -7,12 +7,12 @@ function replaceAll(str, searchStr, replaceStr) {
 /* yyyy-MM-dd 형식으로 변경하는 메서드  */
 function getFormatDate(date,seperater){
 	var date = new Date(date);
-    var year = date.getFullYear()+seperater;              //yyyy
-    var month = (date.getMonth()+1)+seperater;          //M
-    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
+    var year = date.getFullYear();              //yyyy
+    var month = (date.getMonth()+1);          //M
+    month = month >= 9 ? month : '0' + month;  //month 두자리로 저장
     var day = date.getDate();                   //d
     day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
-    return  year + '' + month + '' + day;
+    return  year + seperater + month + seperater + day;
 }
 function calPrice(obj) {
 	var price = 0;
@@ -27,7 +27,7 @@ function calPrice(obj) {
 			 var checkoutDate = new Date(obj.checkout);
 			 var dateDiffDate = new Date();
 			 dateDiffDate.setDate(checkoutDate.getDate()-checkinDate.getDate());
-			 price += (obj.price * (dateDiffDate.getDate()-1)); 
+			 price += (obj.price * (dateDiffDate.getDate())); 
 		 } 
 	 }) 
 	 $(obj.tour).each(function(i,obj){
@@ -44,7 +44,7 @@ function appendAjaxData(rs,url,classname) {
 		 var $p1 = $("<p>").addClass("pkgTitle").html(obj.pname);
 		 var price = calPrice(obj);
 		 var $p2 = $("<p>").addClass("pkgPrice").html(price+"원 부터~").css("text-align","right");
-		 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire,"/")+"까지");
+		 var $p3 = $("<p>").addClass("pkgDate").html("~ "+getFormatDate(obj.pexpire,"/")+"까지 예약 가능");
 		 var $p4 = $("<p>").addClass("pkgReserv");
 		 var $btn = $("<button data-price='"+price+"' data-pno='"+obj.pno+"'>").addClass("pkgReservBtn").html("지금 바로 예약");
 		 

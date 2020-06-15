@@ -154,7 +154,8 @@ public class ManagerController {
 	public String addFlightForm(Model model) throws Exception {
 		SearchCriteria cri = new SearchCriteria();
 		//항공기번호 세팅
-		int dbNo = flightService.totalCountAirplane(cri);
+		int dbNo = flightService.totalAllCountAirplane();
+	
 		//출발편 번호
 		int no = dbNo +1;
 		//도착편 번호
@@ -169,7 +170,7 @@ public class ManagerController {
 	public String addFlightResult(DataListVO list) throws Exception {
 		for(AirplaneVO a : list.getList()) {
 			flightService.addAirplane(a);
-		}
+		} 
 		
 		return "redirect:/manager/flightMngList";
 	}
