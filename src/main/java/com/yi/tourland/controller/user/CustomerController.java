@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
-import javax.mail.Session;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,6 +51,7 @@ import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
 import com.yi.tourland.domain.mng.ReservationVO;
+import com.yi.tourland.domain.mng.ReviewVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
@@ -68,6 +68,7 @@ import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
 import com.yi.tourland.service.mng.ReservationService;
+import com.yi.tourland.service.mng.ReviewService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 
@@ -136,6 +137,9 @@ public class CustomerController {
 	
 	@Autowired
 	private ReservationService reservationService;
+	
+	@Autowired
+	private ReviewService reviewService;
 		
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 		@ResponseBody
@@ -160,7 +164,7 @@ public class CustomerController {
 	        }
 	        
 	        if(choice.equals("practice")) {
-	        	path= "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
+	        	path= "/tourland/resources/images/practice";
 	        }
 			// System.out.println("displayFile-----------"+ filename);
 			InputStream in = null;
@@ -438,18 +442,31 @@ public class CustomerController {
 	
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
-	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow) throws SQLException {
+	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow, String cancel, String addReview) throws SQLException {
 		HttpSession session = req.getSession();
 		vo = (UserVO)session.getValue("Auth");
+		System.out.println(vo.getUserno());
 		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(reservationService.totalSearchReservationCountByUserNo(cri, vo));
-		model.addAttribute("list",list);
-		model.addAttribute("pageMaker",pageMaker);
+		if(list.size()==0) {
+			model.addAttribute("noList", "noList");
+		}else {
+			model.addAttribute("list",list);
+			model.addAttribute("pageMaker",pageMaker);
+			
+		}
 		if(payNow != null) {
 			model.addAttribute("paySuccess", "paySuccess");
 		}
+		if(cancel != null) {
+			model.addAttribute("cancel", "cancel");
+		}
+		if(addReview != null) {
+			model.addAttribute("addReview", "addReview");
+		}
+		
 		return "/user/mypage/tourlandMyReserv"; 
 	}
 	//마이 페이지 - 내 예약 현황 - 결제
@@ -462,13 +479,57 @@ public class CustomerController {
 		model.addAttribute("payNow", "payNow");
 		return "redirect:/customer/tourlandMyReserv"; 
 	}
+	//마이 페이지 - 내 예약 현황 - 예약 취소
+		@RequestMapping(value="tourlandMyReservCancel", method=RequestMethod.GET)
+		public String tourlandMyReservCancel(String rno, Model model) throws SQLException {
+			ReservationVO rs = new ReservationVO();
+			rs.setNo(Integer.parseInt(rno));
+			rs.setRstatus("4");
+			reservationService.updateReservation(rs);
+			model.addAttribute("cancel", "cancel");
+			return "redirect:/customer/tourlandMyReserv"; 
+		}
 	
 	
-	//상품 리뷰    
+	//마이페이지 - 리뷰    
 	@RequestMapping(value="tourlandMyReview", method=RequestMethod.GET)
-	public String tourlandMyReview() throws SQLException {
+	public String tourlandMyReview(HttpSession session, String rno, Model model) throws SQLException {
+		UserVO vo = (UserVO) session.getAttribute("Auth");
+		ProductVO product = productService.selectNamePic(Integer.parseInt(rno));
 		
+		model.addAttribute("userno", vo.getUserno());
+		model.addAttribute("username", vo.getUsername());
+		model.addAttribute("rno", rno);
+		model.addAttribute("pno", product.getPno());
+		model.addAttribute("pname", product.getPname());
 		return "/user/mypage/tourlandMyReview"; 
+	}
+	//리뷰 등록 
+	@RequestMapping(value="tourlandAddMyReview", method=RequestMethod.POST)
+	public String tourlandAddMyReview(ReviewVO review, Model model) throws SQLException {
+		
+		if(review!=null) {
+			List<ReviewVO> reviewList = reviewService.checkReviewExists();
+			int listSize = reviewList.size();
+			review.setNo(listSize+1);
+			Date today = new Date();
+			review.setRegdate(today);
+			reviewService.addReview(review);
+			model.addAttribute("addReview", "addReview");
+		}
+		
+		return "redirect:/customer/tourlandMyReserv"; 
+	}
+	//리뷰 보기
+	@RequestMapping(value="tourlandReadMyReview", method=RequestMethod.GET)
+	public String tourlandReadMyReview(ReviewVO review, Model model) throws Exception {
+		review = reviewService.readReviewByRno(review);
+		ProductVO product = productService.selectNamePic(review.getRno());
+		UserVO user = userService.readByNoUser(review.getUserno());
+		model.addAttribute("review",review);
+		model.addAttribute("product",product);
+		model.addAttribute("user",user);
+		return "user/mypage/tourlandReadMyReview"; 
 	}
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
@@ -1354,11 +1415,42 @@ public class CustomerController {
 	
 	//상품 리뷰    
 	@RequestMapping(value="tourlandProductReview", method=RequestMethod.GET)
-	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model,int price) throws SQLException {
-		  vo = productService.productByNo(vo); 
-		  model.addAttribute("cri",cri);
-		  model.addAttribute("vo",vo);
-		  model.addAttribute("price",price);
+	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model,int price) throws Exception {
+		vo = productService.productByNo(vo);
+		Date ddate = vo.getAir().get(0).getDdate();
+		Date rdate = vo.getAir().get(1).getRdate();
+		cri.setPerPageNum(reservationService.totalSearchReservationCount(cri));
+		List<ReservationVO> reservlist = reservationService.listReservation(cri);
+		List<ProductVO> productList = new ArrayList<ProductVO>(); 
+		List<ReviewVO> chkReviewList = new ArrayList<ReviewVO>(); 
+		List<UserVO> users = new ArrayList<UserVO>(); 
+		List<ProductVO> chkProduct = new ArrayList<ProductVO>();
+		for(ReservationVO rvo : reservlist) {
+			if(rvo.getRstatus().equals("3") && rvo.getProduct().getPname().equals(vo.getPname())) {
+				productList.add(rvo.getProduct());
+			}
+		}
+		for(ProductVO pvo : productList) {
+			Date cddate = pvo.getAir().get(0).getDdate();
+			Date crdate = pvo.getAir().get(1).getRdate();
+			if(cddate.equals(ddate) && crdate.equals(rdate)) {
+				chkProduct.add(pvo);
+			}
+		}
+		List<ReviewVO> reviewList = reviewService.checkReviewExists();
+		for(ReviewVO rvo : reviewList) {
+			for(ProductVO pvo : chkProduct) {
+				if(rvo.getPno()==pvo.getPno()) {
+					chkReviewList.add(rvo);
+					users.add(userService.readByNoUser(rvo.getUserno()));
+				}
+			}
+		} 
+		model.addAttribute("cri",cri);
+		model.addAttribute("vo",vo);
+		model.addAttribute("price",price);
+		model.addAttribute("list",chkReviewList);
+		model.addAttribute("users",users);
 		return "/user/product/tourlandProductReview"; 
 	}
 

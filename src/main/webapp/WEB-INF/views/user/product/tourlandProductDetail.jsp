@@ -56,7 +56,8 @@
 			var checkoutDate = new Date(Date.parse(checkout));  
 			var date = new Date();
 			date.setDate(checkoutDate.getDate() - checkinDate.getDate());
-			return date.getDate()-1;
+			var dateDiff = date.getDate();
+			return dateDiff;
 		}
 		function calPrice() {
 			price = 0;

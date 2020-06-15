@@ -62,44 +62,35 @@
 
 	$(function(){
 		$("#cancel").click(function(){
-			var cf = confirm("리뷰 등록을 취소하고 리스트로 돌아갑니다.");
-			
-			if(cf){
-				location.href="tourlandMyReserv";
-			}  
+			location.href="tourlandMyReserv";
 		})  
-		$(".s1").click(function(){
-			$(this).addClass("fas fa-star s1");
-			$("#star").val("1");
-		})
-		$(".s2").click(function(){
+		switch($("#star").val()) {
+		case "1":
 			$(".s1").addClass("fas fa-star s1");
-			$(this).addClass("fas fa-star s2");
-			$("#star").val("2");
-		})
-		$(".s3").click(function(){
-		
+			break;
+		case "2":
 			$(".s1").addClass("fas fa-star s1");
 			$(".s2").addClass("fas fa-star s2");
-			$(this).addClass("fas fa-star s3");
-			$("#star").val("3");
-		})
-		$(".s4").click(function(){
-			 
+			break;
+		case "3":
 			$(".s1").addClass("fas fa-star s1");
 			$(".s2").addClass("fas fa-star s2");
 			$(".s3").addClass("fas fa-star s3");
-			$(this).addClass("fas fa-star s4");
-			$("#star").val("4");
-		})
-			$(".s5").click(function(){
+			break;
+		case "4":
 			$(".s1").addClass("fas fa-star s1");
 			$(".s2").addClass("fas fa-star s2");
 			$(".s3").addClass("fas fa-star s3");
 			$(".s4").addClass("fas fa-star s4");
-			$(this).addClass("fas fa-star s5");
-			$("#star").val("5");
-		})
+			break;
+		case "5":
+			$(".s1").addClass("fas fa-star s1");
+			$(".s2").addClass("fas fa-star s2");
+			$(".s3").addClass("fas fa-star s3");
+			$(".s4").addClass("fas fa-star s4");
+			$(".s5").addClass("fas fa-star s5");
+			break;
+		}
 	})   
 </script> 
 <body>    
@@ -113,28 +104,25 @@
 					<form action="tourlandAddMyReview" method="post">
 						<p>
 							<label>번호</label>     
-							<span>RV00${rno }</span>  
-							<input type="hidden" value="${rno }" name="rno">
+							<span>RV00${review.rno}</span>  
 						</p>
 						<p>
 							<label>고객명</label>
-							<input type="text" value="${username }" readonly="readonly">
-							<input type="hidden" name="userno" value="${userno }">
+							<input type="text" value="${user.username}" readonly="readonly">
 						</p>
 						<p>
 							<label>상품명</label>
 							<div id="proImgBox">
-							<p id="proTitle">${pname }</p>
-							<input type="hidden" name="pno" value="${pno }">
+							<p id="proTitle">${product.pname}</p>
 							</div>
 						</p>	
 						<p>
 							<label><span class="red">*</span> 리뷰 제목</label>
-							<input type="text" placeholder="리뷰 제목을 입력하세요." name="reviewTitle">
+							<input type="text" readonly="readonly" name="reviewTitle" value="${review.reviewTitle}" >
 						</p>
 						<p id="long">
 							<label><span class="red">*</span> 리뷰 내용</label>    
-							<textarea rows="10" cols="60" placeholder="리뷰 내용을 작성하세요." name="reviewContent"></textarea>
+							<textarea rows="10" cols="60" readonly="readonly" name="reviewContent">${review.reviewContent}</textarea>
 						</p>
 						<p>
 						<label><span class="red">*</span> 별점</label>
@@ -144,10 +132,9 @@
 									<i class="far fa-star s4"></i>
 									<i class="far fa-star s5"></i>
 						</p>
-						<input type="hidden" name="starpoint" id="star">
+						<input type="hidden" name="starpoint" id="star" value="${review.starpoint}">
 						<p id="inputs">
-							<input type="submit" id="submit" value="등록"  style="cursor:pointer">
-							<input type="reset" id="cancel" value="취소"  style="cursor:pointer">
+							<input type="reset" id="cancel" value="돌아가기"  style="cursor:pointer">
 						</p>
 					</form>
 				</div>

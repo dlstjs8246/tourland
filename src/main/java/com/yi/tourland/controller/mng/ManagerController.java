@@ -517,6 +517,7 @@ public class ManagerController {
 	public String employeeDelete(SearchCriteria cri, Model model, @PathVariable("empretired") int empretired,
 			@PathVariable("empno") int empno) throws Exception {
 		EmployeeVO vo = employeeService.readByNoEmployee(empno);
+		
 		// System.out.println(vo);
 		if (vo.getEmpretired() == 0) { // 근무사원이라면
 			vo.setEmpretired(1); // 퇴사 사원 처리
@@ -2228,7 +2229,16 @@ public class ManagerController {
 		
 		//관리자 메인화면에 나올 통계
 		@RequestMapping(value="statistics", method=RequestMethod.GET)
-		public String mainStatistics() throws Exception { 
+		public String mainStatistics(Model model) throws Exception { 
+			/*
+			 * List<StatisticVO> jejuList = statisticService.searchTotalPriceJejuByMonth();
+			 * List<StatisticVO> dokyoList =
+			 * statisticService.searchTotalPriceDokyoByMonth(); List<StatisticVO>
+			 * beijingList = statisticService.searchTotalPriceBeijingByMonth();
+			 * List<StatisticVO> list2 = statisticService.searchTotalCountByLocation();
+			 * model.addAttribute("jeju",jejuList); model.addAttribute("dokyo",dokyoList);
+			 * model.addAttribute("beijing",beijingList); model.addAttribute("list2",list2);
+			 */
 			return "/manager/main/statistics";
 		}
 		
