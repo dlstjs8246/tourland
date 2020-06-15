@@ -26,13 +26,13 @@ section#section1 {
 
 section#section1 div#imgBox {
 	width: 1200px;
-	height: 400px;
+	height: 500px;
 	margin-top: 30px;
 }
 
 section#section1 div#imgBox .box1 {
-	width: 810px;
-	height: 400px;
+	width: 100%;
+	height: 500px;
 	float: left;
 	position: relative;
 }
@@ -44,8 +44,8 @@ section#section1 div#imgBox .box1 div {
 }
 
 section#section1 div#imgBox .box1 img {
-	width: 810px;
-	height: 400px;
+	width: 1200px;
+	height: 500px;
 	position: absolute;
 }
 section#section1 div#imgBox #weatherWrap { 
@@ -53,29 +53,12 @@ section#section1 div#imgBox #weatherWrap {
 	height: 195px; float: right;
 	margin-bottom: 10px;
 }
-section#section1 div#imgBox #weatherWrap .box2 { 
-	position: absolute;
-}
 
-
-section#section1 div#imgBox .box2 {
-	width: 380px;
-	height: 195px;
-	float: right;
-	background: seagreen; /* #0067a3; */
-
-}
-   
+    
 
 section#section1 div#imgBox .marg {
 	margin-bottom: 10px;   
 }
-
-section#section1 div#imgBox .box2 img {
-	width: 100%;
-	height: 100%;
-}
-
 /* 메인2 (검색 박스 있는 부분) */
 section#section2 {
 	background: #bcbcbc;
@@ -310,10 +293,10 @@ section#section5 div#shortcutBtns a {
 
 /*팝업스타일 */
 #popup1 {
-	margin-left: 100px;
+	margin-left: 120px;
 	float: left;
 	text-align: center;
-	width: 560px;
+	width: 400px;
 	height: 600px;
 	position: relative;
 	position: absolute;
@@ -419,54 +402,7 @@ button.popupBtnClose2 {
 }
 
 
-/* 날씨 박스 */
-.box2 {
-	overflow: hidden;
-}
 
-.weatherImgBox {
-	width: 230px;
-	height: 190px;
-	text-align: center;
-	line-height: 200px;
-	float: left;
-}
-
-.cloud {
-	font-size: 60px;
-	color: #fff;
-}
-
-.weatherInfoBox {
-	width: 140px;
-	height: 190px;
-	overflow: hidden;
-	margin-top: 3px;
-}
-
-.weatherInfoBox p {
-	height: 38px;
-	color: #fff;
-	line-height: 38px;
-	text-align: center;
-	text-indent: 10px;
-}
-
-.weatherInfoBox .temp {
-	height: 110px;
-	line-height: 110px;
-	font-size: 40px;
-	text-align: center;
-	font-weight: bold;
-}
-
-.weatherInfoBox .temp .tempNum {
-	color: #fff;
-}
-
-.weatherInfoBox .weatherLoca {
-	font-style: italic;
-}
 </style>
 <body>
 	<div id="container">
@@ -474,101 +410,9 @@ button.popupBtnClose2 {
 
 
 <script>
-//날씨 API Ajax
-	function getKRWeather() {
-		$.ajax({
-				url : "http://api.openweathermap.org/data/2.5/forecast?q=Jeju&appid=a791f39f5b8894495048828df8c2a988",
-				type : "get",
-				dataType : "json",
-				success : function(rs) {
-					var $img1 = $("<i>").addClass("fas fa-cloud cloud");
-					var $img2 = $("<i>").addClass("fas fa-sun cloud");
-					
-					var cloudSunny = rs.list[1].weather[0].description;
-					if(cloudSunny =="scattered clouds" || cloudSunny =="few clouds" || cloudSunny =="overcast clouds"|| cloudSunny =="broken clouds"){
-						cloudSunny = "구름 조금";
-						$("#krw").find(".weatherImgBox").append($img1);
-					}else if(cloudSunny =="clear sky"){
-						cloudSunny = "맑음";
-						$("#krw").find(".weatherImgBox").append($img2);
-					}else if(cloudSunny =="light rain"){
-						cloudSunny = "비 조금";
-						$("#krw").find(".weatherImgBox").append($img3);
-						
-					}
-					/* 섭씨 온도 : 273.15를 빼줌 */
-						$("#krw").find(".tempNum").html(Math.ceil((rs.list[1].main.temp - 273.15)));
-						$("#krw").find(".cloudSunny").html(cloudSunny);
-					}
-				})
-	}
-	function getJPWeather() {
-		$.ajax({
-				url : "http://api.openweathermap.org/data/2.5/forecast?q=Japan&appid=a791f39f5b8894495048828df8c2a988",
-				type : "get",
-				dataType : "json",
-				success : function(rs) {
-					var $img1 = $("<i>").addClass("fas fa-cloud cloud");
-					var $img2 = $("<i>").addClass("fas fa-sun cloud");
-					var $img3 = $("<i>").addClass("fas fa-umbrella cloud");
-					
-					var cloudSunny = rs.list[1].weather[0].description;
-					if(cloudSunny =="scattered clouds" || cloudSunny =="few clouds" || cloudSunny =="overcast clouds"|| cloudSunny =="broken clouds"){
-						cloudSunny = "구름 조금";
-						$("#jpw").find(".weatherImgBox").append($img1);
-					}else if(cloudSunny =="clear sky"){
-						cloudSunny = "맑음";
-						$("#jpw").find(".weatherImgBox").append($img2);
-					}else if(cloudSunny =="light rain"){
-						cloudSunny = "비 조금";
-						$("#jpw").find(".weatherImgBox").append($img3);
-						
-					}
-					/* 섭씨 온도 : 273.15를 빼줌 */
-						$("#jpw").find(".tempNum").html(Math.ceil((rs.list[1].main.temp - 273.15)));
-						$("#jpw").find(".cloudSunny").html(cloudSunny);
-					}
-				})
-	}
-	function getCNWeather() {
-		$.ajax({
-				url : "http://api.openweathermap.org/data/2.5/forecast?q=china&appid=a791f39f5b8894495048828df8c2a988",
-				type : "get",
-				dataType : "json",
-				success : function(rs) {
-					var $img1 = $("<i>").addClass("fas fa-cloud cloud");
-					var $img2 = $("<i>").addClass("fas fa-sun cloud");
-					var $img3 = $("<i>").addClass("fas fa-umbrella cloud");
-					
-					var cloudSunny = rs.list[1].weather[0].description;
-					if(cloudSunny =="scattered clouds" || cloudSunny =="few clouds" || cloudSunny =="overcast clouds"|| cloudSunny =="broken clouds"){
-						cloudSunny = "구름 조금";
-						$("#cnw").find(".weatherImgBox").append($img1);
-					}else if(cloudSunny =="clear sky"){
-						cloudSunny = "맑음";
-						$("#cnw").find(".weatherImgBox").append($img2);
-					}else if(cloudSunny =="light rain"){
-						cloudSunny = "비 조금";
-						$("#cnw").find(".weatherImgBox").append($img3);
-						
-					}
-					/* 섭씨 온도 : 273.15를 빼줌 */
-						$("#cnw").find(".tempNum").html(Math.ceil((rs.list[1].main.temp - 273.15)));
-						$("#cnw").find(".cloudSunny").html(cloudSunny);
-					}
-				})
-	}
-	window.onload = function() {
-		getKRWeather();
-		getJPWeather();
-		getCNWeather();
-	}
+
 	
-	//날씨 박스 setInteval
-	setInterval(function() {
-		$('#weatherWrap > div:first').hide(1000).next().show(1000).end().appendTo('#weatherWrap');
-	}, 3000);
-	
+
 	//메인 배너 슬라이드
 	/* $(".box1 > div:gt(0)").hide(); */
 
@@ -699,7 +543,7 @@ button.popupBtnClose2 {
 										+ capa + "&date=" + date;
 							}
 
-						})
+						})					
 	})
 </script>
  <c:if test="${currentProductPrice != null}">
@@ -770,43 +614,7 @@ button.popupBtnClose2 {
 							<div><a href="${pageContext.request.contextPath }/loginForm"><img src="${pageContext.request.contextPath}/images/maincoupon.jpg" style="z-index:2" title="로그인 페이지로 이동합니다."></a></div>
 							<div><a href="${pageContext.request.contextPath }/customer/eventDetailPage?no=3"><img src="${pageContext.request.contextPath}/images/mainevent1.jpg" style="z-index:1" title="이벤트 상세 페이지로 이동합니다"></a></div>
 							<div><img src="${pageContext.request.contextPath}/images/mainevent2.jpg"></div>
-						</div>
-						<div id="weatherWrap">
-						<!-- 날씨 API -->
-						<div class="box2 marg" class="weather" id="krw" style="z-index:2">                 
-							<div class="weatherImgBox">   
-								  
-							</div>   
-							<div class="weatherInfoBox">
-								<p class="temp"><span class="tempNum"></span> ℃</p>
-								<p class="cloudSunny"></p>
-								<p class="weatherLoca">제주, 한국</p>
-							</div>           
 						</div> 
-						<div class="box2 marg" class="weather" id="jpw" style="z-index:1">                 
-							<div class="weatherImgBox">   
-								  
-							</div>   
-							<div class="weatherInfoBox">
-								<p class="temp"><span class="tempNum"></span> ℃</p>
-								<p class="cloudSunny"></p>
-								<p class="weatherLoca">도쿄, 일본</p>
-							</div>           
-						</div>    
-						<div class="box2 marg" class="weather" id="cnw">                 
-							<div class="weatherImgBox">   
-								  
-							</div>   
-							<div class="weatherInfoBox">
-								<p class="temp"><span class="tempNum"></span> ℃</p>
-								<p class="cloudSunny"></p>
-								<p class="weatherLoca">베이징, 중국</p>
-							</div>           
-						</div>      
-						</div>
-						<div class="box2">   
-							<img src="${pageContext.request.contextPath}/images/jeju/tour26.jpg">
-						</div>    
 					</div>
 				</section>
 				

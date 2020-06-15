@@ -1,26 +1,44 @@
 package com.yi.tourland.service.mng;
 
-import java.io.File;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
+import com.yi.tourland.domain.mng.UserVO;
+import com.yi.tourland.persistance.mng.dao.FlightDAO;
+import com.yi.tourland.persistance.mng.dao.HotelDAO;
 import com.yi.tourland.persistance.mng.dao.ProductDao;
+import com.yi.tourland.persistance.mng.dao.RentcarDAO;
+import com.yi.tourland.persistance.mng.dao.ReservationDao;
+import com.yi.tourland.persistance.mng.dao.TourDao;
 
 @Service
 public class ProductService {
 	@Autowired
+	private FlightDAO adao;
+	@Autowired
+	private HotelDAO hdao;
+	@Autowired
+	private TourDao tdao;
+	@Autowired
+	private RentcarDAO rdao;
+	@Autowired
 	private ProductDao dao;	
+	@Autowired
+	private ReservationDao reservDao;
+	
+	
 	public List<ProductVO> listPage(SearchCriteria cri) throws SQLException {
 		return dao.productListPage(cri);
 	}
@@ -49,7 +67,6 @@ public class ProductService {
 			dao.insertpTourStatus(pvo, tvo);
 		}
 		for(RentcarVO rvo : pvo.getRentcar()) {
-			System.out.println(rvo.getNo());
 			dao.insertpRentcarStatus(pvo, rvo);
 		}	
 	}
@@ -71,6 +88,15 @@ public class ProductService {
 	}
 	@Transactional
 	public void deleteProduct(ProductVO pvo) throws SQLException {
+		dao.deletepAirStatus(pvo);
+		dao.deletepHotelStatus(pvo);
+		dao.deletepTourStatus(pvo);
+		dao.deletepRentStatus(pvo);
+		dao.deleteProduct(pvo);		
+	}
+	@Transactional
+	public void deleteUserProduct(ProductVO pvo, ReservationVO rvo) throws SQLException {
+		dao.deleteUserpStatus(pvo,rvo);
 		dao.deletepAirStatus(pvo);
 		dao.deletepHotelStatus(pvo);
 		dao.deletepTourStatus(pvo);
@@ -119,4 +145,134 @@ public class ProductService {
 	public List<ProductVO> tourlandProductKRSearchLowPriceList(SearchCriteria cri) throws SQLException {
 		return dao.tourlandProductKRSearchLowPriceList(cri);
 	};
+	@Transactional
+	public int insertUserProduct(ProductVO pvo,ProductVO upvo, UserVO uvo, SearchCriteria cri) throws Exception {
+		//선택한 상품 옵션들의 인원수에 따라 전체 상품 옵션들 update
+		for(int i=0;i<pvo.getAir().size();i++) {
+			for(int j=0;j<upvo.getAir().size();j++) {
+				if(pvo.getAir().get(i).getNo()==upvo.getAir().get(j).getNo()) {
+					if(pvo.getAir().get(i).getCapacity()<=0) {
+						return -1;
+					}
+					pvo.getAir().get(i).setCapacity(pvo.getAir().get(i).getCapacity() - upvo.getAir().get(j).getCapacity());
+					adao.editAirplane(pvo.getAir().get(i));
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		for(int i=0;i<pvo.getHotel().size();i++) {
+			for(int j=0;j<upvo.getHotel().size();j++) {
+				if(pvo.getHotel().get(i).getNo()==upvo.getHotel().get(j).getNo()) {
+					if(pvo.getHotel().get(i).getTotalcapacity()<=0) {
+						pvo.getHotel().get(i).setBookedup(1);
+						return -1;
+					}
+					pvo.getHotel().get(i).setTotalcapacity(pvo.getHotel().get(i).getTotalcapacity() - upvo.getHotel().get(j).getTotalcapacity());
+					hdao.updateHotel(pvo.getHotel().get(i));
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		for(int i=0;i<pvo.getTour().size();i++) {
+			for(int j=0;j<upvo.getTour().size();j++) {
+				if(pvo.getTour().get(i).getNo()==upvo.getTour().get(j).getNo()) {
+					if(pvo.getTour().get(i).getCapacity()<=0) {
+						return -1;
+					}
+					pvo.getTour().get(i).setCapacity(pvo.getTour().get(i).getCapacity() - upvo.getTour().get(j).getCapacity());
+					tdao.updateTour(pvo.getTour().get(i));
+					System.out.println("투어 update 실행");
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		for(int i=0;i<pvo.getRentcar().size();i++) {
+			for(int j=0;j<upvo.getRentcar().size();j++) {
+				if(pvo.getRentcar().get(i).getNo()==upvo.getRentcar().get(j).getNo()) {
+					if(pvo.getRentcar().get(i).getCapacity()<=0) {
+						return -1;
+					}
+					pvo.getRentcar().get(i).setCapacity(pvo.getRentcar().get(i).getCapacity() - upvo.getRentcar().get(j).getCapacity());
+					rdao.updateRentcar(pvo.getRentcar().get(i));
+					System.out.println("렌트카 update 실행");
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		int insertAno = adao.totalAllCountAirplane()+1;
+		int insertHno = hdao.totalCountHotel()+1;
+		int insertTno = tdao.totalCount()+1;
+		int insertRno = rdao.totalCountRentcar()+1;
+		//선택한 상품 옵션들 insert
+		for(AirplaneVO vo : upvo.getAir()) {
+			vo.setNo(insertAno);
+			adao.addAirplane(vo);
+			insertAno++;
+		}
+		for(HotelVO vo : upvo.getHotel()) {
+			vo.setNo(insertHno);
+			hdao.insertHotel(vo);
+			insertHno++;
+		}
+		for(TourVO vo : upvo.getTour()) {
+			vo.setNo(insertTno);
+			tdao.insertTour(vo);
+			insertTno++;
+		}
+		for(RentcarVO vo : upvo.getRentcar()) {
+			vo.setNo(insertRno);
+			rdao.insertRentcar(vo);
+			insertRno++;
+		}
+		//새로운 상품 insert
+		insertProduct(upvo);
+		ReservationVO vo = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo, "1"); 
+		reservDao.insertReservation(vo);
+		dao.insertpUserStatus(vo,uvo,upvo);
+		return 0;
+	}
+	
+	@Transactional
+	public void insertProductInUserCart(ProductVO product, UserVO uvo, SearchCriteria cri) throws Exception {
+		//선택한 상품 옵션들 insert
+		for (int i=0; i<product.getAir().size(); i++) {
+			adao.addAirplane(product.getAir().get(i));
+		}
+		for (int i=0; i<product.getHotel().size(); i++) {
+			hdao.insertHotel(product.getHotel().get(i));
+		}
+		for (int i=0; i<product.getTour().size(); i++) {
+			tdao.insertTour(product.getTour().get(i));
+		}
+		for (int i=0; i<product.getRentcar().size(); i++) {
+			rdao.insertRentcar(product.getRentcar().get(i));
+		}
+		insertProduct(product);
+		ReservationVO cart = new ReservationVO(reservDao.totalSearchReservationCount(cri)+1, uvo ,Integer.toString(0));
+		reservDao.insertReservation(cart);
+		dao.insertpUserStatus(cart,uvo, product);
+	}
+	@Transactional
+	public void deleteProductInUserCart(ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception {
+		deleteUserProduct(pvo,rvo);
+		reservDao.deleteReservation(rvo);
+	}
+	@Transactional
+	public void updateProductInUserCart(ProductVO pvo, UserVO uvo,ReservationVO rvo, SearchCriteria cri) throws Exception {
+		deleteProductInUserCart(pvo, rvo, cri);
+		insertProductInUserCart(pvo, uvo, cri);
+	}
+	
+	//마이페이지 - 리뷰쓰기 - 들어갈 때 해당 상품 이름과 사진 가져가기 
+	public ProductVO selectNamePic(int no) throws SQLException {
+		return dao.selectNamePic(no);
+	}
 }

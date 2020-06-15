@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.persistance.mng.dao.UserDAO;
 
@@ -67,12 +68,15 @@ public class UserService {
 	}
 	
 	//태원
-	public List<UserVO> listSearchCriteriaPaymentUser(SearchCriteria cri) throws Exception {
+	//결제관리에 쓰일 리스트
+	public List<ReservationVO> listSearchCriteriaPaymentUser(SearchCriteria cri) throws Exception {
 		return dao.listSearchCriteriaPaymentUser(cri);
 	}
 	public int totalSearchCountPaymentUser(SearchCriteria cri) throws Exception {
 		return dao.totalSearchCountPaymentUser(cri);
 	}
+	
+	//메일보내기
 	public UserVO readByNameBirthTel(String username,String userbirth,String usertel) throws Exception {
 		return dao.readByNameBirthTel(username,userbirth,usertel);
 	}

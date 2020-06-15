@@ -44,6 +44,7 @@
 <body>
 	<%@ include file="../../include/userHeader.jsp"%>
 	<script>
+		var uno = 0;
 		var price = 0; 
 		var bookCapacity = 0;
 		function calDateDiff(checkin,checkout) {
@@ -55,7 +56,8 @@
 			var checkoutDate = new Date(Date.parse(checkout));  
 			var date = new Date();
 			date.setDate(checkoutDate.getDate() - checkinDate.getDate());
-			return date.getDate();
+			var dateDiff = date.getDate();
+			return dateDiff;
 		}
 		function calPrice() {
 			price = 0;
@@ -63,15 +65,15 @@
 			$(".selAir").each(function(i,obj){
 				switch($(obj).find("option:selected").val()) {
 				case "F":
-					var airprice = ${vo.air[0].price} * 2;
+					var airprice = ${vo.air[0].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity")); 
 					price += airprice;
 					break;
 				case "B":
-					var airprice = ${vo.air[2].price} * 2;
+					var airprice = ${vo.air[2].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity"));
 					price += airprice;
 					break;
 				case "E":
-					var airprice = ${vo.air[4].price} * 2;
+					var airprice = ${vo.air[4].price} * 2 * Number($(".airSelect").eq(i).find("option:selected").attr("data-capacity"));
 					price += airprice;
 					break;
 				}
@@ -81,29 +83,28 @@
 				case "S":
 					var hotelPrice = ${vo.hotel[0].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[0].checkin}","${vo.hotel[0].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity"))); 
 					break;
 				case "D":
 					var hotelPrice = ${vo.hotel[1].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[1].checkin}","${vo.hotel[1].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity")));
 					break;
 				case "N":
 					var hotelPrice = ${vo.hotel[2].price};
 					var dateDiff = Number(calDateDiff("${vo.hotel[2].checkin}","${vo.hotel[2].checkout}"));
-					price += (hotelPrice * dateDiff);
+					price += (hotelPrice * dateDiff * Number($(".hotelSelect").eq(i).find("option:selected").attr("data-capacity")));
 					break;
 				}
 			})
 			$(".selTour:checked").each(function(i,obj){
-				var tourprice = Number($(this).attr("data-price"));
+				var tourprice = Number($(this).attr("data-price")) * bookCapacity;
 				price += tourprice; 
 			})
 			if($("#selRentcar option:selected").val()=='S') {
-				price += Math.ceil(${vo.rentcar[0].price}/45); 
+				price += Math.ceil(${vo.rentcar[0].price/vo.rentcar[0].capacity}*bookCapacity); 
 			}
-			var totalPrice = price * bookCapacity; 
-			$("#price").text(totalPrice.toLocaleString());
+			$("#price").text(price.toLocaleString());
 		}
 		function replaceAll(str, searchStr, replaceStr) {
 		   return str.split(searchStr).join(replaceStr);
@@ -111,6 +112,9 @@
 		$(function(){
 			$("#smallImgBox li").each(function(i,obj){
 				$(this).find("img").attr("src",$("#proDetail img").eq(i).attr("src"));
+			})
+			$(document).on("click","#smallImgBox li img",function(){
+				$("#bigImgBox img").attr("src",$(this).attr("src"));
 			})
 			$("#review").click(function() {
 				location.href = "tourlandProductReview?pno=${vo.pno}&price=${price}";
@@ -120,14 +124,19 @@
 				$("#capacity").append(option);
 			}
 			$("#capacity").change(function(){
-				$(".selAir").val("");
 				$(".selAir").eq(0).val("E");
+				$(".selAir").eq(1).val("");
+				$(".selAir").eq(2).val("");
 				$(".selAir").change();
-				$(".selHotel").val("");
+				$(".airSelect").eq(0).find("option").eq(bookCapacity-1).prop("selected",true);  
 				$(".selHotel").eq(0).val("N");
+				$(".selHotel").eq(1).val("");
+				$(".selHotel").eq(2).val("");
 				$(".selHotel").change();
-				$(".selTour").prop("checked",true); 
-				$("#selRentcar").eq(0).val("DS"); 
+				$(".hotelSelect").eq(0).find("option").eq(bookCapacity-1).prop("selected",true);
+				$(".selTour").prop("checked",true);
+				$(".selTour").change();
+				$("#selRentcar").change();
 				calPrice();
 			})
 			$(".selAir").change(function(){
@@ -181,7 +190,7 @@
 			$(document).on("change",".airSelect",function(){
 				var airCapacity = 0;
 				$(".airSelect").each(function(i,obj){
-					airCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
+					airCapacity += Number($(this).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
 				})
 				if(bookCapacity<airCapacity) {
 					alert("현재 예약인원보다 항공기 탑승인원이 더 많을 수 없습니다");
@@ -225,8 +234,7 @@
 					p.append(hotelSelect);  
 					$(this).parent().after(p); 
 					break;
-				}
-				calPrice();
+				} 
 				var hotelCapacity = 0; 
 				$(".hotelSelect").each(function(i,obj){
 					hotelCapacity += Number($(obj).find("option:selected").val().substring(0,$(this).find("option:selected").val().length-1));
@@ -235,8 +243,8 @@
 					alert("현재 예약인원보다 호텔 투숙 인원이 더 많을 수 없습니다");
 					$(this).find("option").eq(0).prop("selected",true);
 					$(this).parent().next().remove();
-					calPrice();
 				}
+				calPrice();
 			}) 
 			$(document).on("change",".hotelSelect",function(){
 				var hotelCapacity = 0;
@@ -260,15 +268,13 @@
 			$(".selHotel").eq(0).val("N");
 			$(".selHotel").eq(0).change();
 			$(".selTour").prop("checked",true);
-			$("#selRentcar").eq(0).val("DS");
-			calPrice();
+			$(".selTour").change(); 
 			$("#doReserv").click(function(){
 				if(${Auth==null}) {
 					alert("로그인부터 먼저해주세요");
 					location.href = "${pageContext.request.contextPath}/loginForm";
 					return false;
 				}
-				var uno = ${Auth.userno};
 				var pno = ${vo.pno};
 				var price = replaceAll($("#price").text(),",","");
 				var ano = [];
@@ -278,7 +284,7 @@
 				var tno = [];
 				var tcapacity = bookCapacity;
 				var rno = [];
-				var rcacaacity = bookCapacity;
+				var rcapacity = bookCapacity;
 				$(".selAir option:selected").each(function(i,obj){
 					if($(this).val()!="") {
 						var dno = $(this).attr("data-dano");
@@ -288,8 +294,6 @@
 				$(".airSelect option:selected").each(function(i,obj){
 					acapacity[i] = $(this).attr("data-capacity"); 
 				})
-				alert(ano);
-				alert(acapacity);
 				$(".selHotel option:selected").each(function(i,obj){
 					if($(this).val()!="" || $(this).val=="DS") {
 						var no = $(this).attr("data-hno");
@@ -299,22 +303,16 @@
 				$(".hotelSelect option:selected").each(function(i,obj){
 					hcapacity[i] = $(this).attr("data-capacity"); 
 				})
-				alert(hno);
-				alert(hcapacity);
 				$(".selTour:checked").each(function(i,obj){
 					tno[i] = $(this).val();
 				})
-				alert(tno);
-				alert(tcapacity);
 				if($("#selRentcar option:selected").val()=="S") {
 					rno[0] = $(this).attr("data-rentno");
 				}
-				alert("렌트카");
-				alert(rno);
-				alert(rcapacity);
 				$.ajax({
-					url : "ProductDetail/reserv",
+					url : "tourlandProductDetail/reserv",
 					method : "get",
+					traditional : true,
 					data : {
 						uno:uno,
 						pno:pno,
@@ -328,115 +326,93 @@
 						rno:rno,
 						rcapacity:rcapacity
 					},
-					dataType : "json",
+					dataType : "text", 
 					success : function(res) {
+						if(confirm("예약이 완료되었습니다. 예약 확인으로 넘어갈까요?")) {
+							location.href = "tourlandMyReserv";
+						}
+					},
+					error : function(res) {
 						console.log(res);
+						if(res.responseText=="OVERLAP") {
+							alert("중복 예약할 수 없습니다");
+							return;
+						}
 					}
 				})
-			})
+			}); 
 			$("#doWish").click(function(){
-				alert("장바구니");
-				/* //상품 번호
-				var pno = $("#pno").text().substring($("#pno").text().indexOf("P"),$("#pno").text().length);
-				//가격
-				var price = replaceAll($("#price").text(),",","");
-				//항공편 번호
-				var ano;
-				//호텔번호
-				var hno;
-				//투어 번호 
-				var tno;
-				//렌트카 번호
-				var rno;
-				 */
-
 			if(${Auth==null}) {
 				alert("로그인부터 먼저해주세요");
 				location.href = "${pageContext.request.contextPath}/loginForm";
 				return false;
 			}
 				//유저 번호
-				var uno = ${Auth.userno};
-				//상품 번호
-				var pno = ${vo.pno};
-				//가격
-				var price = replaceAll($("#price").text(),",","");
-				//항공 출발편 번호
-				var ano = [];
-				//항공 도착편 번호
-				var rano = [];
-				//항공 선택 인원 (좌석 별)
-				var acapacity = [];
-				//호텔 번호
-				var hno = [];
-				//호텔 룸
-				var hroomtype = [];
-				//호텔 인원 (룸 별)
-				var hcapacity = [];
-				//투어 번호
-				var tno = [];
-				//투어 인원 == 예약 인원
-				var tcapacity = bookCapacity;
-				//렌트카 번호
-				var rno = [];
-				//렌트카 인원 == 예약 인원
-				var rcapacity = bookCapacity;
-				
-				$(".selAir option:selected").each(function(i,obj){
-					if($(this).val()!="") {
-						var rno = $(this).attr("data-rano");
-						ano[i] = rno;
+					//상품 번호
+					var pno = ${vo.pno};
+					//가격
+					var price = replaceAll($("#price").text(),",","");
+					//항공 출발편 번호
+					var ano = [];
+					//항공 도착편 번호
+					var rano = [];
+					//항공 선택 인원 (좌석 별)
+					var acapacity = [];
+					//호텔 번호
+					var hno = [];
+					//호텔 룸
+					var hroomtype = [];
+					//호텔 인원 (룸 별)
+					var hcapacity = [];
+					//투어 번호
+					var tno = [];
+					//투어 인원 == 예약 인원
+					var tcapacity = bookCapacity;
+					//렌트카 번호
+					var rno = [];
+					//렌트카 인원 == 예약 인원
+					var rcapacity = bookCapacity;
+					
+					$(".selAir option:selected").each(function(i,obj){
+						if($(this).val()!="") {
+							var rno = $(this).attr("data-rano");
+							ano[i] = rno;
+						}
+					})
+					$(".selAir option:selected").each(function(i,obj){
+						if($(this).val()!="") {
+							var dno = $(this).attr("data-dano");
+							rano[i] = dno;
+						}
+					})
+					
+					$(".airSelect option:selected").each(function(i,obj){
+						acapacity[i] = $(this).attr("data-capacity"); 
+					})
+					$(".selHotel option:selected").each(function(i,obj){
+						if($(this).val()!="" || $(this).val=="DS") {
+							var no = $(this).attr("data-hno");
+							hno[i] = no;
+						}
+					})
+					$(".hotelSelect option:selected").each(function(i,obj){
+						hcapacity[i] = $(this).attr("data-capacity"); 
+					})
+					$(".selTour:checked").each(function(i,obj){
+						tno[i] = $(this).val();
+					})
+					if($("#selRentcar option:selected").val()=="S") {
+						rno[0] = $("#selRentcar option:selected").attr("data-rentno");
 					}
-				})
-				$(".selAir option:selected").each(function(i,obj){
-					if($(this).val()!="") {
-						var dno = $(this).attr("data-dano");
-						rano[i] = dno;
-					}
-				})
-				$(".airSelect option:selected").each(function(i,obj){
-					acapacity[i] = $(this).attr("data-capacity"); 
-				})
-				//alert(ano);
-				//alert(acapacity);
-				$(".selHotel option:selected").each(function(i,obj){
-					if($(this).val()!="" || $(this).val=="DS") {
-						var no = $(this).attr("data-hno");
-						hno[i] = no;
-					}
-				})
-				$(".hotelSelect option:selected").each(function(i,obj){
-					hcapacity[i] = $(this).attr("data-capacity"); 
-				})
-			//	alert(hno);
-				//alert(hcapacity);
-				$(".selTour:checked").each(function(i,obj){
-					tno[i] = $(this).val();
-				})
-				//alert(tno);
-				//alert(tcapacity);
-				if($("#selRentcar option:selected").val()=="S") {
-					rno[0] = $("#selRentcar option:selected").attr("data-rentno");
-				}
-				//alert(rno);
-				//alert("인원");
-				//alert(rcapacity);
-				
-				//alert("항공기 옵션 길이");
-				//alert(acapacity.length);
-			//	alert("호텔 옵션 길이");
-			//	alert(hcapacity.length);
-				if(rcapacity != acapacity.length || rcapacity != hcapacity.length){ //예약 인원과 옵션 선택 인원이 맞지 않을 때 return
-					alert("예약 인원에 맞게 옵션을 선택해주세요.");
-					return;  
-				}else{/* traditional :true -> ajax에서 배열을 컨트롤러로 보낼때 컨트롤러에서 배열 형태로 받을 수 있게 설정하는 것 */
+					/* traditional :true -> ajax에서 배열을 컨트롤러로 보낼때 컨트롤러에서 배열 형태로 받을 수 있게 설정하는 것 */
+					
 					$.ajax({
 						url : "tourlandProductDetail/cart",
 						method : "get",
-     					traditional : true, 
+						traditional : true,
 						data : {
-							uno:uno,
-							pno:pno,
+							uno : uno,
+							pno: pno,
 							price:price,
 							ano:ano,
 							rano:rano,
@@ -447,17 +423,34 @@
 							tcapacity:tcapacity,
 							rno:rno,
 							rcapacity:rcapacity
-						},
-						dataType : "json",
+						}, 
+						dataType : "text",
 						success : function(res) {
 							console.log(res);
+							if(confirm("상품을 장바구니에 담았습니다. 장바구니로 넘어갈까요?")) {
+								location.href = "tourlandMyWishes";
+							}
+						},
+						error : function(res) {
+							console.log(res.responseText);
+							if(res.responseText=="CAPACITYFAIL") {
+								alert("상품의 인원이 가득 찼습니다. 다른 상품을 선택해주세요");
+								return;
+							}
+							if(res.responseText=="OVERLAP") {
+								alert("이미 장바구니에 담겨 있는 상품입니다. 다시 확인하시고 장바구니에 추가해주세요");
+								return; 
+							}
 						}
 					}) 
-				}
-				 
-			})
-		})
-	</script>
+				});
+		});
+</script>
+	<c:if test="${Auth!=null && login=='user'}">
+		<script>
+			uno = ${Auth.userno};
+		</script>
+	</c:if>
 		<section>
 				<div id="proBox">
 					<h1>${vo.pname}</h1>
@@ -478,8 +471,7 @@
 							#optionInfo th { height: 50px; background: gainsboro;border-top: 1px solid #929292; border-bottom: 1px solid #929292; font-size: 18px; }
 							#optionInfo td { height: 30px; }
 							#optionInfo #include { color:forestgreen; }
-							#optionInfo #exclude { color:maroon; }
-							  
+							#optionInfo #exclude { color:maroon; } 		  
 						</style>
 						<table id="optionInfo">
 							<tr>   

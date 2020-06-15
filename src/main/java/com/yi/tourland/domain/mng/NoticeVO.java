@@ -8,6 +8,8 @@ public class NoticeVO {
 	private String writer;
 	private String content;
 	private Date regdate;
+	private int fixed;
+	
 	public int getNo() {
 		return no;
 	}
@@ -39,11 +41,22 @@ public class NoticeVO {
 	public void setRegdate(Date regdate) {
 		this.regdate = regdate;
 	}
+	
+	
+	
+	public int getFixed() {
+		return fixed;
+	}
+	public void setFixed(int fixed) {
+		this.fixed = fixed;
+	}
 	@Override
 	public String toString() {
 		return "NoticeVO [no=" + no + ", title=" + title + ", writer=" + writer + ", content=" + content + ", regdate="
-				+ regdate + "]";
+				+ regdate + ", fixed=" + fixed + "]";
 	}
+
+	
 	
 	
 	

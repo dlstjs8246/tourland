@@ -87,18 +87,19 @@ section div#editProfile #btns input {
 		<script>
 			$(function(){
 				$("#withdraw").click(function(){
-					var id = $("input[name='userid']").val();
+					var no = $("input[name='userno']").val();
 					var res = confirm("정말로 탈퇴하시겠습니까?");
 					if(res){
-						location.href="${pageContext.request.contextPath}/customer/logoutWithdrawal?id="+id;
+						location.href="${pageContext.request.contextPath}/customer/logoutWithdrawal?no="+no;
 						alert("탈퇴되었습니다.");
 					}
 				})
 				
-				$("#submit").click(function(){
 					$("form").submit(function(e){
-						var userid = $("input[name='userid']").val();
+						var userno = $("input[name='userno']").val();
 						$(".error").css("display","none");
+						var userpass = $("input[name='userpass']").val();
+						var useraddr = $("input[name='useraddr']").val(); 
 						var username=$("input[name='username']").val();
 						var userbirth = $("input[name='userbirth']").val();
 						var usertel = $("input[name='usertel']").val();
@@ -122,19 +123,16 @@ section div#editProfile #btns input {
 							$("input[name='usertel']").next().css("display", "inline");
 							  return false;
 						  }
-						//여권번호 정규 표현식
-						var passportReg = /^(M|S|R|G|D)[0-9]{8}$/;
+						//여권번호 정규 표현식  원래 마이페이지 수정 시 여권번호 무조건 입력해야되는 줄 알고 넣었었음
+			        /*  var passportReg = /^(M|S|R|G|D)[0-9]{8}$/;
 						if(passportReg.test(userpassport)==false){
 							$("input[name='userpassport']").next().css("display", "inline");
 							  return false;
-						}
+						} */
 						var res = confirm("수정하시겠습니까?");
 						if(res){
-							location.href="${pageContext.request.contextPath}/editProfile";
-							alert("수정이 완료되었습니다.");
-						}
-						return false;
-					})
+							location.href="${pageContext.request.contextPath}/customer/editProfile";
+					}
 				})
 			})
 		</script>
@@ -150,6 +148,7 @@ section div#editProfile #btns input {
 						var empname=$("input[name='empname']").val();
 						var empbirth = $("input[name='empbirth']").val();
 						var emptel = $("input[name='emptel']").val();
+						
 						
 						//이름 정규표현식
 						var nameReg = /^[가-힣]{2,5}$/; //네임은 2-5 한글
@@ -185,7 +184,7 @@ section div#editProfile #btns input {
 		<div id="editProfile">
 			<h1>내 정보 수정</h1>
 			<span id="info">투어랜드는 고객님의 개인정보가 외부로 노출되지 않도록 항상 노력하고 있습니다.</span>
-			<form action="editProfile" method="post" autocomplete="off">
+			<form action="${pageContext.request.contextPath}/customer/editProfile" method="post" autocomplete="off">
 				<c:choose>
 					<c:when test="${mypage=='mypageuser'}">
 					<input type="hidden" value="${Auth.userno }" name="userno">
@@ -215,7 +214,7 @@ section div#editProfile #btns input {
 							<span class="error">여권번호 양식 예)M12345678</span>
 						</p>
 						<p id="btns">
-							<input type="submit" id="submit" value="수정" style="cursor: pointer">
+							<input type="submit" value="수정" style="cursor: pointer">
 							<button type="button" id="withdraw" style="cursor: pointer">투어랜드 탈퇴</button>
 						</p>
 					</c:when>
@@ -243,10 +242,15 @@ section div#editProfile #btns input {
 							<span class="error">전화번호 양식 예)010-4245-3825</span>
 						</p>
 						<p id="btns">	
-							<input type="submit" id="submit" value="수정" style="cursor: pointer;margin-left:84px;">
+							<input type="submit" value="수정" style="cursor:pointer;margin-left:84px;">
 						</p>
 					</c:when>
 				</c:choose>
+					<c:if test="${success!=null }">
+						<script>
+							alert("${success}");
+						</script>
+					</c:if>
 			</form>
 		</div>
 	</section>

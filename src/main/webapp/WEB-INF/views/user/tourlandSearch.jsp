@@ -197,6 +197,16 @@ div.pkgInfoBox .pkgTitle {
  .whereLi{
     cursor:pointer; 
  }
+ .eventBox:hover{
+  cursor: pointer;
+  background-color: lightyellow; 
+  height:60px;
+ }
+ 
+ .toProductList{
+   margin-top:30px;
+ }
+ 
 </style>
 <body>   
 	<%@ include file="../include/userHeader.jsp"%>
@@ -263,14 +273,14 @@ div.pkgInfoBox .pkgTitle {
 						<p class="pkgPrice">${price}원 부터~</p>
 						<p class="pkgDate">~ ${expire}까지</p>
 						<p class="pkgReserv">
-							<button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button>
+							<%-- <button class="pkgReservBtn" data-price="${price}" data-pno="${product.pno}">지금 바로 예약</button> --%>
 						</p>
 						
 					</div>
 					</c:forEach> 
 					
-				  <c:if test="${listCount ==3 }"> <!-- 3개만 일단 불러오도록 했기 때문에  -->
-				  <a href="#" style="text-decoration: none;" class="toProductList">더 보기</a>
+				  <c:if test="${listCount >= 1 }"> <!-- 3개만 일단 불러오도록 했기 때문에  -->
+				  <a href="#" style="text-decoration: none; margin-top:30px; padding:5px; border-bottom: 2px solid blue; " class="toProductList">검색상품 리스트로 바로가기</a>
 				  </c:if>
 				  <c:if test="${listCount ==0 }">
 				     <p style="margin-left:20px; margin-top:200px;">여행 상품에 해당 검색어가 포함된 게시물이 없습니다.</p>
@@ -417,6 +427,11 @@ div.pkgInfoBox .pkgTitle {
 			
 		})
 		
+		$(document).on("click",".FAQContent",function(){
+		$(this).css("display","none");
+		return false;
+	})
+		
 	//이벤트
 	//각각의 이벤트를 클릭할 때 상세페이지로 이동
 	  $(".eventBox").click(function(){
@@ -465,11 +480,11 @@ div.pkgInfoBox .pkgTitle {
     	 var keyword = $("#mainSearchKeyword").val();
  	     var keyword2= $("#secondSearchKeyword").val();
     	  if(wherewhere == "china"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/china?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchchina";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductChinaList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchchina";
     	  }else if(wherewhere == "japan"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/japan?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjapan";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductJPList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjapan";
     	  }else if(wherewhere == "jeju"){
-    	     location.href="${pageContext.request.contextPath }/customer/tourlandSearch/jeju?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjeju";
+    	     location.href="${pageContext.request.contextPath }/customer/tourlandProductKRList?searchType=&keyword="+keyword+"&keyword2="+keyword2+"&keyword3=forsearchjeju";
     	  }
       })
     	

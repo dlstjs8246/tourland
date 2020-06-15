@@ -9,13 +9,14 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
+import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.persistance.mng.dao.ProductDao;
 @Repository
 public class ProductDaoImpl implements ProductDao {
@@ -147,6 +148,15 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	@Override
+	public void deleteUserpStatus(ProductVO pvo, ReservationVO rvo) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("p", pvo);
+		map.put("r", rvo);
+		sqlSession.delete(namespace + "deleteUserpStatus",map);
+		
+	}
+	
+	@Override
 	public void deletepRentStatus(ProductVO pvo) throws SQLException {
 		sqlSession.delete(namespace + "deletepRentStatus",pvo);
 		
@@ -220,4 +230,18 @@ public class ProductDaoImpl implements ProductDao {
 	public List<ProductVO> tourlandProductKRSearchLowPriceList(SearchCriteria cri) throws SQLException {
 		return sqlSession.selectList(namespace + "tourlandProductKRSearchLowPriceList", cri);
 	}
+	@Override
+	public void insertpUserStatus(ReservationVO rvo, UserVO uvo, ProductVO pvo) throws SQLException {
+		Map<String,Object> map = new HashMap<>();
+		map.put("r", rvo);
+		map.put("u", uvo);
+		map.put("p", pvo);
+		sqlSession.insert(namespace + "insertpUserStatus",map);
+	}
+	@Override
+	public ProductVO selectNamePic(int no) throws SQLException {
+		return sqlSession.selectOne(namespace + "selectNamePic", no);
+	}
+
+	
 }

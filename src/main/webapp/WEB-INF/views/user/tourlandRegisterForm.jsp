@@ -164,7 +164,7 @@
 			$(".errorMsg").css("display", "none");
 			var userpass = $("input[name='userpass']").val();
 			if(userpass != $(this).val()){
-		    	 $("input[name='userpass2']").next().next().next().next().css("display","inline");
+		    	 $("input[name='userpass2']").next().next().next().css("display","inline");
 			}
 		})
 		
@@ -288,8 +288,9 @@
 						<p>
 							<label>비밀번호 확인</label>
 							<input type="password" name="userpass2" required="required" id="userpassword2" ><br>
-							<span class="errorMsg">영문, 숫자 포함 5-12자리를 넣어주세요</span><br>
+							<span class="errorMsg">영문, 숫자 포함 5-12자리를 넣어주세요</span>
 							<span class="errorMsg">비밀번호가 일치하지 않습니다.</span>
+							<br>
 						</p>
 						<p>
 							<label>고객 이름</label>

@@ -83,9 +83,9 @@ $(function(){
 	//가격 정규표현석
 	$("form").submit(function(){
 		var rentPrice = $("input[name='price']").val();
-		var checkPrice = /^[0-9]$/;
+		var checkPrice = /^[0-9]{1,8}$/;
 		if(checkPrice.test(rentPrice) == false){
-			alert("dd");
+			alert("가격을 체크해주세요");
 			return false;
 		}
 	})

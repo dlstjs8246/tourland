@@ -50,6 +50,8 @@ import com.yi.tourland.domain.mng.PlanBoardVO;
 import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
+import com.yi.tourland.domain.mng.ReviewVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
@@ -65,6 +67,8 @@ import com.yi.tourland.service.mng.PlanBoardService;
 import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
+import com.yi.tourland.service.mng.ReservationService;
+import com.yi.tourland.service.mng.ReviewService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 
@@ -131,7 +135,11 @@ public class CustomerController {
 	@Autowired
 	private EmailVO emailVo;
 	
-
+	@Autowired
+	private ReservationService reservationService;
+	
+	@Autowired
+	private ReviewService reviewService;
 		
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 		@ResponseBody
@@ -156,7 +164,7 @@ public class CustomerController {
 	        }
 	        
 	        if(choice.equals("practice")) {
-	        	path= "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
+	        	path= "/tourland/resources/images/practice";
 	        }
 			// System.out.println("displayFile-----------"+ filename);
 			InputStream in = null;
@@ -377,7 +385,7 @@ public class CustomerController {
 	}
 
 	//비밀번호 확인 되었을때 나타나는곳
-	@ResponseBody
+	
 	@RequestMapping(value = "EditPasswordCheck/{totalId}/{checkPass}", method = RequestMethod.GET)
 	public ResponseEntity<String> EditPasswordCheck(@PathVariable("totalId") String totalId,@PathVariable("checkPass") String checkPass,Model model) {
 		ResponseEntity<String> entity = null;
@@ -413,19 +421,18 @@ public class CustomerController {
 	}
 	//마이 페이지 - 내정보수정에서 수정 후 수정버튼을 눌릴때 받을곳
 	@RequestMapping(value="editProfile", method=RequestMethod.POST) 
-	public String tourlandEditProfile(UserVO userVo, EmployeeVO empVo) throws Exception { 						
-		if(userVo.getUserno()!=0) {
-			userService.updateUser(userVo);
-		}else if(empVo.getEmpno()!=0){
-			employeeService.updateEmployee(empVo);
-		}
-		return "redirect:/"; 
+	public String tourlandEditProfile(UserVO userVo, Model model, HttpSession session) throws Exception { 		
+		userService.updateUser(userVo);
+		model.addAttribute("success", "수정이 완료되었습니다.");
+		//model.addAttribute("Auth", userVo);
+		session.setAttribute("Auth", userVo);
+		return "/user/mypage/tourlandMyInfoEdit"; 
 	}
 	
 	//마이 페이지 - 탈퇴버튼 눌리는 경우
 	@RequestMapping(value="logoutWithdrawal",method = RequestMethod.GET)
-	public String logoutWithdrawal(String id,UserVO vo,HttpSession session) throws Exception{
-		vo = userService.readByIdUser(id);
+	public String logoutWithdrawal(int no, UserVO vo,HttpSession session) throws Exception{
+		vo = userService.readByNoUser(no);
 		vo.setUsersecess(1);
 		userService.updateUser(vo);
 		session.invalidate();
@@ -435,24 +442,234 @@ public class CustomerController {
 	
 	//마이 페이지 - 내 예약 현황
 	@RequestMapping(value="tourlandMyReserv", method=RequestMethod.GET)
-	public String tourlandMyReserv() { 
+	public String tourlandMyReserv(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,String payNow, String cancel, String addReview) throws SQLException {
+		HttpSession session = req.getSession();
+		vo = (UserVO)session.getValue("Auth");
+		System.out.println(vo.getUserno());
+		List<ReservationVO> list = reservationService.ReadReservationByUserNo(vo, cri);
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(reservationService.totalSearchReservationCountByUserNo(cri, vo));
+		if(list.size()==0) {
+			model.addAttribute("noList", "noList");
+		}else {
+			model.addAttribute("list",list);
+			model.addAttribute("pageMaker",pageMaker);
+			
+		}
+		if(payNow != null) {
+			model.addAttribute("paySuccess", "paySuccess");
+		}
+		if(cancel != null) {
+			model.addAttribute("cancel", "cancel");
+		}
+		if(addReview != null) {
+			model.addAttribute("addReview", "addReview");
+		}
+		
 		return "/user/mypage/tourlandMyReserv"; 
 	}
-	//상품 리뷰    
+	//마이 페이지 - 내 예약 현황 - 결제
+	@RequestMapping(value="tourlandMyReservPayNow", method=RequestMethod.GET)
+	public String tourlandMyReservPayNowSearch(String rno, Model model) throws SQLException {
+		ReservationVO rs = new ReservationVO();
+		rs.setNo(Integer.parseInt(rno));
+		rs.setRstatus("2");
+		reservationService.updateReservation(rs);
+		model.addAttribute("payNow", "payNow");
+		return "redirect:/customer/tourlandMyReserv"; 
+	}
+	//마이 페이지 - 내 예약 현황 - 예약 취소
+		@RequestMapping(value="tourlandMyReservCancel", method=RequestMethod.GET)
+		public String tourlandMyReservCancel(String rno, Model model) throws SQLException {
+			ReservationVO rs = new ReservationVO();
+			rs.setNo(Integer.parseInt(rno));
+			rs.setRstatus("4");
+			reservationService.updateReservation(rs);
+			model.addAttribute("cancel", "cancel");
+			return "redirect:/customer/tourlandMyReserv"; 
+		}
+	
+	
+	//마이페이지 - 리뷰    
 	@RequestMapping(value="tourlandMyReview", method=RequestMethod.GET)
-	public String tourlandMyReview() throws SQLException {
+	public String tourlandMyReview(HttpSession session, String rno, Model model) throws SQLException {
+		UserVO vo = (UserVO) session.getAttribute("Auth");
+		ProductVO product = productService.selectNamePic(Integer.parseInt(rno));
 		
+		model.addAttribute("userno", vo.getUserno());
+		model.addAttribute("username", vo.getUsername());
+		model.addAttribute("rno", rno);
+		model.addAttribute("pno", product.getPno());
+		model.addAttribute("pname", product.getPname());
 		return "/user/mypage/tourlandMyReview"; 
+	}
+	//리뷰 등록 
+	@RequestMapping(value="tourlandAddMyReview", method=RequestMethod.POST)
+	public String tourlandAddMyReview(ReviewVO review, Model model) throws SQLException {
+		
+		if(review!=null) {
+			List<ReviewVO> reviewList = reviewService.checkReviewExists();
+			int listSize = reviewList.size();
+			review.setNo(listSize+1);
+			Date today = new Date();
+			review.setRegdate(today);
+			reviewService.addReview(review);
+			model.addAttribute("addReview", "addReview");
+		}
+		
+		return "redirect:/customer/tourlandMyReserv"; 
+	}
+	//리뷰 보기
+	@RequestMapping(value="tourlandReadMyReview", method=RequestMethod.GET)
+	public String tourlandReadMyReview(ReviewVO review, Model model) throws Exception {
+		review = reviewService.readReviewByRno(review);
+		ProductVO product = productService.selectNamePic(review.getRno());
+		UserVO user = userService.readByNoUser(review.getUserno());
+		model.addAttribute("review",review);
+		model.addAttribute("product",product);
+		model.addAttribute("user",user);
+		return "user/mypage/tourlandReadMyReview"; 
 	}
 	//마이 페이지 - 장바구니
 	@RequestMapping(value="tourlandMyWishes", method=RequestMethod.GET)
-	public String tourlandMyWishes() { 
+	public String tourlandMyWishes(HttpServletRequest req,SearchCriteria cri,UserVO vo,Model model,ProductVO pvo,String suc) throws SQLException { 
+		HttpSession session = req.getSession();
+		vo = (UserVO)session.getValue("Auth");
+		List<ReservationVO> list = reservationService.ReadCartByUserNo(vo, cri);
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri(cri);
+		pageMaker.setTotalCount(reservationService.totalSearchCartCountByUserNo(cri, vo));
+		model.addAttribute("list",list);
+		model.addAttribute("pageMaker",pageMaker);
+		if(suc != null) {
+			model.addAttribute("success", "success");
+		}
 		return "/user/mypage/tourlandMyWishes"; 
 	}
+	//마이 페이지 - 장바구니에서 들어온 상품 삭제
+	@RequestMapping(value="tourlandMyWishesDelete", method=RequestMethod.GET)
+	public String tourlandMyWishesDelete(int pno,int rno,Model model,ProductVO pvo,ReservationVO rvo,SearchCriteria cri) throws Exception { 
+		pvo.setPno(pno);
+		pvo.setPdiv(true);
+		rvo.setNo(rno);
+		productService.deleteProductInUserCart(pvo,rvo,cri);
+		model.addAttribute("suc", "suc");
+		return "redirect:/customer/tourlandMyWishes"; 
+	}
+	
+	//마이 페이지 - 장바구니 - 예약하기
+	@RequestMapping(value="tourlandMyWishesRes", method=RequestMethod.GET)
+	public String tourlandMyWishesRes(int rno,ReservationVO rvo) throws Exception {
+		rvo.setNo(rno);
+		rvo.setRstatus("1");
+		reservationService.updateReservation(rvo);
+		return "redirect:/customer/tourlandMyWishes";
+	}
+	
+	//마이 페이지 - 장바구니 - 클릭으로 상세보기
+	@RequestMapping(value="tourlandMyWishesDetail", method=RequestMethod.GET)
+	public String tourlandMyWishesDetail(int userno,int rno,SearchCriteria cri,Model model) throws Exception {
+		ReservationVO rvo = reservationService.ReadCartByNoAndUserNo(rno,userno);
+		ProductVO upvo = rvo.getProduct();
+		cri.setSearchType("userCart");
+		cri.setKeyword(upvo.getPname());
+		cri.setPerPageNum(productService.totalCountBySearchProduct(cri));
+		List<ProductVO> list = productService.listPage(cri);
+		ProductVO pvo = null;
+		Date uddate = upvo.getAir().get(0).getDdate();
+		Date urdate = upvo.getAir().get(1).getRdate();
+		if(list.size()>1) {
+			for(ProductVO vo : list) {
+				if(uddate.equals(vo.getAir().get(0).getDdate()) && urdate.equals(vo.getAir().get(1).getRdate())) {
+					pvo = vo;
+					break;
+				}
+			}
+		}
+		else {
+			pvo = list.get(0);
+		}
+		if(upvo.getTour().size()>0) {
+			for(int i=0;i<upvo.getTour().size();i++) {
+				upvo.getTour().get(i).setNo(pvo.getTour().get(i).getNo());
+			}
+		}
+		if(upvo.getRentcar().size()>0) {
+			for(int i=0;i<1;i++) {
+				upvo.getRentcar().get(i).setNo(pvo.getRentcar().get(i).getNo());
+			} 
+		} 
+		model.addAttribute("uvo",upvo);
+		model.addAttribute("vo",pvo);
+		model.addAttribute("userno",userno);
+		model.addAttribute("rno",rno);
+		return "/user/mypage/tourlandCartDetail"; 
+	}
+	@ResponseBody
+	@RequestMapping(value="tourlandMyWishesDetail/update", method=RequestMethod.GET)
+	public ResponseEntity<String> tourlandMyWishesDetail(SearchCriteria cri, Model model,int userno,int rno, int upno, int price, int[] ano, int[] acapacity, int[] hno, int[] hcapacity, int[] tno, int tcapacity, int[] rentno, int rcapacity) throws Exception {
+		ResponseEntity<String> entity = null;
+		ProductVO pvo = new ProductVO();
+		ReservationVO rvo = new ReservationVO();
+		rvo.setNo(rno);
+		List<AirplaneVO> air = new ArrayList<>();
+		List<HotelVO> hotel = new ArrayList<>();
+		List<TourVO> tour = new ArrayList<>();
+		List<RentcarVO> rentcar = new ArrayList<>();
+		for(int i : ano) {
+			System.out.println(i);
+			air.add(flightService.airplaneByNo(new AirplaneVO(i)));
+			air.add(flightService.airplaneByNo(new AirplaneVO(i+1)));
+		}
+		if(hno!=null) for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
+		if(tno!=null) for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
+		if(rentno!=null) for(int i : rentno) rentcar.add(rentcarService.readByNo(i));
+		for(int i=0;i<acapacity.length;i++) {
+			air.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i)+1);
+			air.get(i+i).setCapacity(acapacity[i]);
+			air.get(i+i).setPdiv(1);
+			air.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			air.get(i+i+1).setCapacity(acapacity[i]);
+			air.get(i+i+1).setPdiv(1);
+		}
+		for(int i=0;i<hcapacity.length;i++) {
+			hotel.get(i).setNo(hotelService.totalCountHotel()+(i+1));
+			hotel.get(i).setTotalcapacity(hcapacity[i]);
+			hotel.get(i).setPdiv(true);
+		}
+		for(int i=0;i<tour.size();i++) {
+			tour.get(i).setNo(tourService.totalCount()+(i+1));
+			tour.get(i).setCapacity(tcapacity);
+			tour.get(i).setPdiv(true);
+		}
+		for(int i=0;i<rentcar.size();i++) {
+			rentcar.get(i).setNo(rentcarService.totalCountRentcar()+(i+1));
+			rentcar.get(i).setCapacity(rcapacity);
+			rentcar.get(i).setPdiv(1);
+		}
+		UserVO uvo = userService.readByNoUser(userno);
+		try {
+			rvo = reservationService.ReadCartByNoAndUserNo(rno, userno);
+			pvo = rvo.getProduct();
+			pvo.setAir(air);
+			pvo.setHotel(hotel);
+			pvo.setTour(tour);
+			pvo.setRentcar(rentcar);
+			productService.updateProductInUserCart(pvo,uvo,rvo, cri);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+		}
+		return entity;
+	}
+	
 	//마이 페이지 - 내 쿠폰
 	@RequestMapping(value="tourlandMyCoupon", method=RequestMethod.GET)
 	public String tourlandMyCoupon(SearchCriteria cri, Model model, HttpSession session) throws Exception { 
-		//Auth 키가 있을 때 
+		//Auth 키가 있을 때  
 		if(session.getAttribute("Auth")!=null) {
 			if(session.getAttribute("Auth") instanceof UserVO) { //세션 객체가 UserVO 일 경우 = 회원 일 경우
 				//세션에 로그인 정보가 있으면 해당 고객 불러오기
@@ -499,6 +716,31 @@ public class CustomerController {
 	//상품 리스트   (제주 패키지)
 	@RequestMapping(value="tourlandProductKRList", method=RequestMethod.GET)
 	public String tourlandProductKRList(Model model,SearchCriteria cri) throws SQLException {
+		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
+		model.addAttribute("jejucount",jejulistCount);
+		String keyword = cri.getKeyword();
+		String keyword2 = cri.getKeyword2();
+		String keyword3 = cri.getKeyword3();
+		if(keyword3 !=null) {
+			  if(keyword3.contentEquals("forsearchjeju")) {
+					cri.setPerPageNum(10); //다시 리스트 10개로 세팅
+					model.addAttribute("keyword",keyword);
+					model.addAttribute("keyword3","jeju");
+					if(keyword2 != null) {
+						model.addAttribute("keyword2",keyword2);
+					}
+					List<ProductVO> list = productService.productListPageByDomestic(cri);
+					model.addAttribute("list",list);
+					PageMaker pageMaker = new PageMaker();
+					pageMaker.setCri(cri);
+					pageMaker.setTotalCount(jejulistCount);
+					model.addAttribute("pageMaker", pageMaker);
+					model.addAttribute("cri",cri);
+					model.addAttribute("count",jejulistCount);
+				    return "/user/product/tourlandProductKRList"; 
+			   }
+		}
+		
 		List<ProductVO> list = productService.productListPageByDomestic(cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
@@ -642,6 +884,34 @@ public class CustomerController {
 	//상품 리스트   (일본 패키지)
 	@RequestMapping(value="tourlandProductJPList", method=RequestMethod.GET)
 	public String tourlandProductJPList(SearchCriteria cri,Model model) throws SQLException { 
+		int japanlistCount = productService.totalCountBySearchProductJapan(cri);
+		model.addAttribute("japancount",japanlistCount);
+
+		String keyword = cri.getKeyword();
+		String keyword2 = cri.getKeyword2();
+		String keyword3 = cri.getKeyword3();
+		if(keyword3 !=null) {
+			  if(keyword3.contentEquals("forsearchjapan")) {
+					cri.setPerPageNum(10); //다시 리스트 10개로 세팅
+					model.addAttribute("keyword",keyword);
+					model.addAttribute("keyword3","japan");
+					if(keyword2 != null) {
+						model.addAttribute("keyword2",keyword2);
+					}
+					List<ProductVO> list = productService.productListPageByJapan(cri);
+					model.addAttribute("list",list);
+					PageMaker pageMaker = new PageMaker();
+					pageMaker.setCri(cri);
+					pageMaker.setTotalCount(japanlistCount);
+					model.addAttribute("pageMaker", pageMaker);
+					model.addAttribute("cri",cri);
+					model.addAttribute("count",japanlistCount);
+
+				    return "/user/product/tourlandProductJPList"; 
+			   }
+		}
+		
+		
 		List<ProductVO> list = productService.productListPageByJapan(cri);
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
@@ -741,37 +1011,33 @@ public class CustomerController {
 		public String tourlandProductChinaList(SearchCriteria cri,Model model) throws SQLException {
 			int chinalistCount = productService.totalCountBySearchProductChina(cri);
 			model.addAttribute("chinalistCount",chinalistCount);
-			int japanlistCount = productService.totalCountBySearchProductJapan(cri);
-			model.addAttribute("japancount",japanlistCount);
-			int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
-			model.addAttribute("jejucount",jejulistCount);
+
 			String keyword = cri.getKeyword();
-			String keyword2 = cri.getKeyword3();
-			String keyword3 = cri.getKeyword2();
-			//System.out.println("키워드3"+keyword3);
-			//System.out.println("크리찍업ㄴ다"+cri);
+			String keyword2 = cri.getKeyword2();
+			String keyword3 = cri.getKeyword3();
 			if(keyword3 !=null) {
 				  if(keyword3.contentEquals("forsearchchina")) {
 						cri.setPerPageNum(10); //다시 리스트 10개로 세팅
 						model.addAttribute("keyword",keyword);
+						model.addAttribute("keyword3","china");
 						if(keyword2 != null) {
 							model.addAttribute("keyword2",keyword2);
 						}
-						model.addAttribute("keyword2",keyword2);
-						
+						List<ProductVO> list = productService.productListPageByChina(cri);
+						model.addAttribute("list",list);
 						PageMaker pageMaker = new PageMaker();
 						pageMaker.setCri(cri);
 						pageMaker.setTotalCount(chinalistCount);
-						System.out.println("페이지 메이커"+pageMaker);
 						model.addAttribute("pageMaker", pageMaker);
-					       return "redirect:/customer/tourlandProductChinaList?searchType=&keyword3=forsearchchina";
+						model.addAttribute("cri",cri);
+						model.addAttribute("count",chinalistCount);
+					    return "/user/product/tourlandProductChinaList"; 
 				   }
 			}
 			List<ProductVO> list = productService.productListPageByChina(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
 			pageMaker.setTotalCount(productService.totalCountBySearchProductChina(cri));
-			System.out.println("페이지 메이커상품"+pageMaker);
 			
 			model.addAttribute("list",list);
 			model.addAttribute("pageMaker",pageMaker);
@@ -870,118 +1136,324 @@ public class CustomerController {
 		return "/user/product/tourlandProductDetail"; 
 	}
 	
-	//상품 장바구니에 담기 ajax
-	@RequestMapping(value="tourlandProductDetail/cart", method=RequestMethod.GET)
-	public String tourlandProductDoWith(SearchCriteria cri, Model model, int uno, int pno, int price, String[] ano,String[] rano, String[] acapacity, String[] hno, String[] hcapacity, String[] tno, String[] tcapacity, String[] rno, String[] rcapacity) throws Exception {
-		System.out.println("유저번호 : " + uno );
-		//유저
+	@ResponseBody
+	@RequestMapping(value="tourlandProductDetail/reserv", method=RequestMethod.GET)
+	public ResponseEntity<String> tourlandProductReservation(SearchCriteria cri, Model model, int uno, int pno, int price, int[] ano, int[] acapacity, int[] hno, int[] hcapacity, int[] tno, int tcapacity, int[] rno, int rcapacity) throws Exception {
+		ResponseEntity<String> entity = null;
+		List<AirplaneVO> air = new ArrayList<>();
+		List<HotelVO> hotel = new ArrayList<>();
+		List<TourVO> tour = new ArrayList<>();
+		List<RentcarVO> rentcar = new ArrayList<>();
+		for(int i : ano) {
+			air.add(flightService.airplaneByNo(new AirplaneVO(i)));
+			air.add(flightService.airplaneByNo(new AirplaneVO(i+1)));
+		}
+		if(hno!=null) for(int i : hno) hotel.add(hotelService.readHotel(new HotelVO(i)));
+		if(tno!=null) for(int i : tno) tour.add(tourService.selectTourByNo(new TourVO(i)));
+		if(rno!=null) for(int i : rno) rentcar.add(rentcarService.readByNo(i));
+		for(int i=0;i<acapacity.length;i++) {
+			air.get(i+i).setCapacity(acapacity[i]);
+			air.get(i+i).setPdiv(1);
+			air.get(i+i+1).setCapacity(acapacity[i]);
+			air.get(i+i+1).setPdiv(1);
+		}
+		for(int i=0;i<hcapacity.length;i++) {
+			hotel.get(i).setTotalcapacity(hcapacity[i]);
+			hotel.get(i).setPdiv(true);
+		}
+		for(int i=0;i<tour.size();i++) {
+			tour.get(i).setCapacity(tcapacity);
+			tour.get(i).setPdiv(true);
+		}
+		for(int i=0;i<rentcar.size();i++) {
+			rentcar.get(i).setCapacity(rcapacity);
+			rentcar.get(i).setPdiv(1);
+		}
 		UserVO user = userService.readByNoUser(uno);
-
-		System.out.println("상품번호 : " + pno);
-		//상품 
-		ProductVO p = new ProductVO();
-		p.setPno(pno);
-		ProductVO product = productService.productByNo(p);
+		ProductVO product = productService.productByNo(new ProductVO(pno));
+		ProductVO userProduct = productService.productByNo(new ProductVO(pno));
+		userProduct.setPprice(price);
+		userProduct.setPdiv(true);
+		userProduct.setAir(air);
+		userProduct.setHotel(hotel);
+		userProduct.setTour(tour);
+		userProduct.setRentcar(rentcar);
+		userProduct.setPno(productService.totalCountProduct()+1);
+		try {
+			Date chkStartDate = null;
+			Date chkEndDate = null;
+			Date startDate = null;
+			Date endDate = null;
+			List<ReservationVO> list = reservationService.ReadReservationByUserNo(user, cri);
+			for(ReservationVO vo : list) {
+				if(vo.getUserno().getUserno()==uno) {
+					chkStartDate = vo.getProduct().getAir().get(0).getDdate();
+					chkEndDate = vo.getProduct().getAir().get(1).getRdate();
+					startDate = userProduct.getAir().get(0).getDdate();
+					endDate = userProduct.getAir().get(1).getRdate();
+					if(chkStartDate.equals(startDate) && chkEndDate.getTime() - chkStartDate.getTime() == endDate.getTime() - startDate.getTime()) {
+						throw new Exception("중복");
+					}
+				}	
+			}
+			int res = productService.insertUserProduct(product, userProduct, user, cri);
+			if(res==0) {
+				entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+			}
+			else {
+				throw new Exception("인원부족");
+			}
+			
+		}
+		catch(Exception e) {
+			if(e.getMessage().equals("중복")) {
+				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
+			}
+			else if(e.getMessage().equals("인원부족")) {
+				entity = new ResponseEntity<String>("CAPACITYFAIL",HttpStatus.BAD_REQUEST);
+			}
+			else {
+				e.printStackTrace();
+				entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+			}
+		}
+		return entity;
+	}
+	
+	//상품 장바구니에 담기 ajax
+	@ResponseBody
+	@RequestMapping(value="tourlandProductDetail/cart", method=RequestMethod.GET)
+	public ResponseEntity<String> tourlandProductDoWith(SearchCriteria cri, Model model, int uno, int pno, int price, String[] ano,String[] rano, String[] acapacity, String[] hno, String[] hcapacity, String[] tno, String[] tcapacity, String[] rno, String[] rcapacity) throws Exception {
+		//기본 로직
 		
-		//가격
-		System.out.println("가격 : " + price);
+		//1.항공,호텔,투어,렌트카 테이블 insert 
+		//(1)고객이 선택한 항공편, 호텔, 투어, 렌터카 번호 배열 가져옴
+		//(2)해당 번호의 객체 찾기
+		//(3)새로운 객체 만듦 > 새로운 객체에 DB에서 번호로 찾아온 객체 정보 세팅 (번호:total넘버+1..,인원:고객이 옵션에서 선택한 인원, pdiv:1) 
+		//(4)테이블에 새로운 객체 insert
+		//1~4번 (항공편, 호텔, 투어, 렌터카 테이블) 반복
+		
+		//2.상품 테이블 insert
+		//(1)가져온 상품 번호로 상품 객체 DB에서 찾아옴
+		//(2)새 상품 객체 만듦 > 새 상품 객체에 DB에서 찾아온 객체 정보 세팅 (가격 : 페이지에서 가져온 가격, pdiv : 1) 
+		//(3)상품 테이블에 새로운 객체 insert
+		
+		//3.연결 테이블
+		//3-1. 연결테이블1 (userpstatus)
+		//(1)user번호, 방금 새로 insert 한 상품 객체 번호 insert
+		//3-2. 연결테이블 2~5 (항공, 호텔, 투어, 렌트 연결 테이블)
+		//(1) 각 테이블에 새로 insert 한 고객용 객체의 번호, 새로 insert 한 고객용 상품 번호 insert
+		ResponseEntity<String> entity = null;
+		List<AirplaneVO> airList = new ArrayList<>();
+		List<HotelVO> hotelList = new ArrayList<>();
+		List<TourVO> tourList = new ArrayList<>();
+		List<RentcarVO> rentList = new ArrayList<>();
+		
 		
 		//항공 출발편
 		for(int i=0; i<ano.length; i++) {
 			System.out.println("항공 출발편 번호 : " + ano[i]);
-			//새로운 객체 생성
-			AirplaneVO air = new AirplaneVO();
-			//객체에 불러온 항공편 번호 세팅
-			air.setNo(Integer.parseInt(ano[i]));
-			//해당 항공편 번호로 검색해서 DB에서 해당 번호 항공편 불러옴
-			AirplaneVO newAir = flightService.airplaneByNo(air);
-			System.out.println("출발편 : "+newAir);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 항공편 정보 세팅 (단, capacity는 1, pdiv:1)
-			//Airplane 테이블에 객체2 insert
 			
-		}
-		for(int i=0; i<rano.length; i++) {
-			System.out.println("항공 도착편 번호 : " + rano[i]);
-			//새로운 객체 생성
-			AirplaneVO air = new AirplaneVO();
-			//객체에 불러온 항공편 번호 세팅
-			air.setNo(Integer.parseInt(rano[i]));
-			//해당 항공편 번호로 검색해서 DB에서 해당 번호 항공편 불러옴
-			AirplaneVO newAir = flightService.airplaneByNo(air);
-			System.out.println("도착편 : "+newAir);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 항공편 정보 세팅 (단, capacity는 1, pdiv:1)
-			//Airplane 테이블에 객체2 insert
+			AirplaneVO dair = new AirplaneVO();//출발편
+			AirplaneVO rair = new AirplaneVO();//도착편
+			
+			dair.setNo(Integer.parseInt(ano[i]));
+			rair.setNo(Integer.parseInt(rano[i]));
+			
+			AirplaneVO dbdAir = flightService.airplaneByNo(new AirplaneVO(dair.getNo()));
+			AirplaneVO dbrAir = flightService.airplaneByNo(new AirplaneVO(rair.getNo()));
+			System.out.println("출발편 : "+dbdAir);
+			System.out.println("도착편 : "+dbrAir);
+			airList.add(dbdAir);
+			airList.add(dbrAir);
 		}
 		for(int i=0; i<acapacity.length; i++) {
-			System.out.println("항공편 인원 :" + acapacity[i]);
+			
+			airList.get(i+i+1).setNo(flightService.totalAllCountAirplane()+(i+i+1));
+			airList.get(i+i+1).setCapacity(Integer.parseInt(acapacity[i]));
+			airList.get(i+i+1).setPdiv(1);
+			//도착편
+			airList.get(i+i).setNo(flightService.totalAllCountAirplane()+(i+i+1)+1);
+			airList.get(i+i).setCapacity(Integer.parseInt(acapacity[i]));
+			airList.get(i+i).setPdiv(1);
+			
+		}
+		for(AirplaneVO air : airList) {
+			System.out.println("변경된 항공편 : ");
+			System.out.println(air);
+			
 		}
 		for(int i=0; i<hno.length; i++) {
 			System.out.println("호텔 번호 :"+hno[i]);
-			//새로운 객체 생성
-			HotelVO hotel = new HotelVO();
-			//객체에 불러온 호텔 번호 세팅
+			
+			HotelVO hotel = new HotelVO();//객체에 불러온 호텔 번호 세팅
 			hotel.setNo(Integer.parseInt(hno[i]));
-			//해당 호텔 번호로 검색해서 DB에서 해당 번호 호텔 불러옴
-			HotelVO newHotel = hotelService.readHotel(hotel);
+			HotelVO newHotel = hotelService.readHotel(new HotelVO(hotel.getNo()));
+			newHotel.setTotalcapacity(Integer.parseInt(hcapacity[i]));
 			System.out.println("호텔 : "+newHotel);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 호텔 정보 세팅 (단, capacity는 1, pdiv:1)
-			//호텔 테이블에 객체2 insert
+			hotelList.add(newHotel);
+			
 		}
 		for(int i=0; i<hcapacity.length; i++) {
 			System.out.println("호텔 인원 : "+hcapacity[i]);
+			
+			hotelList.get(i).setNo(hotelService.totalCountHotel()+i+1);
+			hotelList.get(i).setCapacity(Integer.parseInt(hcapacity[i]));
+			hotelList.get(i).setPdiv(true);
+			
 		}
+		
 		for(int i=0; i<tno.length; i++) {
 			System.out.println("투어 번호 : "+tno[i]);
-			//새로운 객체 생성
+		
 			TourVO tour = new TourVO();
-			//객체에 불러온 투어 번호 세팅
 			tour.setNo(Integer.parseInt(tno[i]));
-			//해당 투어 번호로 검색해서 DB에서 해당 번호 투어 불러옴
-			TourVO newTour = tourService.selectTourByNo(tour);
+			TourVO newTour = tourService.selectTourByNo(new TourVO(tour.getNo()));
 			System.out.println("투어 : "+newTour);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 투어 정보 세팅 (단, capacity는 1, pdiv:1)
-			//투어 테이블에 객체2 insert
+			tourList.add(newTour);
 		}
 		for(int i=0; i<tcapacity.length; i++) {
 			System.out.println("투어 인원 : "+tcapacity[i]);
+			
+			
 		}  
-		for(int i=0; i<rno.length; i++) {
-			System.out.println("렌트카 번호 : "+rno[i]);
-			//새로운 객체 생성
-			RentcarVO rent = new RentcarVO();
-			//객체에 불러온 렌트카 번호 세팅
-			rent.setNo(Integer.parseInt(rno[i]));
-			//해당 렌트카 번호로 검색해서 DB에서 해당 번호 투어 불러옴
-			RentcarVO newRent = rentcarService.readByNo(rent.getNo());
-			System.out.println("렌트카  : "+newRent);
-			//새로운 객체2를 만듦
-			//객체2에 DB에서 검색해온 투어 정보 세팅 (단, capacity는 1, pdiv:1)
-			//투어 테이블에 객체2 insert
+		for(int i = 0; i<tourList.size(); i++) {
+			System.out.println("변경 전 투어 : " + tourList.get(i));
+		
+			tourList.get(i).setNo(tourService.totalCount()+i+1);
+			tourList.get(i).setCapacity(Integer.parseInt(tcapacity[0]));
+			tourList.get(i).setPdiv(true);
+			System.out.println("변경된 투어 : " + tourList.get(i));
 		}
-		for(int i=0; i<rcapacity.length; i++) {
-			System.out.println("렌트카 인원 : "+rcapacity[i]);
+		if(rno!=null) {
+			for(int i=0; i<rno.length; i++) {
+				System.out.println("렌트카 번호 : "+rno[i]);
+				RentcarVO rent = new RentcarVO();
+				rent.setNo(Integer.parseInt(rno[i]));
+				RentcarVO newRent = rentcarService.readByNo(rent.getNo());
+				System.out.println("렌트카  : "+newRent);
+				rentList.add(newRent);
+			}
+			for(int i=0; i<rcapacity.length; i++) {
+				System.out.println("렌트카 인원 : "+rcapacity[i]);
+				System.out.println("변경 전 렌트카 : " + rentList.get(i));
+				rentList.get(i).setNo(rentcarService.totalCountRentcar() + i + 1);
+				rentList.get(i).setCapacity(Integer.parseInt(rcapacity[i]));
+				rentList.get(i).setPdiv(1);
+				System.out.println("변경 후 렌트카 : " + rentList.get(i));
+			}
 		}
 		
+		// 가격
+		System.out.println("가격 : " + price);
+		//상품 
+		System.out.println("상품번호 : " + pno);
+		ProductVO p = new ProductVO();
+		p.setPno(pno);
+		ProductVO product = productService.productByNo(p);
+		product.setPno(productService.totalCountProduct()+1);
+		product.setPprice(price);
+		product.setAir(airList);
+		product.setHotel(hotelList);
+		product.setTour(tourList);
+		product.setRentcar(rentList);
+		product.setPdiv(true);
 		
-		return "redirect:/customer/toulandProductDetail";
+		//INSERT
+		//유저
+		UserVO user = userService.readByNoUser(uno);
+		System.out.println("유저번호 : " + uno );
+		//상품
+		System.out.println(product);
+		for(AirplaneVO i : product.getAir()) {
+			System.out.println(i);
+		}
+		for(HotelVO i : product.getHotel()) {
+			System.out.println(i);
+		}
+		for(TourVO i : product.getTour()) {
+			System.out.println(i);
+		}
+		for(RentcarVO i : product.getRentcar()) {
+			System.out.println(i);
+		}
+		try {
+			Date chkStartDate = null;
+			Date chkEndDate = null;
+			Date startDate = null;
+			Date endDate = null;
+			List<ReservationVO> list = reservationService.ReadCartByUserNo(user, cri);
+			for(ReservationVO vo : list) {
+				if(vo.getUserno().getUserno()==uno) {
+					chkStartDate = vo.getProduct().getAir().get(0).getDdate();
+					chkEndDate = vo.getProduct().getAir().get(1).getRdate();
+					startDate = product.getAir().get(0).getDdate();
+					endDate = product.getAir().get(1).getRdate();
+					if(chkStartDate.equals(startDate) && chkEndDate.getTime() - chkStartDate.getTime() == endDate.getTime() - startDate.getTime()) {
+						throw new Exception("중복");
+					}
+				}	
+			}
+			productService.insertProductInUserCart(product, user, cri);
+			entity = new ResponseEntity<String>("SUCCESS",HttpStatus.OK);
+		}
+		
+		catch(Exception e) {
+			if(e.getMessage().equals("중복")) {
+				entity = new ResponseEntity<String>("OVERLAP",HttpStatus.BAD_REQUEST);
+			}
+			else {
+				e.printStackTrace();
+				entity = new ResponseEntity<String>("FAIL",HttpStatus.BAD_REQUEST);
+			}
+			e.printStackTrace();
+			entity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+		return entity;
 	}
 	
 	
 	//상품 리뷰    
 	@RequestMapping(value="tourlandProductReview", method=RequestMethod.GET)
-	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model,int price) throws SQLException {
-		  vo = productService.productByNo(vo); 
-		  model.addAttribute("cri",cri);
-		  model.addAttribute("vo",vo);
-		  model.addAttribute("price",price);
+	public String tourlandProductReview(SearchCriteria cri,ProductVO vo,Model model,int price) throws Exception {
+		vo = productService.productByNo(vo);
+		Date ddate = vo.getAir().get(0).getDdate();
+		Date rdate = vo.getAir().get(1).getRdate();
+		cri.setPerPageNum(reservationService.totalSearchReservationCount(cri));
+		List<ReservationVO> reservlist = reservationService.listReservation(cri);
+		List<ProductVO> productList = new ArrayList<ProductVO>(); 
+		List<ReviewVO> chkReviewList = new ArrayList<ReviewVO>(); 
+		List<UserVO> users = new ArrayList<UserVO>(); 
+		List<ProductVO> chkProduct = new ArrayList<ProductVO>();
+		for(ReservationVO rvo : reservlist) {
+			if(rvo.getRstatus().equals("3") && rvo.getProduct().getPname().equals(vo.getPname())) {
+				productList.add(rvo.getProduct());
+			}
+		}
+		for(ProductVO pvo : productList) {
+			Date cddate = pvo.getAir().get(0).getDdate();
+			Date crdate = pvo.getAir().get(1).getRdate();
+			if(cddate.equals(ddate) && crdate.equals(rdate)) {
+				chkProduct.add(pvo);
+			}
+		}
+		List<ReviewVO> reviewList = reviewService.checkReviewExists();
+		for(ReviewVO rvo : reviewList) {
+			for(ProductVO pvo : chkProduct) {
+				if(rvo.getPno()==pvo.getPno()) {
+					chkReviewList.add(rvo);
+					users.add(userService.readByNoUser(rvo.getUserno()));
+				}
+			}
+		} 
+		model.addAttribute("cri",cri);
+		model.addAttribute("vo",vo);
+		model.addAttribute("price",price);
+		model.addAttribute("list",chkReviewList);
+		model.addAttribute("users",users);
 		return "/user/product/tourlandProductReview"; 
 	}
-	
-	
+
 	//이벤트 --------------------------------------------------------------------------------------
 	@RequestMapping(value="tourlandEventList/{times}", method=RequestMethod.GET)
 	public String tourlandEventList(@PathVariable("times") String times, Model model) { 
@@ -1020,13 +1492,100 @@ public class CustomerController {
 			return "/user/event/eventDetailPage";
 		}
 	
+	 
+	 
+	 //쿠폰 ---------------------------------------------------------------------------------------
+	 //쿠폰 페이지
+	 @RequestMapping(value="userpageCoupon", method = RequestMethod.GET)
+	 public String userpageCoupon(SearchCriteria cri, Model model, String success, String fail, String hasCoupon) throws Exception {
+		 List<CouponVO> couponList = couponService.couponList(cri);
+			//포맷 
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			//오늘 날짜 생성
+			Date date = new Date();
+			//형식 변경
+			String today = dateFormat.format(date);
+			
+			List<CouponVO> available = new ArrayList<>(); //아직 만료되지 않은 쿠폰
+			
+			for(int i=0; i<couponList.size(); i++) {
+				//오늘 날짜와 해당 고객의 쿠폰의 만료일을 하나씩 비교 후 만료 안된 거 & 쿠폰번호1(가입축하쿠폰)이 아닌 것만 리스트에 넣기  
+				long rs = date.getTime() - couponList.get(i).getEdate().getTime(); 
+				if(rs < 0 && couponList.get(i).getCno()!=1) {
+					available.add(couponList.get(i));
+				}  
+			}
+			
+			model.addAttribute("availableList", available);
+			if(success != null) {
+				model.addAttribute("success", "successs");
+			}
+			if(fail != null) {
+				model.addAttribute("fail", "fail");
+			}
+			if(hasCoupon != null) {
+				model.addAttribute("hasCoupon", "hasCoupon");
+			}
+			
+			
+		 return "/user/coupon/tourlandCoupon";
+	 }
+	 
+	 //쿠폰 다운 받기 클릭했을 때 
+	 @RequestMapping(value="getCoupon", method = RequestMethod.GET)
+	 public String getCoupon(String cno, Model model, HttpSession session) throws Exception {
+		
+		 if(session.getAttribute("Auth")!=null) {
+				//세션에 로그인 정보가 있으면 해당 고객 불러오기
+				UserVO vo = (UserVO) session.getAttribute("Auth");
+				
+				List<Integer> couponCheck = couponService.userHasACouponOrNot(vo.getUserno(), Integer.parseInt(cno));
+				//가지고 있으면 반려
+				if(couponCheck.size()>0) {
+					
+					model.addAttribute("hasCoupon", "hasCoupon");
+					 return "redirect:/customer/userpageCoupon";
+				}
+				//안 가지고 있으면 insert 후 리스트로 돌아가기
+				else {
+					couponService.addCouponToUser(vo.getUserno(), Integer.parseInt(cno));
+					model.addAttribute("success", "success");
+					 return "redirect:/customer/userpageCoupon";
+				}
+				
+				
+		 }else {
+			 model.addAttribute("fail", "fail");
+			 return "redirect:/customer/userpageCoupon";
+		 }
+			
+		
+	 }
 	
 	//게시판 ---------------------------------------------------------------------------------------
 	
 	//공지사항
 	@RequestMapping(value="tourlandBoardNotice", method=RequestMethod.GET)
 	public String tourlandBoardNotice(SearchCriteria cri, Model model) throws Exception { 
-		List<NoticeVO> noticeList = noticeService.noticeList(cri);
+		List<NoticeVO> noticeList =  noticeService.noticeList(cri);
+		
+		if(noticeList.size()!=0) {
+			List<NoticeVO> noticeNoFixedList = new ArrayList<>();
+			List<NoticeVO> noticeFixedList = new ArrayList<>();
+			
+			for(int i=0; i<noticeList.size(); i++) {
+				if(noticeList.get(i).getFixed()==0) {
+					noticeNoFixedList.add(noticeList.get(i));
+				}else {
+					noticeFixedList.add(noticeList.get(i));
+				}
+			}
+			
+			model.addAttribute("noticeNoFixedList", noticeNoFixedList);
+			model.addAttribute("noticeFixedList", noticeFixedList);
+		}else {
+			model.addAttribute("noticeList", noticeList);
+		}
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(noticeService.totalCountNotice(cri));
@@ -1087,15 +1646,15 @@ public class CustomerController {
 			model.addAttribute("custBoardVO", vo);
 			model.addAttribute("cri", cri);
 			model.addAttribute("pageMaker", pageMaker);
-
 		  }
 	  if(where.contentEquals("planBoard")) {
-		 List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
+		  PlanBoardVO vo = planBoardService.readByNoPlanBoard(no);
+		 //List<PlanBoardVO> list = planBoardService.listSearchCriteriaPlanBoard(cri);
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
 			pageMaker.setTotalCount(planBoardService.totalSearchCountPlanBoard(cri) < 10 ? 10 : planBoardService.totalSearchCountPlanBoard(cri));
 			model.addAttribute("no",no);
-			model.addAttribute("list", list);
+			model.addAttribute("planBoardVO", vo);
 			model.addAttribute("pageMaker", pageMaker);
 			model.addAttribute("cri", cri); 
 	      }
@@ -1106,7 +1665,7 @@ public class CustomerController {
 	
 	@RequestMapping(value = "tourlandCustBoardDetail", method = RequestMethod.GET)
 	public String tourlandCustBoardDetail(int no, SearchCriteria cri, Model model) throws Exception {
-		System.out.println("EnEm");
+		
 		CustBoardVO vo = custBoardService.readByNoCustBoard(no);
 		model.addAttribute("custBoardVO", vo);
 		model.addAttribute("cri", cri);
@@ -1171,7 +1730,6 @@ public class CustomerController {
 		model.addAttribute("cri", cri);
 		return "/user/board/tourlandPlanBoardDetail";
 	}
-
 	
 	//Footer
 	//찾아 오시는 길
@@ -1207,7 +1765,6 @@ public class CustomerController {
 		int jejulistCount = productService.totalCountBySearchProductDomestic(cri);
 		model.addAttribute("jejucount",jejulistCount);
 		
-		
         model.addAttribute("searchkeyword",cri.getKeyword());
 		String keyword = cri.getKeyword();
 		String keyword2 = cri.getKeyword2();
@@ -1220,17 +1777,14 @@ public class CustomerController {
 		if(keyword3 !=null) {
 		  if(keyword3.contentEquals("forsearchchina")) {
 				cri.setPerPageNum(10); //다시 리스트 10개로 세팅
-				model.addAttribute("keyword",keyword);
+	            model.addAttribute("keyword",keyword);
 				if(keyword2 != null) {
-					model.addAttribute("keyword2",keyword2);
-				}
 				model.addAttribute("keyword2",keyword2);
-				model.addAttribute("keyword3","searchforchina");
-				PageMaker pageMaker = new PageMaker();
+   		    	}
+                model.addAttribute("keyword3",keyword3);
+		    	PageMaker pageMaker = new PageMaker();
 				pageMaker.setCri(cri);
 				pageMaker.setTotalCount(chinalistCount);
-				System.out.println("페이지 메이커"+pageMaker);
-				model.addAttribute("pageMaker", pageMaker);
 			       return "redirect:/customer/tourlandProductChinaList?searchType=";
 		   }else if(keyword3.contentEquals("forsearchjapan")) {
 				cri.setPerPageNum(10); //다시 리스트 10개로 세팅
@@ -1238,7 +1792,11 @@ public class CustomerController {
 				if(keyword2 != null) {
 					model.addAttribute("keyword2",keyword2);
 				}
-				model.addAttribute("keyword2",keyword2);
+				
+				model.addAttribute("keyword3",keyword3);
+			    PageMaker pageMaker = new PageMaker();
+				pageMaker.setCri(cri);
+				pageMaker.setTotalCount(japanlistCount);
 				   return "redirect:/customer/tourlandProductJPList?searchType=";
 			}else if(keyword3.contentEquals("forsearchjeju")) {
 				cri.setPerPageNum(10); //다시 리스트 10개로 세팅
@@ -1246,7 +1804,10 @@ public class CustomerController {
 				if(keyword2 != null) {
 					model.addAttribute("keyword2",keyword2);
 				}
-				model.addAttribute("keyword2",keyword2);
+				model.addAttribute("keyword3",keyword3);
+		    	PageMaker pageMaker = new PageMaker();
+				pageMaker.setCri(cri);
+				pageMaker.setTotalCount(jejulistCount);
 				   return "redirect:/customer/tourlandProductKRList?searchType=";
 			  }
 		}

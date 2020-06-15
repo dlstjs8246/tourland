@@ -18,4 +18,6 @@ public interface PopupDAO {
 
 	//팝업 리스트 부르기 
     public PopupVO setPopup(String position) throws Exception;
+    
+    public List<PopupVO> setPopupList(String position) throws Exception;
 }

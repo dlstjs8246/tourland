@@ -53,6 +53,7 @@ import com.yi.tourland.domain.mng.PlanBoardVO;
 import com.yi.tourland.domain.mng.PopupVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
 import com.yi.tourland.domain.mng.UserVO;
 import com.yi.tourland.service.mng.BannerService;
@@ -68,6 +69,7 @@ import com.yi.tourland.service.mng.PlanBoardService;
 import com.yi.tourland.service.mng.PopupService;
 import com.yi.tourland.service.mng.ProductService;
 import com.yi.tourland.service.mng.RentcarService;
+import com.yi.tourland.service.mng.ReservationService;
 import com.yi.tourland.service.mng.TourService;
 import com.yi.tourland.service.mng.UserService;
 import com.yi.tourland.util.UploadFileUtils;
@@ -85,7 +87,7 @@ public class ManagerController {
 	 
 	@Resource(name = "uploadPathProduct")
 	private String uploadPathProduct; // c:/tourland/upload/product
-	 
+
 	@Autowired
 	private TourService tourService;
 	@Autowired
@@ -129,12 +131,10 @@ public class ManagerController {
 
 	@Autowired
 	PlanBoardService planBoardService;
+	
+	@Autowired
+	private ReservationService reservationService;
 
-	// 예약관리
-	@RequestMapping(value = "reservMngList", method = RequestMethod.GET)
-	public String reservMngList(SearchCriteria cri, Model model) {
-		return "/manager/reservation/reservationMngList";
-	}
 
 	// 항공 관리
 	@RequestMapping(value = "flightMngList", method = RequestMethod.GET)
@@ -154,7 +154,8 @@ public class ManagerController {
 	public String addFlightForm(Model model) throws Exception {
 		SearchCriteria cri = new SearchCriteria();
 		//항공기번호 세팅
-		int dbNo = flightService.totalCountAirplane(cri);
+		int dbNo = flightService.totalAllCountAirplane();
+	
 		//출발편 번호
 		int no = dbNo +1;
 		//도착편 번호
@@ -169,9 +170,9 @@ public class ManagerController {
 	public String addFlightResult(DataListVO list) throws Exception {
 		for(AirplaneVO a : list.getList()) {
 			flightService.addAirplane(a);
-		}
+		} 
 		
-		return "redirect:/flightMngList";
+		return "redirect:/manager/flightMngList";
 	}
 	
 	// 항공 세부 페이지
@@ -251,7 +252,7 @@ public class ManagerController {
 		flightService.removeAirplane(d_no);
 		flightService.removeAirplane(r_no);
 		model.addAttribute("cri", cri);
-		return "redirect:/flightMngList";
+		return "redirect:/manager/flightMngList";
 	}
 	
 	// 항공 수정
@@ -463,7 +464,7 @@ public class ManagerController {
 	public String employeeRegisterPost(EmployeeVO vo) throws Exception {
 
 		employeeService.insertEmployee(vo);
-		return "redirect:/empMngList/0";
+		return "redirect:/manager/empMngList/0";
 	}
 
 	// 아이디 존재유무 체크
@@ -497,8 +498,6 @@ public class ManagerController {
 		// System.out.println(vo); //퇴사사원 null로 찍혀서 mapper수정
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
-		session.setAttribute("Retired", empretired);
-		System.out.println("================="+empretired);
 		return "/manager/employee/empDetailForm";
 	}
 
@@ -507,20 +506,11 @@ public class ManagerController {
 	public String employeeUpdate(EmployeeVO vo, SearchCriteria cri, Model model,
 			@PathVariable("empretired") int empretired, HttpSession session) throws Exception {
 		employeeService.updateEmployee(vo);
-		// System.out.println(vo);
+		model.addAttribute("success", "수정이 완료되었습니다.");
 		model.addAttribute("empVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("empretired", empretired);
-//		session.setAttribute("Retired", empretired);
-//		System.out.println("================="+empretired);
-//		session.setAttribute("Page", cri.getPage());
-//		System.out.println("================="+cri.getPage());
-//		session.setAttribute("Search", cri.getSearchType());
-//		System.out.println("================="+cri.getSearchType());
-//		session.setAttribute("Keyword", cri.getKeyword());
-//		System.out.println("================="+cri.getKeyword());
-		return "redirect:/manager/employeeDetail/" + empretired + "?empno=" + vo.getEmpno() + "&page=" + cri.getPage()
-				+ "&searchType=" + cri.getSearchType() + "&keyword=" + cri.getKeyword();
+		return "/manager/employee/empDetailForm";
 	}
 
 	// 사원 논리 삭제(퇴사처리) 및 완전 삭제(정보삭제)
@@ -528,15 +518,17 @@ public class ManagerController {
 	public String employeeDelete(SearchCriteria cri, Model model, @PathVariable("empretired") int empretired,
 			@PathVariable("empno") int empno) throws Exception {
 		EmployeeVO vo = employeeService.readByNoEmployee(empno);
+		
 		// System.out.println(vo);
-		if (empretired == 0) { // 근무사원이라면
+		if (vo.getEmpretired() == 0) { // 근무사원이라면
 			vo.setEmpretired(1); // 퇴사 사원 처리
 			employeeService.updateEmployee(vo);
+
 		} else {
 			employeeService.deleteEmployee(vo.getEmpno()); // 완전 삭제
 		}
 
-		return "redirect:/empMngList/" + empretired + "?page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
+		return "redirect:/manager/empMngList/" + empretired + "?page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
 				+ "&keyword=" + cri.getKeyword();
 	}
 
@@ -548,13 +540,13 @@ public class ManagerController {
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(userService.totalSearchCountUser(cri, usersecess));
-
 		model.addAttribute("cri", cri);
 		model.addAttribute("list", userList);
 		model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("usersecess", usersecess);
-
+		
 		// 같은 페이지를 공유하기에 버튼이름 변경을 위한 model값 선언
+		
 		if (usersecess == 1) { // 탈퇴회원일 경우
 			model.addAttribute("btnName", "회원 리스트");
 		} else {
@@ -594,7 +586,10 @@ public class ManagerController {
 	@RequestMapping(value = "userDetailForm/{usersecess}", method = RequestMethod.GET)
 	public String userDetailForm(int no, SearchCriteria cri, Model model, @PathVariable("usersecess") int usersecess) throws Exception {
 		UserVO vo = userService.readByNoUser(no);
-		System.out.println(vo);
+		//System.out.println(vo);
+		List<CouponVO> userCouponList = couponService.userCouponList(vo);
+		//System.out.println(userCouponList);
+		model.addAttribute("couponList",userCouponList);
 		model.addAttribute("userVO", vo);
 		model.addAttribute("cri", cri);
 		model.addAttribute("usersecess", usersecess);
@@ -605,14 +600,87 @@ public class ManagerController {
 	public String userRegisterPost(UserVO vo) throws Exception {
         System.out.println(vo);
 		userService.insertUser(vo);
-		return "redirect:/userMngList/0";
+		return "redirect:/manager/userMngList/0";
 	}
 
 	// 예약관리
 	@RequestMapping(value = "reservationMgnList", method = RequestMethod.GET)
-	public String reservationMgnList() {
-		return "/manager/reservation/reservationMngList";
+	public String reservationMgnList(SearchCriteria cri,Model model, String confirmSuccess) throws Exception {
+	
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
+		List<ReservationVO> list = reservationService.listReservationForMng(cri);
+		if(list.size()==0) {
+			model.addAttribute("noList", "noList");
+			return "/manager/reservation/reservationMngList";
+		}else {
+			for(int i =0; i<list.size(); i++) {
+				System.out.println(list.get(i).getProduct().getAir());
+				UserVO user = userService.readByNoUser(list.get(i).getUserno().getUserno());
+				list.get(i).getUserno().setUsername(user.getUsername());
+				list.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
+				list.get(i).getUserno().setUserpassport(user.getUserpassport());
+			}  
+			
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(reservationService.totalSearchReservationCount(cri));
+			model.addAttribute("yesList", "yesList");
+			model.addAttribute("list",list);
+			model.addAttribute("pageMaker",pageMaker);
+			model.addAttribute("confirmSuccess", confirmSuccess);
+			return "/manager/reservation/reservationMngList";
+		}
+	
+	
 	}
+	
+	//예약 상세 모달 Ajax
+	@ResponseBody
+	@RequestMapping(value = "reservationDetail", method = RequestMethod.GET)
+	public ResponseEntity<Map<String,Object>> reservationDetail(String userno, String pno,SearchCriteria cri,Model model) throws Exception {
+		
+		ResponseEntity<Map<String,Object>> entity = null;
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			UserVO vo = new UserVO();
+			vo.setUserno(Integer.parseInt(userno));
+			List<ReservationVO> rs = reservationService.listReservationForModal(userno, pno);
+			 
+			for(int i =0; i<rs.size(); i++) {
+				UserVO user = userService.readByNoUser(Integer.parseInt(userno));
+				rs.get(i).getUserno().setUserno(Integer.parseInt(userno));
+				rs.get(i).getUserno().setUsername(user.getUsername());
+				rs.get(i).getUserno().setUserbirth(fm.format(user.getUserbirth()));
+				rs.get(i).getUserno().setUserpassport(user.getUserpassport());
+				rs.get(i).getUserno().setUserid(user.getUserid());
+			
+			}
+			
+			Map<String,Object> map = new HashMap<>();
+			map.put("list", rs);
+			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.OK);
+		}catch(Exception e) {
+			e.printStackTrace();
+			Map<String, Object> map = new HashMap<>();
+			map.put("null", null);
+			entity = new ResponseEntity<Map<String,Object>>(map, HttpStatus.BAD_REQUEST);
+		}
+		
+		return entity;
+	}
+	//예약 확정
+	@RequestMapping(value="reservationConfirm", method = RequestMethod.GET)
+	public String reservationConfirm(String rno, Model model) throws Exception { 
+		ReservationVO rs = new ReservationVO();
+		rs.setNo(Integer.parseInt(rno));
+		rs.setRstatus("3");
+		reservationService.updateReservation(rs);
+		
+		model.addAttribute("confirmSuccess", "confirmSuccess");
+		
+		return "redirect:/manager/reservationMgnList";
+	}
+	
 
 	// 상품관리
 	@RequestMapping(value = "addProductForm", method = RequestMethod.GET)
@@ -678,7 +746,7 @@ public class ManagerController {
 		String bigSizePic = savedName.substring(0, 12) + savedName.substring(14);
 		vo.setPic(bigSizePic.replaceAll(" ", "_"));
 		productService.insertProduct(vo);
-		return "redirect:/productMngList";
+		return "redirect:/manager/productMngList";
 	}
 	
 	@RequestMapping(value = "productMngList", method = RequestMethod.GET)
@@ -697,7 +765,7 @@ public class ManagerController {
 		vo.setPno(no);
 		vo = productService.productByNo(vo);
 		model.addAttribute("vo",vo);
-		model.addAttribute("cri",cri);
+		model.addAttribute("cri",cri); 
 		return "manager/product/productDetail";
 	}
 	@RequestMapping(value = "productModify", method = RequestMethod.GET)
@@ -797,7 +865,7 @@ public class ManagerController {
 		}
 		productService.deleteProduct(vo);
 		model.addAttribute("cri",cri);
-		return "redirect:/productMngList";
+		return "redirect:/manager/productMngList";
 	}
 
 	@ResponseBody
@@ -988,8 +1056,9 @@ public class ManagerController {
 
 	@RequestMapping(value = "tourRegister", method = RequestMethod.POST)
 	public String tourRegisterPost(TourVO vo, Model model) throws SQLException {
+		vo.setPdiv(false);
 		tourService.insertTour(vo);
-		return "redirect:/tourMngList";
+		return "redirect:/manager/tourMngList";
 	}
 
 	@RequestMapping(value = "tourDetail", method = RequestMethod.GET)
@@ -1010,15 +1079,16 @@ public class ManagerController {
 
 	@RequestMapping(value = "tourModify", method = RequestMethod.POST)
 	public String tourModifyPost(TourVO vo, SearchCriteria cri) throws SQLException {
+		vo.setPdiv(false);
 		tourService.updateTour(vo);
-		return "redirect:/tourDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
+		return "redirect:/manager/tourDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
 				+ "&searchType2=" + cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "tourDelete", method = RequestMethod.GET)
 	public String tourDelete(TourVO vo, SearchCriteria cri, Model model) throws SQLException {
 		tourService.deleteTour(vo);
-		return "redirect:/tourMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
+		return "redirect:/manager/tourMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 				+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 	}
 
@@ -1030,12 +1100,8 @@ public class ManagerController {
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(rentcarService.totalSearchCountRentcar(cri));
-		
-	//	System.out.println(rentcarService.totalSearchCountRentcar(cri));
-		System.out.println("리스트 사이즈"+rentcarList.size());
+
 		for(RentcarVO rentcar: rentcarList) {
-			  System.out.println("렌트"+rentcar.getRentddate());
-			  System.out.println("리턴"+rentcar.getReturndate());
 			  
 		}
 		model.addAttribute("cri", cri);
@@ -1069,8 +1135,9 @@ public class ManagerController {
 	
 	@RequestMapping(value = "rentcarRegister", method = RequestMethod.POST)
 	public String rentcarRegisterPost(RentcarVO vo, Model model) throws Exception {
-		  rentcarService.insertRentcar(vo);
-		return "redirect:/rentcarMngList";
+		vo.setPdiv(0);  
+		rentcarService.insertRentcar(vo);
+		return "redirect:/manager/rentcarMngList";
 	}
 	
 	//렌트카 상세 페이지
@@ -1087,12 +1154,12 @@ public class ManagerController {
 	//렌트카 정보 수정
 	@RequestMapping(value = "rentcarDetailFormUpdate", method = RequestMethod.POST)
 	public String rentcarDetailFormUpdate(RentcarVO vo, SearchCriteria cri, Model model) throws Exception {
-		System.out.println(vo);
+
 		rentcarService.updateRentcar(vo);
 
 		model.addAttribute("rentcarVO", vo);
 		model.addAttribute("cri", cri);
-		return "redirect:/rentcarDetailForm?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType="
+		return "redirect:/manager/rentcarDetailForm?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType="
 				+ cri.getSearchType() + "&keyword=" + cri.getKeyword();
 	}
 	
@@ -1100,7 +1167,7 @@ public class ManagerController {
 		@RequestMapping(value = "delRentcar", method = RequestMethod.GET)
 		public String delRentcar(int no, SearchCriteria cri) throws Exception{
 			rentcarService.deleteRentcar(no);
-			return "redirect:/rentcarMngList?page="+cri.getPage()+"&searchType="+cri.getSearchType()+"&keyword="+cri.getKeyword();
+			return "redirect:/manager/rentcarMngList?page="+cri.getPage()+"&searchType="+cri.getSearchType()+"&keyword="+cri.getKeyword();
 		}
 
 // 이벤트관리  -------------------------------------------------------------------------------
@@ -1142,7 +1209,7 @@ public class ManagerController {
 
 			vo.setPic(bigSizePic.replaceAll(" ", "_"));
 			eventService.insertEvent(vo);
-			return "redirect:/eventMngList";
+			return "redirect:/manager/eventMngList";
 		}
 	 @RequestMapping(value = "eventDetailForm", method = RequestMethod.GET)
 		public String eventDetailForm(int no, SearchCriteria cri, Model model) throws Exception {
@@ -1177,7 +1244,7 @@ public class ManagerController {
 			}
 			eventService.updateEvent(vo);
 
-			return "redirect:/eventDetailForm?no=" + vo.getNo();
+			return "redirect:/manager/eventDetailForm?no=" + vo.getNo();
 
 		}
 	 //이벤트 삭제	
@@ -1197,7 +1264,7 @@ public class ManagerController {
 
 				eventService.deleteEvent(no);
 
-				return "redirect:/eventMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&keyword="
+				return "redirect:/manager/eventMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&keyword="
 						+ cri.getKeyword();
 			}
 // 게시판관리 -------------------------------------------------------------------------------------------------------------------------
@@ -1223,7 +1290,7 @@ public class ManagerController {
 	@RequestMapping(value = "FAQRegister", method = RequestMethod.POST)
 	public String FAQResgiterPost(FaqVO vo) throws SQLException {
 		faqService.insertFAQ(vo);
-		return "redirect:/FAQMngList";
+		return "redirect:/manager/FAQMngList";
 	}
 
 	@RequestMapping(value = "FAQDetail", method = RequestMethod.GET)
@@ -1245,14 +1312,14 @@ public class ManagerController {
 	@RequestMapping(value = "FAQModify", method = RequestMethod.POST)
 	public String FAQModifyPost(FaqVO vo, SearchCriteria cri) throws SQLException {
 		faqService.updateFAQ(vo);
-		return "redirect:/FAQDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
+		return "redirect:/manager/FAQDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType=" + cri.getSearchType()
 				+ "&searchType2=" + cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "FAQDelete", method = RequestMethod.GET)
 	public String FAQDelete(FaqVO vo, SearchCriteria cri, Model model) throws SQLException {
 		faqService.deleteFAQ(vo);
-		return "redirect:/FAQMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
+		return "redirect:/manager/FAQMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 				+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
 	}
 
@@ -1308,7 +1375,7 @@ public class ManagerController {
 
 		custBoardService.insertCustBoard(vo);
 
-		return "redirect:/custBoardDetail?no=" + vo.getNo();
+		return "redirect:/manager/custBoardDetail?no=" + vo.getNo();
 	}
 
 	// 고객의 소리 업데이트- 고객글을 함부로 업데이트 하면 안되기 때문에 테스트용에 가까움
@@ -1319,7 +1386,7 @@ public class ManagerController {
 
 		model.addAttribute("custBoardVO", vo);
 		model.addAttribute("cri", cri);
-		return "redirect:/custBoardDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType="
+		return "redirect:/manager/custBoardDetail?no=" + vo.getNo() + "&page=" + cri.getPage() + "&searchType="
 				+ cri.getSearchType() + "&keyword=" + cri.getKeyword();
 	}
 
@@ -1327,7 +1394,7 @@ public class ManagerController {
 	@RequestMapping(value = "removeCustBoard", method = RequestMethod.GET)
 	public String removeCustBoard(int no, SearchCriteria cri) throws Exception {
 		custBoardService.deleteCustBoard(no);
-		return "redirect:/custBoardMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&keyword="
+		return "redirect:/manager/custBoardMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&keyword="
 				+ cri.getKeyword();
 	}
 
@@ -1382,7 +1449,7 @@ public class ManagerController {
 
 		vo.setPic(bigSizePic.replaceAll(" ", "_"));
 		popupService.insertPopup(vo);
-		return "redirect:/popupMngList";
+		return "redirect:/manager/popupMngList";
 	}
 	
 	//팝업 디테일 조회
@@ -1420,7 +1487,7 @@ public class ManagerController {
 		}
 		popupService.updatePopup(vo);
 
-		return "redirect:/popupDetailForm?no=" + vo.getNo();
+		return "redirect:/manager/popupDetailForm?no=" + vo.getNo();
 
 	}
 	//리스트에서 팝업 미리보기
@@ -1510,7 +1577,7 @@ public class ManagerController {
 
 			popupService.deletePopup(no);
 
-			return "redirect:/popupMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&keyword="
+			return "redirect:/manager/popupMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&keyword="
 					+ cri.getKeyword();
 		}
 
@@ -1571,13 +1638,13 @@ public class ManagerController {
 
 		vo.setPic(bigSizePic.replaceAll(" ", "_"));
 		bannerService.insertBanner(vo);
-		return "redirect:/bannerMngList";
+		return "redirect:/manager/bannerMngList";
 	}
 
 	// c드라이브에 있는 이미지에 대한 데이터를 직접 가져와야한다. ajax용으로 처리됨
 	@ResponseBody
 	@RequestMapping(value = "displayFile/{whichOne}", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> displayFile(String filename,@PathVariable("whichOne") String choice) {
+	public ResponseEntity<byte[]> displayFile(String filename,@PathVariable("whichOne") String choice, HttpServletRequest request) {
 		ResponseEntity<byte[]> entity = null;
         String path = null;
         
@@ -1597,9 +1664,9 @@ public class ManagerController {
         }
         
         if(choice.equals("practice")) {
-        	path= "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
+        	path= "/tourland/resources/images/practice";
         }
-		// System.out.println("displayFile-----------"+ filename);
+//		System.out.println("displayFile-----------"+ filename);
 		InputStream in = null;
 		try {
 			
@@ -1668,7 +1735,7 @@ public class ManagerController {
 		}
 		bannerService.updateBanner(vo);
 
-		return "redirect:/bannerDetailForm?no=" + vo.getNo();
+		return "redirect:/manager/bannerDetailForm?no=" + vo.getNo();
 
 	}
 
@@ -1689,7 +1756,7 @@ public class ManagerController {
 
 		bannerService.deleteBanner(vo.getNo());
 
-		return "redirect:/bannerMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&keyword="
+		return "redirect:/manager/bannerMngList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&keyword="
 				+ cri.getKeyword();
 	}
 
@@ -1765,11 +1832,30 @@ public class ManagerController {
 
 	@RequestMapping(value = "noticeMngList", method = RequestMethod.GET)
 	public String noticeMngList(SearchCriteria cri, Model model) throws Exception {
-		List<NoticeVO> noticeList = noticeService.noticeList(cri);
+		List<NoticeVO> noticeList =  noticeService.noticeList(cri);
+		
+		if(noticeList.size()!=0) {
+			List<NoticeVO> noticeNoFixedList = new ArrayList<>();
+			List<NoticeVO> noticeFixedList = new ArrayList<>();
+			
+			for(int i=0; i<noticeList.size(); i++) {
+				if(noticeList.get(i).getFixed()==0) {
+					noticeNoFixedList.add(noticeList.get(i));
+				}else {
+					noticeFixedList.add(noticeList.get(i));
+				}
+			}
+			
+			model.addAttribute("noticeNoFixedList", noticeNoFixedList);
+			model.addAttribute("noticeFixedList", noticeFixedList);
+		}else {
+			model.addAttribute("noticeList", noticeList);
+		}
+		
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCri(cri);
 		pageMaker.setTotalCount(noticeService.totalCountNotice(cri));
-		model.addAttribute("noticeList", noticeList);
+		
 		model.addAttribute("pageMaker", pageMaker);
 		model.addAttribute("cri", cri);
 		return "/manager/notice/noticeMngList";
@@ -1788,9 +1874,9 @@ public class ManagerController {
 	// 공지사항 추가
 	@RequestMapping(value = "addNoticeForm", method = RequestMethod.POST)
 	public String addNoticeResult(NoticeVO notice, Model model) throws Exception {
-		System.out.println(notice);
+		System.out.println(notice.getFixed());
 		noticeService.addNotice(notice);
-		return "redirect:/noticeMngList";
+		return "redirect:/manager/noticeMngList";
 	}
 
 	// 공지사항 상세페이지
@@ -1807,7 +1893,7 @@ public class ManagerController {
 	public String removeNotice(int no, SearchCriteria cri, Model model) throws Exception {
 		noticeService.removeNotice(no);
 		model.addAttribute("cri", cri);
-		return "redirect:/noticeMngList";
+		return "redirect:/manager/noticeMngList";
 	}
 
 	// 공지사항 수정
@@ -1823,7 +1909,7 @@ public class ManagerController {
 	public String editNoticePOST(NoticeVO notice, Model model) throws Exception {
 		System.out.println(notice);
 		noticeService.editNotice(notice);
-		return "redirect:/noticeDetail?no=" + notice.getNo();
+		return "redirect:/manager/noticeDetail?no=" + notice.getNo();
 	}
 
 	// 쿠폰관리
@@ -1978,7 +2064,7 @@ public class ManagerController {
 	@RequestMapping(value = "editCoupon", method = RequestMethod.POST)
 	public String editCouponPOST(CouponVO coupon, Model model) throws Exception {
 		couponService.editCoupon(coupon);
-		return "redirect:/couponDetail?cno=" + coupon.getCno();
+		return "redirect:/manager/couponDetail?cno=" + coupon.getCno();
 	}
 
 	//호텔관리
@@ -2003,8 +2089,10 @@ public class ManagerController {
 
 	@RequestMapping(value = "hotelRegister", method = RequestMethod.POST)
 	public String hotelResgiterPost(HotelVO vo) throws Exception {
+		vo.setTotalcapacity(vo.getRoomcapacity() * vo.getCapacity());
+		vo.setPdiv(false);
 		hotelService.insertHotel(vo);
-		return "redirect:/hotelMngList";
+		return "redirect:/manager/hotelMngList";
 	}
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.GET)
@@ -2017,14 +2105,15 @@ public class ManagerController {
 
 	@RequestMapping(value = "hotelModify", method = RequestMethod.POST)
 	public String hotelModifyPost(HotelVO vo, SearchCriteria cri) throws Exception {
+		vo.setTotalcapacity(vo.getRoomcapacity() * vo.getCapacity());
 		hotelService.updateHotel(vo);
-		return "redirect:/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/manager/hotelMngList?page="+cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 
 	@RequestMapping(value = "hotelDelete", method = RequestMethod.GET)
 	public String hotelDelete(HotelVO vo, SearchCriteria cri) throws Exception {
 		hotelService.deleteHotel(vo);
-		return "redirect:/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
+		return "redirect:/manager/hotelMngList?page=" + cri.getPage() +"&searchType=" + cri.getSearchType()+"&keyword=" + cri.getKeyword();
 	}
 	
 	// 상품 문의사항
@@ -2049,10 +2138,7 @@ public class ManagerController {
 			return "/manager/board/planBoardDetail";
 		}
 
-		//달려져있는 답변내용 수정,삭제 하는 페이지
-
 		//답변내용 달기
-
 		@RequestMapping(value = "planBoardModify", produces = "application/text; charset=utf8", method = RequestMethod.GET)
 		public String planBoardModify(PlanBoardVO vo, SearchCriteria cri, Model model,int no, String respond) throws Exception {
 			vo = planBoardService.readByNoPlanBoard(no);
@@ -2091,34 +2177,36 @@ public class ManagerController {
 			planBoardService.deletePlanBoard(vo);
 			return "redirect:/planBoardList?page=" + cri.getPage() + "&searchType=" + cri.getSearchType() + "&searchType2="
 					+ cri.getSearchType2() + "&keyword=" + cri.getKeyword();
-		}
-
-		
+		}		
 		
 		//결제 관리
-		
 		@RequestMapping(value = "paymentList", method = RequestMethod.GET)
 		public String paymentList(SearchCriteria cri, Model model) throws Exception {
+			List<ReservationVO> list = userService.listSearchCriteriaPaymentUser(cri);
+			for(ReservationVO vo : list) System.out.println(vo);
+			PageMaker pageMaker = new PageMaker();
+			pageMaker.setCri(cri);
+			pageMaker.setTotalCount(userService.totalSearchCountPaymentUser(cri));	
+			model.addAttribute("list", list);
+			model.addAttribute("cri", cri);
+			model.addAttribute("pageMaker", pageMaker);
 			return "/manager/payment/paymentList";
 		}
-		
 		
 	//ckEditor 이미지 업로드용
 		@ResponseBody
 		@RequestMapping(value = "imageUpload", method = RequestMethod.POST)
 		public String imageUpload(HttpServletRequest req, HttpServletResponse resp, 
                 MultipartHttpServletRequest multiFile, Model model,String ckEditorFuncNum) throws Exception {
-			
 			JsonObject json = new JsonObject();
 			PrintWriter printWriter = null;
-			OutputStream out = null;
 			MultipartFile file = multiFile.getFile("upload");
-			
-			if(file !=null && file.getSize() > 0) {
+			if(file !=null && file.getSize() > 0) { 
          try {
 			printWriter = resp.getWriter();
 			resp.setContentType("text/html");
-			String serverPath =req.getContextPath()+"/displayFile/practice?filename=";
+			String serverPath =req.getContextPath()+"/manager/displayFile/practice?filename=";
+			//String serverPath ="localhost:8080/tourland/displayFile/practice?filename=";
 			String serverPath2 =req.getContextPath()+"/resources/images/practice";
 			String savedName = UploadFileUtils.uploadFile(serverPath2, file.getOriginalFilename().replaceAll(" ", "_"),
 			file.getBytes());
@@ -2139,6 +2227,20 @@ public class ManagerController {
 			}
           return null;
 		}
-
-	
+		
+		//관리자 메인화면에 나올 통계
+		@RequestMapping(value="statistics", method=RequestMethod.GET)
+		public String mainStatistics(Model model) throws Exception { 
+			/*
+			 * List<StatisticVO> jejuList = statisticService.searchTotalPriceJejuByMonth();
+			 * List<StatisticVO> dokyoList =
+			 * statisticService.searchTotalPriceDokyoByMonth(); List<StatisticVO>
+			 * beijingList = statisticService.searchTotalPriceBeijingByMonth();
+			 * List<StatisticVO> list2 = statisticService.searchTotalCountByLocation();
+			 * model.addAttribute("jeju",jejuList); model.addAttribute("dokyo",dokyoList);
+			 * model.addAttribute("beijing",beijingList); model.addAttribute("list2",list2);
+			 */
+			return "/manager/main/statistics";
+		}
+		
 }

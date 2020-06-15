@@ -142,7 +142,7 @@
 				<div class="box-header">
 					<h3 class="box-title">사원 정보 조회</h3> 
 				</div>
-				<form role="form" action="${pageContext.request.contextPath}/manager/employeeUpdate/${empretired }?empno=${Auth.empno}&page=${Page}&searchType=${Search}&keyword=${Keyword}" method="post" id="detaiLForm">
+				<form role="form" action="${pageContext.request.contextPath}/manager/employeeUpdate/${empretired}" method="post" id="detaiLForm" autocomplete="off">
 					<div class="box-body">
 					    <!-- <input type="hidden" value="" id="forSubmit"> -->
 					    <%-- <input type="hidden" value="${empretired }" name="empretired"> --%>
@@ -169,11 +169,21 @@
 							<label>주소</label>
 							<input type="text" name="empaddr" required="required" value="${empVO.empaddr}" >
 						</div>
-						<div class="form-group">
-							<label>권한</label>
-							<input type="text" name="empauth" required="required"  placeholder=" 일반사원은 0" value="${empVO.empauth}">
-							<span class="errorMsg">0또는 1을 넣어주세요 일반 사원은 0</span>
-						</div>
+						<c:if test="${Auth.empauth==1}">
+							<div class="form-group">
+								<label>권한</label>
+								<input type="text" name="empauth" required="required"  placeholder=" 일반사원은 0" value="${empVO.empauth}">
+								<span class="errorMsg">0또는 1을 넣어주세요 일반 사원은 0</span>
+							</div>
+						</c:if>
+						<c:if test="${Auth.empauth==0}">
+							<div class="form-group">
+								<label>권한</label>
+								<input type="text" name="empauth" required="required"  placeholder=" 일반사원은 0" value="${empVO.empauth}" readonly="readonly" style="background:lavender;">
+								<span class="errorMsg">0또는 1을 넣어주세요 일반 사원은 0</span>
+							</div>
+						</c:if>
+						
 						<div class="form-group">
 							<label>아이디</label> 
 							<input type="text" name="empid" readonly="readonly"  placeholder=" 영문,숫자 포함 5-12자리" value="${empVO.empid}" style="background:lavender;">
@@ -182,9 +192,9 @@
 							<span class="errorMsg">중복되는 아이디 입니다. 다른 아이디를 입력해주세요.</span>
 						</div>
 						<div class="form-group">
-							<label>비밀번호</label>
+							<!-- <label>비밀번호</label>
 							<input type="text" name="emppass" placeholder="기존 비밀번호 입력 필요" >
-							<span class="errorMsg">비밀번호가 일치하지 않습니다.</span> <!-- 관리자일 경우 프리패스로 만들 것  -->
+							<span class="errorMsg">비밀번호가 일치하지 않습니다.</span> 관리자일 경우 프리패스로 만들 것  -->
 						</div>
 						<c:if test="${Auth.empauth==1}">
 							<div class="box-footer">
@@ -199,7 +209,11 @@
 								<button type="submit" class="btn btn-primary" style="${empretired== 0?'visibility:visible;':'visibility:hidden;'}">수정</button>
 							</div>
 						</c:if>
-					
+					<c:if test="${success!=null }">
+						<script>
+							alert("${success}");
+						</script>
+					</c:if>
 					</div>
 				</form>
 			</div>

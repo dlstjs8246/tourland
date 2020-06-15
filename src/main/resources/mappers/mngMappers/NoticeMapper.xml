@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mappers.mngMappers.NoticeMapper">
 	<insert id="addNotice">
-		insert into notice values(#{no}, #{title}, #{writer}, #{content}, now())
+		insert into notice values(#{no}, #{title}, #{writer}, #{content}, now(), #{fixed})
 	</insert>
 	<!-- 번호로 공지사항 검색 -->
 	<select id="readNoticeByNo" resultType="NoticeVO">
@@ -13,7 +13,7 @@
 		delete from notice where no = #{no}
 	</delete>
 	<update id="editNotice">
-		update notice set title = #{title}, content=#{content} where no = #{no}
+		update notice set fixed=#{fixed}, title = #{title}, content=#{content} where no = #{no}
 	</update>
 	<sql id="search">
 		<where>

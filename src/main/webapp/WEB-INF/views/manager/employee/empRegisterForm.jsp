@@ -91,6 +91,7 @@
 		})
 		
 		$("#btnCheck").click(function(){
+			$(".errorMsg").css("display","none");
 			var empid = $("input[name='empid']").val();
 			 //아이디 중복 ajax로 처리하기
 			 $.ajax({
@@ -106,6 +107,8 @@
 						validId = false;
 						
 
+					}else{
+						alert("사용할 수 있는 아이디입니다. 등록을 진행해주세요");
 					}
 				}
 				 
@@ -173,7 +176,7 @@
 						</div>
 						<div class="form-group">
 							<label>비밀번호</label>
-							<input type="text" name="emppass" placeholder=" 영문, 숫자 포함 5-12자리">
+							<input type="password" name="emppass" placeholder=" 영문, 숫자 포함 5-12자리">
 							<span class="errorMsg">영문, 숫자 포함 5-12자리를 넣어주세요</span>
 						</div>
 						<div class="box-footer">

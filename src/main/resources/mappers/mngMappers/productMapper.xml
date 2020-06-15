@@ -17,6 +17,9 @@
 	<insert id="insertpRentcarStatus">
 		insert into prentstatus values(#{p.pno},#{r.no})
 	</insert>
+	<insert id="insertpUserStatus">
+		insert into userpstatus values(#{r.no},#{u.userno},#{p.pno})
+	</insert>
 	<resultMap type="ProductVO" id="product">
 		<id property="pno" column="pno"/>
 		<result property="pname" column="pname"/>
@@ -50,6 +53,7 @@
 			<result property="roomtype" column="roomtype"/>
 			<result property="ldiv" column="ldiv"/>
 			<result property="bookedup" column="bookedup"/>
+			<result property="totalcapacity" column="totalcapacity"/>
 			<result property="pdiv" column="pdiv"/> 
 		</collection>
 		<collection property="tour" ofType="TourVO">
@@ -79,6 +83,12 @@
 			<result property="ldiv" column="ldiv"/>
 			<result property="pdiv" column="pdiv"/>
 		</collection>
+<!-- 		<collection property="" ofType="ReservationVO">
+			<id property="no" column="rno"/>
+			<result property="userno" column="userno"/>
+			<result property="rdate" column="rdate"/>
+			<result property="rstatus" column="rstatus"/>
+		</collection> -->
 	</resultMap>
 	<sql id="search">
 		<if test='searchType=="name"'>
@@ -86,6 +96,9 @@
 		</if>
 		<if test='searchType=="expire"'>
 			and pexpire like concat('%',#{keyword},'%')
+		</if>
+		<if test='searchType=="userCart"'>
+			and pname = #{keyword}
 		</if>
 		<if test='searchType=="location"'>
 			<if test='keyword=="한국"'>
@@ -107,7 +120,7 @@
 					    and pname like CONCAT('%',#{keyword2},'%')
 				    </if>
 				</if>
-		</if>
+			</if>
 		</if>
 	</sql>
 	<sql id="searchBoxKR">
@@ -147,7 +160,7 @@
 	<select id="productByNo" resultMap="product">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from product p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -159,7 +172,7 @@
 	<select id="productListPage" resultMap="product">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product where pdiv = 0 <include refid="search"/> order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -167,12 +180,11 @@
 							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
 	</select>
-	
 	<select id="productListPageByDomestic" resultMap="product">
 	  <if test="searchType != null">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product where substring(pname,2,3) = '제주' <include refid="search"/> order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -184,7 +196,7 @@
 	   <if test="searchType == null">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product where substring(pname,2,3) = '제주' order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -198,7 +210,7 @@
 	  <if test="searchType != null">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product where substring(pname,2,4) = '베이징' <include refid="search"/> order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -210,7 +222,7 @@
 		<if test="searchType == null">
 		  select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product where substring(pname,2,4) = '베이징'  order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -224,7 +236,7 @@
 	  <if test="searchType != null">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product where substring(pname,2,3) = '도쿄' 	<include refid="search"/> order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -236,7 +248,7 @@
 	   <if test="searchType == null">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product where substring(pname,2,3) = '도쿄'  order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -254,22 +266,30 @@
 		select count(*) from product where pdiv = 0 <include refid="search"/> order by pno desc
 	</select>
 	<select id="totalCountBySearchProductDomestic" resultType="int">
-		select count(*) from product where pname like '%제주%'
+		select count(*) from product where pdiv = 0 and pname like '%제주%'
 		<include refid="search"/>
 		order by pno desc
 	</select>
 	<select id="totalCountBySearchProductChina" resultType="int">
-		select count(*) from product where pname like '%베이징%'
+		select count(*) from product where pdiv = 0 and pname like '%베이징%'
 		<include refid="search"/>
 		order by pno desc
 	</select>
 	<select id="totalCountBySearchProductJapan" resultType="int">
-		select count(*) from product where pname like '%도쿄%'
+		select count(*) from product where pdiv = 0 and pname like '%도쿄%'
 		<include refid="search"/>
 		order by pno desc
 	</select>
 	<update id="updateProduct">
-		update product set pname = #{pname}, pcontent = #{pcontent}, pexpire = #{pexpire}, pprice = #{pprice}, ppic = #{pic} where pno = #{pno}
+		update product
+		<set>
+			<if test="pname!=null">pname = #{pname},</if>
+			<if test="pcontent!=null">pcontent = #{pcontent},</if>
+			<if test="pexpire!=null">pexpire = #{pexpire},</if>
+			<if test="pprice!=null">pprice = #{pprice},</if>
+			<if test="ppic!=null">ppic = #{ppic},</if>
+		</set>
+		 where pno = #{pno}
 	</update>
 	<update id="updatepAirStatus">
 		update pairstatus set ano = #{a.no} where pno = #{p.pno}
@@ -283,6 +303,8 @@
 	<update id="updatepRentStatus">
 		update prentstatus set rno = #{r.no} where pno = #{p.pno}
 	</update>
+	
+	
 	<delete id="deletepAirStatus">
 		delete from pairstatus where pno = #{pno} 
 	</delete>
@@ -295,15 +317,20 @@
 	<delete id="deletepRentStatus">
 		delete from prentstatus where pno = #{pno}
 	</delete>
+	<delete id="deleteUserpStatus">
+		delete from userpstatus where pno = #{p.pno} and no = #{r.no}
+	</delete>
 	<delete id="deleteProduct">
 		delete from product where pno = #{pno} 
 	</delete>
+	
+	
 	<!-- 상품 리스트 검색 박스 Ajax (중국) -->
 	<select id="tourlandProductChinaSearchList" resultMap="product">
 		<!-- select * from product where pno = (select distinct pno from (select * from pairstatus) as pair join (select * from airplane where ddate like concat('%',#{ddate},'%') and ano ="AC201"  and capacity >= #{cnt} or rdate like concat('%',#{rdate},'%') and ano ="AC202" and capacity >= #{cnt}) as a2 on pair.ano = a2.no) --> 
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product order by pno desc) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -313,11 +340,11 @@
 							 	 	<include refid="searchBoxCN"/>
 	</select>
 	
-		<!-- 상품 리스트 검색 박스 Ajax (일본) -->
+	<!-- 상품 리스트 검색 박스 Ajax (일본) -->
 	<select id="tourlandProductJapanSearchList" resultMap="product"> 
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product order by pno desc) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -326,11 +353,12 @@
 							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
 							 	<include refid="searchBoxJP"/>
 	</select>
-		<!-- 상품 리스트 검색 박스 Ajax (제주) -->
+	
+	<!-- 상품 리스트 검색 박스 Ajax (제주) -->
 	<select id="tourlandProductKRSearchList" resultMap="product"> 
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select * from product order by pno desc) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
@@ -344,7 +372,7 @@
 	<select id="tourlandProductChinaSearchLowPriceList" resultMap="product">
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + tsum) as 'defaultPrice'
@@ -365,7 +393,7 @@
 	<select id="tourlandProductJapanSearchLowPriceList" resultMap="product"> 
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + tsum) as 'defaultPrice'
@@ -385,7 +413,7 @@
 	<select id="tourlandProductKRSearchLowPriceList" resultMap="product"> 
 		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
 	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
+	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.totalcapacity,h2.pdiv,
 	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
 	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
 		from (select p.*,((a2.price * 2) + (h2.price * datediff(h2.checkout,h2.checkin)) + tsum) as 'defaultPrice'
@@ -401,89 +429,9 @@
 		join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
 		where p.pdiv = 0
 	</select>
-	
-	<!-- 
-	   
-
-<select id="productListPageByDomestic" resultMap="product">
-	  <if test="searchType != null">
-		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
-	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
-	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
-	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,3) = '제주' <include refid="search"/> order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0
-	   </if>		
-	   <if test="searchType == null">
-		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
-	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
-	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
-	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,3) = '제주' and pdiv = 0 order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0
-	  </if>				 	
+	<!-- 마이페이지 - 리뷰쓰기 - 들어갈 때 해당 상품 이름과 사진 가져가기 -->
+	<select id="selectNamePic" resultMap="product">
+		select * from (select * from reservation where rstatus = 3) r join userpstatus up on r.no = up.no join product p on up.pno = p.pno where r.no = #{no}
 	</select>
-	<select id="productListPageByChina" resultMap="product">
-	  <if test="searchType != null">
-		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
-	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
-	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
-	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,4) = '베이징' and pdiv = 0 <include refid="search"/> order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0
-		</if>
-		<if test="searchType == null">
-		  select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
-	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
-	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
-	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,4) = '베이징' and pdiv = 0 order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0
-		</if>
-	</select>
-	<select id="productListPageByJapan" resultMap="product">
-	  <if test="searchType != null">
-		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
-	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
-	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
-	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,3) = '도쿄' and p.pdiv = 0 <include refid="search"/> order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-							 	where p.pdiv = 0
-	   </if>
-	   <if test="searchType == null">
-		select p.pno,p.pname,p.pcontent,p.pexpire,p.pprice,p.ppic,p.pdiv,
-	    a2.no as a2no,a2.ano,a2.dlocation,a2.rlocation,a2.ddate,a2.rdate,a2.ldiv,a2.capacity as a2capacity,a2.seat,a2.price as a2price,a2.pdiv, 
-	    h2.no as h2no,h2.hname,h2.haddr,h2.checkin,h2.checkout,h2.capacity as h2capacity,h2.price as h2price,h2.roomcapacity,h2.roomtype,h2.ldiv,h2.bookedup,h2.pdiv,
-	    t2.no as t2no,t2.tname,t2.tlocation,t2.startdate,t2.enddate,t2.taddr,t2.etime,t2.capacity as t2capacity,t2.tprice as t2tprice,t2.ldiv,t2.pdiv,
-	    r2.no as r2no,r2.cdiv,r2.cno,r2.rentddate,r2.returndate,r2.rentaddr,r2.returnaddr,r2.price as r2price,r2.capacity as r2capacity,r2.insurance,r2.ldiv,r2.pdiv 
-		from (select * from product where substring(pname,2,3) = '도쿄' and pdiv = 0  order by pno desc limit #{pageStart}, #{perPageNum}) p join pairstatus a on p.pno = a.pno join airplane a2 on a.ano = a2.no
-							 	join photelstatus h on p.pno = h.pno join hotel h2 on h.hno = h2.no
-							 	join ptourstatus t on p.pno = t.pno join tour t2 on t.tno = t2.no
-							 	join prentstatus r on p.pno = r.pno join rentcar r2 on r.rno = r2.no
-			
-				 	where p.pdiv = 0
-	   </if>
-</select>
 	
-	 -->
 </mapper>

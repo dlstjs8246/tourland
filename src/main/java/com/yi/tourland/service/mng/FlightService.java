@@ -42,6 +42,9 @@ public class FlightService {
 	public int totalCountAirplaneByRending (AirplaneVO vo) throws Exception {
 		return dao.totalCountAirplaneByRending(vo);
 	}
+	public int totalAllCountAirplane() throws Exception{
+		return dao.totalAllCountAirplane();
+	}
 	//항공편 번호로 검색
 	public AirplaneVO airplaneByNo(AirplaneVO vo) throws Exception {
 		return dao.airplaneByNo(vo);

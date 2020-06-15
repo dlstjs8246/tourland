@@ -21,9 +21,9 @@ insert into user values
 -- 고객의 소리
 desc custboard ;
 insert into custboard values
-(1,'홈페이지 이용이 너무 어려워요','좀더 편했으면 좋겠음','장초코',now(),password(111)),
+(1,'홈페이지가 예쁘네요','칭찬해요','장초코',now(),password(111)),
 (2,'상품이 다양하면 좋겠어요','좀더 많았으면..','장도롱',now(),password(111)),
-(3,'차은우 가이드님 칭찬합니다','존잘!!','박열무',now(),password(111));
+(3,'김남길 가이드님 칭찬합니다','목소리가 너무 좋아요!!','박열무',now(),password(111));
 
 
 -- 배너
@@ -50,24 +50,36 @@ IGNORE 1 lines;
 
 
 
--- 현서 렌트카 ----------------------------------------------------------------------------------------------
+-- 패키지 상품을 구성하는 구성요소들 ----------------------------------------------------------------------------------------------
+-- 렌터카
 DESC rentcar; 
 load DATA LOCAL infile 'D:/workspace/workspace_spring/tourland/file/CSV/rentcar.csv'
 INTO TABLE tour.rentcar
+character set 'utf8'
+fields terminated by ',';
+-- 호텔
+desc hotel;
+load data local infile 'D:/workspace/workspace_spring/tourland/file/CSV/hotel.csv'
+into table tour.hotel
+character set 'utf8'
+fields terminated by ',';
+-- 투어
+load DATA LOCAL infile 'D:/workspace/workspace_spring/tourland/file/CSV/tour.csv'
+INTO table tour
+character set 'utf8'
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 lines;
+-- 항공
+load data local infile 'D:/workspace/workspace_spring/tourland/file/CSV/flight.csv'
+into table tour.airplane
 character set 'utf8'
 fields terminated by ',';
 
 -- 인선 ---------------------------------------------------------------------------------------------------
 LOAD DATA LOCAL INFILE 'D:/workspace/workspace_spring/tourland/file/CSV/FAQ.csv'  
 INTO TABLE faq
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 lines;
-
-load DATA LOCAL infile 'D:/workspace/workspace_spring/tourland/file/CSV/tour.csv'
-INTO table tour
-character set 'utf8'
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
@@ -109,40 +121,27 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 lines;
+
 #여기까지
 
 -- 태원 ---------------------------------------------------------------------------------------------------
 
--- 호텔
-desc hotel;
-load data local infile 'D:/workspace/workspace_spring/tourland/file/CSV/hotel.csv'
-into table tour.hotel
-character set 'utf8'
-fields terminated by ',';
-
 -- 상품문의사항
 desc planboard;
-insert into planboard values
-(null, "문의합니다", "단체상품에 대해 문의하고싶습니다.", "박인선", "2020-04-27","D", "J", "0",null),
-(null, "상품 문의사항입니다.", "이미 예약을 했는데 호텔만 변경가능할까요?", "장현서", "2020-04-27","I","P","0",null),
-(null, "상품 4가지 중 한가지만 가능한가요?", "패키지 상품 중 1가지만 예약하고싶습니다.", "황하나", "2020-04-27","R","B","0",null),
-(null, "상품 환불 문의입니다.", "일이 생겨 못가게 되었습니다. 환불 규정이 어떻게 되나요?", "황태원", "2020-04-27","R","R","0",null),
-(null, "렌트카 보험 문의입니다.", "보험을 안들어도 괜찮은가요?", "정아름", "2020-04-27","U","C","0",null);
+insert into planboard(title,content,writer,lcate,mcate,answer) values
+("문의합니다", "단체상품에 대해 문의하고싶습니다.", "박인선","D", "J", "0"),
+("상품 문의사항입니다.", "이미 예약을 했는데 호텔만 변경가능할까요?", "장현서","I","P","0"),
+("상품 4가지 중 한가지만 가능한가요?", "패키지 상품 중 1가지만 예약하고싶습니다.", "황하나","R","B","0"),
+("상품 환불 문의입니다.", "일이 생겨 못가게 되었습니다. 환불 규정이 어떻게 되나요?", "황태원","R","R","0"),
+("렌트카 보험 문의입니다.", "보험을 안들어도 괜찮은가요?", "정아름","U","C","0");
 
 -- 하나 ---------------------------------------------------------------------------------------------------
 
--- 항공
-load data local infile 'D:/workspace/workspace_spring/tourland/file/CSV/flight.csv'
-into table tour.airplane
-character set 'utf8'
-fields terminated by ',';
-
-
 -- 공지사항
 insert into notice values
-(1, "코로나 19로 인한 패키지 취소", "투어랜드", "투어랜드 고객 여러분, 코로나 19로 인한 결항으로 몇몇 패키지가 취소되었습니다. 마이 페이지에서 예약 상황을 꼼꼼히 확인 하시기 바랍니다.", "2020-04-27"),
-(2, "발로투어 달랏 폭포 체험 특가 판매 연장", "투어랜드", "발로투어의 달랏 폭포 체험이 특가 판매를 2020/5/20일까지 연장합니다. 등록하시려면 지금 달랏 폭포 체험을 검색창에서 검색하세요! ", "2020-04-25"),
-(3, "투어랜드 서비스 점검", "투어랜드", "투어랜드는 2020/05/04 AM 00:00 부터 AM 05:00 까지 사이트 점검을 실시합니다. 점검 시간 동안에는 서비스를 이용하실 수 없습니다. 서비스 이용에 불편을 끼쳐 대단히 죄송합니다.", "2020-04-23");
+(1, "코로나 19로 인한 패키지 취소", "투어랜드", "투어랜드 고객 여러분, 코로나 19로 인한 결항으로 몇몇 패키지가 취소되었습니다. 마이 페이지에서 예약 상황을 꼼꼼히 확인 하시기 바랍니다.", "2020-04-27",1),
+(2, "발로투어 달랏 폭포 체험 특가 판매 연장", "투어랜드", "발로투어의 달랏 폭포 체험이 특가 판매를 2020/5/20일까지 연장합니다. 등록하시려면 지금 달랏 폭포 체험을 검색창에서 검색하세요! ", "2020-04-25",0),
+(3, "투어랜드 서비스 점검", "투어랜드", "투어랜드는 2020/05/04 AM 00:00 부터 AM 05:00 까지 사이트 점검을 실시합니다. 점검 시간 동안에는 서비스를 이용하실 수 없습니다. 서비스 이용에 불편을 끼쳐 대단히 죄송합니다.", "2020-04-23",0);
 
 -- 쿠폰
 
@@ -177,3 +176,11 @@ create trigger tri_after_insert_user
      	 insert into usercoupon values(new.userno,1);
    end $
 delimiter ;
+
+-- 통계를 위한 view table
+create view preferenceProduct as select p.pname,count(p.pno) as 'count' from reservation r 
+join userpstatus u on u.no = r.no and u.userno = r.userno
+join product p on u.pno = p.pno where r.rstatus = '3' group by p.pname order by count desc limit 0,5;
+create view totalpricebymonth as select substring(pname,2,3) as 'location',year(rdate),month(rdate),ifnull(sum(p.pprice),0) as 'totalprice' from reservation r 
+join userpstatus u on u.no = r.no and u.userno = r.userno
+join product p on u.pno = p.pno where r.rstatus in (2,3) group by substring(pname,2,3),month(rdate);

@@ -55,6 +55,7 @@
 							<th>객실타입</th>
 							<th>장소구분</th>
 							<th>예약 가능 여부</th>
+							<th>전체인원</th>
 							<th>관리</th>
 						</tr>	
 							<c:forEach var="hotel" items="${list}">
@@ -95,6 +96,7 @@
 											<td><span class="badge bg-blue">예약불가능</span></td>
 										</c:when>
 									</c:choose>
+									<td>${hotel.totalcapacity}</td>
 									<td>
 										<button type="button" class="btn btn-primary active btn-sm btnModify" data-no="${hotel.no }">수정</button>
 										<button type="button" class="btn btn-primary btn-danger btn-sm btnDelete" data-no="${hotel.no }">삭제</button>

@@ -3,13 +3,14 @@ package com.yi.tourland.persistance.mng.dao;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.yi.tourland.domain.Criteria;
 import com.yi.tourland.domain.SearchCriteria;
 import com.yi.tourland.domain.mng.AirplaneVO;
 import com.yi.tourland.domain.mng.HotelVO;
 import com.yi.tourland.domain.mng.ProductVO;
 import com.yi.tourland.domain.mng.RentcarVO;
+import com.yi.tourland.domain.mng.ReservationVO;
 import com.yi.tourland.domain.mng.TourVO;
+import com.yi.tourland.domain.mng.UserVO;
 
 public interface ProductDao {
 	public List<ProductVO> productListPage(SearchCriteria cri) throws SQLException;
@@ -22,11 +23,13 @@ public interface ProductDao {
 	public void insertpHotelStatus(ProductVO pvo, HotelVO hvo) throws SQLException;
 	public void insertpTourStatus(ProductVO pvo, TourVO tvo) throws SQLException;
 	public void insertpRentcarStatus(ProductVO pvo, RentcarVO rvo) throws SQLException;
+	public void insertpUserStatus(ReservationVO rvo, UserVO uvo, ProductVO pvo) throws SQLException;
 	public void updateProduct(ProductVO vo) throws SQLException;
 	public void updatepAirStatus(ProductVO pvo, AirplaneVO avo) throws SQLException;
 	public void updatepHotelStatus(ProductVO pvo, HotelVO hvo) throws SQLException;
 	public void updatepTourStatus(ProductVO pvo, TourVO tvo) throws SQLException;
 	public void updatepRentStatus(ProductVO pvo, RentcarVO rvo) throws SQLException;
+	public void deleteUserpStatus(ProductVO pvo, ReservationVO rvo) throws SQLException;
 	public void deletepAirStatus(ProductVO pvo) throws SQLException;
 	public void deletepHotelStatus(ProductVO pvo) throws SQLException;
 	public void deletepTourStatus(ProductVO pvo) throws SQLException;
@@ -49,4 +52,8 @@ public interface ProductDao {
 	public List<ProductVO> tourlandProductJapanSearchLowPriceList(SearchCriteria cri) throws SQLException; 
 	// 상품 리스트 검색 박스 Ajax "낮은 가격 순" (제주) 
 	public List<ProductVO> tourlandProductKRSearchLowPriceList(SearchCriteria cri) throws SQLException;
+	//마이페이지 - 리뷰쓰기 - 들어갈 때 해당 상품 이름과 사진 가져가기 
+	public ProductVO selectNamePic(int no) throws SQLException;
+	
+	
 }
