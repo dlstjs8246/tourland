@@ -176,7 +176,7 @@
 						</div>
 						<div class="form-group">
 							<label>비밀번호</label>
-							<input type="text" name="emppass" placeholder=" 영문, 숫자 포함 5-12자리">
+							<input type="password" name="emppass" placeholder=" 영문, 숫자 포함 5-12자리">
 							<span class="errorMsg">영문, 숫자 포함 5-12자리를 넣어주세요</span>
 						</div>
 						<div class="box-footer">
