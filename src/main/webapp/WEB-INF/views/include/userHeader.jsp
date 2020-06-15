@@ -248,7 +248,7 @@ window.onload = function() {
 
 
 //날씨 박스 setInteval
- 	 setInterval(function() {
+ 	  setInterval(function() {
  		 $('#weatherBoxWrap .box2:first').animate({
  			 marginTop : -50
  		 }, 1000 )
@@ -262,7 +262,7 @@ window.onload = function() {
  			 $('#weatherBoxWrap .box2:eq(1)').css("margin-top", "0px");
  		 })
  		
- 	 },3000)
+ 	 },3000) 
 		 
 		
 	  

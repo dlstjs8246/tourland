@@ -193,13 +193,15 @@ $(function(){
 	$(document).on("click", ".pkgReservBtn", function(){
 		var pno = $(this).attr("data-pno");
 		var price = replaceAll($(this).attr("data-price"),",","");
-		if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){			 
+		if($.cookie('currentProduct') != null && $.cookie('currentProductPrice') != null ){	
+			if($.cookie('currentProduct') != pno){
 			 $.cookie("currentProduct2",$.cookie('currentProduct'),{expires:1, path:"/"});
 			 $.cookie("currentProductPrice2",$.cookie('currentProductPrice'),{expires:1, path:"/"});
 			 $.removeCookie('currentProduct');
 			 $.removeCookie('currentProductPrice');
 			 $.cookie("currentProduct",pno,{expires:1, path:"/"});
 			 $.cookie("currentProductPrice",price,{expires:1, path:"/"});
+			}
 		 }else{
 			 $.cookie("currentProduct",pno,{expires:1, path:"/"});
 			 $.cookie("currentProductPrice",price,{expires:1, path:"/"});

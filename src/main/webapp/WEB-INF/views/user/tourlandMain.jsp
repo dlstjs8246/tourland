@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Welcome to tourland</title>
 </head>
 
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic&display=swap" rel="stylesheet">
@@ -488,7 +488,7 @@ button.popupBtnClose2 {
 				"top" : positions + currentP + "px"
 			}, 500);
 		})
-
+        //탑버튼 누르면
 		$('#slSpan').click(function() {
 			$('html, body').animate({
 				scrollTop : 0
