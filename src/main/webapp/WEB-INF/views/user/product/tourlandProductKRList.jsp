@@ -204,14 +204,13 @@ $(function(){
 		 }
 		location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 	})
-	calPrice();
 })
 </script>
 
 <body>
 <!-- 메인 검색 박스에서 검색한 내용을 들고와서 자동 검색 후 페이지 출력 -->
 <c:if test="${tourDays!=null }">
-	<script>
+	<script> 
 	$(function(){
 		$(".datepicker").val("${date }");
 		$("#rdate option[value='${tourDays}']").attr("selected", "selected");
@@ -238,7 +237,7 @@ $(function(){
 		<div id="pkgContentBox">
 			<div id="pkgSearch">
 				<h3>검색</h3>
-				<p>출발일 선택</p>
+				<p>출발일 선택</p> 
 				<input type="date" class="datepicker" name="ddate">
 				<p>여행일 선택</p>
 				<select id="rdate">
