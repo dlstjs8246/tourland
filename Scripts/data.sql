@@ -121,6 +121,20 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 lines;
+
+LOAD DATA LOCAL INFILE 'D:/workspace/workspace_spring/tourland/file/CSV/userpstatus.csv'  
+INTO TABLE userpstatus
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 lines;
+
+LOAD DATA LOCAL INFILE 'D:/workspace/workspace_spring/tourland/file/CSV/reservation.csv'  
+INTO TABLE reservation
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 lines;
 #여기까지
 
 -- 태원 ---------------------------------------------------------------------------------------------------
@@ -175,3 +189,11 @@ create trigger tri_after_insert_user
      	 insert into usercoupon values(new.userno,1);
    end $
 delimiter ;
+
+-- 통계를 위한 view table
+create view preferenceProduct as select p.pname,count(p.pno) as 'count' from reservation r 
+join userpstatus u on u.no = r.no and u.userno = r.userno
+join product p on u.pno = p.pno where r.rstatus = '3' group by p.pname order by count desc limit 0,5;
+create view totalpricebymonth as select substring(pname,2,3) as 'location',year(rdate),month(rdate),ifnull(sum(p.pprice),0) as 'totalprice' from reservation r 
+join userpstatus u on u.no = r.no and u.userno = r.userno
+join product p on u.pno = p.pno where r.rstatus in (2,3) group by substring(pname,2,3),month(rdate);

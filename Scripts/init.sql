@@ -444,10 +444,13 @@ ALTER TABLE tour.usercoupon
 -- 상품평
 CREATE TABLE tour.review (
 	no        INT       NOT NULL COMMENT '번호', -- 번호
+	rno       INT       NOT NULL COMMENT '예약번호', -- 예약번호
 	pno       INT       NULL     COMMENT '상품번호', -- 상품번호
 	userno    INT       NULL     COMMENT '유저번호', -- 유저번호
 	regdate   TIMESTAMP NULL     DEFAULT now() COMMENT '등록일', -- 등록일
-	starpoint char(1)   NULL     COMMENT '별점' -- 별점
+	starpoint char(1)   NULL     COMMENT '별점', -- 별점
+	reviewTitle   varchar(255) NOT NULL COMMENT '리뷰제목', -- 리뷰제목
+	reviewContent LONGTEXT     NOT NULL COMMENT '리뷰내용' -- 리뷰내용
 )
 COMMENT '상품평';
 

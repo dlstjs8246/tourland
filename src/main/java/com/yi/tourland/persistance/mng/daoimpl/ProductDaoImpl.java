@@ -238,6 +238,10 @@ public class ProductDaoImpl implements ProductDao {
 		map.put("p", pvo);
 		sqlSession.insert(namespace + "insertpUserStatus",map);
 	}
+	@Override
+	public ProductVO selectNamePic(int no) throws SQLException {
+		return sqlSession.selectOne(namespace + "selectNamePic", no);
+	}
 
 	
 }

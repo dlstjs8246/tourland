@@ -27,7 +27,7 @@ function calPrice(obj) {
 			 var checkoutDate = new Date(obj.checkout);
 			 var dateDiffDate = new Date();
 			 dateDiffDate.setDate(checkoutDate.getDate()-checkinDate.getDate());
-			 price += (obj.price * dateDiffDate.getDate());
+			 price += (obj.price * (dateDiffDate.getDate()-1)); 
 		 } 
 	 }) 
 	 $(obj.tour).each(function(i,obj){

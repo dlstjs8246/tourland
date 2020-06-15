@@ -45,7 +45,7 @@
     <update id="updateUser" parameterType="UserVO">
        update user set 
        username =#{username}, userbirth=#{userbirth}, usertel=#{usertel}, 
-       useraddr=#{useraddr}, userpassport=#{userpassport}, userpass=password(#{userpass})
+       useraddr=#{useraddr}, userpassport=#{userpassport}, userpass=password(#{userpass}), usersecess =#{usersecess}
        where userno=#{userno}
     </update> 
 

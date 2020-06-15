@@ -204,6 +204,7 @@ $(function(){
 		 }
 		location.href = "${pageContext.request.contextPath}/customer/tourlandProductDetail?pno="+pno+"&price="+price;
 	})
+	calPrice();
 })
 </script>
 

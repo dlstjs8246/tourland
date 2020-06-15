@@ -1663,7 +1663,7 @@ public class ManagerController {
         }
         
         if(choice.equals("practice")) {
-        	path= "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
+        	path= "/tourland/resources/images/practice";
         }
 //		System.out.println("displayFile-----------"+ filename);
 		InputStream in = null;
@@ -2200,27 +2200,28 @@ public class ManagerController {
 			JsonObject json = new JsonObject();
 			PrintWriter printWriter = null;
 			MultipartFile file = multiFile.getFile("upload");
+			if(file !=null && file.getSize() > 0) { 
+         try {
+			printWriter = resp.getWriter();
+			resp.setContentType("text/html");
+			String serverPath =req.getContextPath()+"/manager/displayFile/practice?filename=";
+			//String serverPath ="localhost:8080/tourland/displayFile/practice?filename=";
+			String serverPath2 =req.getContextPath()+"/resources/images/practice";
+			String savedName = UploadFileUtils.uploadFile(serverPath2, file.getOriginalFilename().replaceAll(" ", "_"),
+			file.getBytes());
+			String bigSizePic = savedName.substring(0, 12) + savedName.substring(14);
 			
-			if(file !=null && file.getSize() > 0) {
-	         try {
-				printWriter = resp.getWriter();
-				resp.setContentType("text/html");
-				String serverPath =req.getContextPath()+"/manager/displayFile/practice?filename=";
-				//String serverPath ="localhost:8080/tourland/displayFile/practice?filename=";
-				String serverPath2 = "D:/workspace/workspace_spring/tourland/src/main/webapp/resources/images/practice";
-				String savedName = UploadFileUtils.uploadFile(serverPath2, file.getOriginalFilename(),
-				file.getBytes());
-				String bigSizePic = savedName.substring(0, 12) + savedName.substring(14);
-				json.addProperty("uploaded", 1);
-	            json.addProperty("fileName", file.getOriginalFilename());
-	            json.addProperty("url", serverPath+bigSizePic);
-	            printWriter.println(json);
-				}catch (Exception e) {
-					e.printStackTrace();
-				}finally {
-				    if(printWriter != null) {
-					    printWriter.close();
-					 }
+			json.addProperty("uploaded", 1);
+            json.addProperty("fileName", file.getOriginalFilename());
+            json.addProperty("url", serverPath+bigSizePic);
+            printWriter.println(json);
+            
+			}catch (Exception e) {
+				e.printStackTrace();
+			}finally {
+			    if(printWriter != null) {
+				    printWriter.close();
+				 }
 			   }
 			}
           return null;
@@ -2228,7 +2229,16 @@ public class ManagerController {
 		
 		//관리자 메인화면에 나올 통계
 		@RequestMapping(value="statistics", method=RequestMethod.GET)
-		public String mainStatistics() throws Exception { 
+		public String mainStatistics(Model model) throws Exception { 
+			/*
+			 * List<StatisticVO> jejuList = statisticService.searchTotalPriceJejuByMonth();
+			 * List<StatisticVO> dokyoList =
+			 * statisticService.searchTotalPriceDokyoByMonth(); List<StatisticVO>
+			 * beijingList = statisticService.searchTotalPriceBeijingByMonth();
+			 * List<StatisticVO> list2 = statisticService.searchTotalCountByLocation();
+			 * model.addAttribute("jeju",jejuList); model.addAttribute("dokyo",dokyoList);
+			 * model.addAttribute("beijing",beijingList); model.addAttribute("list2",list2);
+			 */
 			return "/manager/main/statistics";
 		}
 		
