@@ -15,6 +15,22 @@
 				"type": "dev",
 				"handlers": {}
 			}
+		},
+		"mysql5-1720890bb15-58133a1d75ae17a5": {
+			"provider": "mysql",
+			"driver": "mysql5",
+			"name": "MySQL - tour",
+			"save-password": true,
+			"read-only": false,
+			"configuration": {
+				"host": "localhost",
+				"port": "3306",
+				"database": "tour",
+				"url": "jdbc:mysql://localhost:3306/tour",
+				"home": "C:\\Program Files\\MySQL\\MySQL Server 5.7",
+				"type": "dev",
+				"handlers": {}
+			}
 		}
 	},
 	"connection-types": {
