@@ -12,8 +12,7 @@
 				"port": "3306",
 				"url": "jdbc:mysql://localhost:3306/",
 				"home": "C:\\Program Files\\MySQL\\MySQL Server 5.7",
-				"type": "dev",
-				"handlers": {}
+				"type": "dev"
 			}
 		},
 		"mysql5-1720890bb15-58133a1d75ae17a5": {
@@ -28,7 +27,24 @@
 				"database": "tour",
 				"url": "jdbc:mysql://localhost:3306/tour",
 				"home": "C:\\Program Files\\MySQL\\MySQL Server 5.7",
+				"type": "dev"
+			}
+		},
+		"mariaDB-172c089a2be-4f6d8e0f2156de9c": {
+			"provider": "mysql",
+			"driver": "mariaDB",
+			"name": "MariaDB - tourland",
+			"save-password": true,
+			"show-system-objects": true,
+			"read-only": false,
+			"configuration": {
+				"host": "blackpink.yi.or.kr",
+				"port": "3306",
+				"database": "tourland",
+				"url": "jdbc:mysql://blackpink.yi.or.kr:3306/tourland",
+				"home": "C:\\Program Files\\MySQL\\MySQL Server 5.7",
 				"type": "dev",
+				"auth-model": "native",
 				"handlers": {}
 			}
 		}
